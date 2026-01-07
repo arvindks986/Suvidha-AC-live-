@@ -1,0 +1,2283 @@
+<?php
+$databaseName = \DB::connection()->getDatabaseName();
+$phase_no = 1;
+if ($databaseName != 'suvidha_ac_2022_03_e13_test') {
+
+
+  if ($databaseName == 'suvidha_ac_2021_11_e12') {
+    $is_counting_enable = true;
+    $is_counting_prepration = true;
+  } else {
+    $is_counting_enable = false;
+    $is_counting_prepration = false;
+  }
+
+  $st_code  = '';
+  $bst_code  = 'S04';
+  $ac_no    = 0;
+  $dist_no  = 0;
+  $phase_no = 1;
+  //$is_counting_enable = false;
+  //$is_counting_prepration = false;
+  $allowed_st_code  = [];
+  $allowed_acs      = [];
+  $allowed_dist_no  = [];
+  if (Auth::user()) {
+    $st_code  = Auth::user()->st_code;
+    $dist_no  = Auth::user()->dist_no;
+    $ac_no    = Auth::user()->ac_no;
+  }
+  /* if($st_code == 'S19'){
+  $allowed_st_code = ['S19'];
+  $allowed_acs = ['29'];
+  $allowed_dist_no = ['4'];
+}
+if($st_code == 'S13'){
+  $allowed_st_code = ['S13'];
+  $allowed_acs = ['215'];
+  $allowed_dist_no = ['25'];
+}
+
+if($st_code == 'S04'){
+  $allowed_st_code = ['S04'];
+  $allowed_acs = ['1'];
+  $allowed_dist_no = ['1'];
+} 
+
+if($st_code == 'S06'){
+  $allowed_st_code = ['S06'];
+  $allowed_acs = ['61','65','106','181'];
+  $allowed_dist_no = ['8','28','31','25'];
+}
+
+if($st_code == 'S17'){
+  $allowed_st_code = ['S17'];
+  $allowed_acs = ['14'];
+  $allowed_dist_no = ['3'];
+}
+if($st_code == 'S12'){
+  $allowed_st_code = ['S12'];
+  $allowed_acs = ['15'];
+  $allowed_dist_no = ['4'];
+  
+}
+if($st_code == 'S14'){
+  $allowed_st_code = ['S14'];
+  $allowed_acs = ['30','34','22','51','60'];
+  $allowed_dist_no = ['4','1','11','9'];
+  
+}*/
+
+  if ($st_code == 'S20') {
+    $allowed_st_code = ['S20'];
+    $allowed_acs = ['24', '175', '179'];
+    $allowed_dist_no = ['4', '27', '28'];
+  }
+
+  if ($st_code == 'S12') {
+    $allowed_st_code = ['S12'];
+    $allowed_acs = ['55'];
+    $allowed_dist_no = ['12'];
+  }
+  if ($st_code == 'S13') {
+    $allowed_st_code = ['S13'];
+    $allowed_acs = ['252'];
+    $allowed_dist_no = ['30'];
+  }
+
+  if ($st_code == 'S17') {
+    $allowed_st_code = ['S17'];
+    $allowed_acs = ['51'];
+    $allowed_dist_no = ['11'];
+  }
+  if ($st_code == 'S06') {
+    $allowed_st_code = ['S06'];
+    $allowed_acs = ['125'];
+    $allowed_dist_no = ['17'];
+  }
+
+  if ($st_code == 'S01') {
+    $allowed_st_code = ['S01'];
+    $allowed_acs = ['23'];
+    $allowed_dist_no = ['3'];
+  }
+
+  $setting = \App\models\Admin\SettingModel::get_setting_cache();
+  if (!empty($setting['booth_app'])) {
+    foreach ($setting['booth_app'] as $iterate_booth_app) {
+      if ($iterate_booth_app['states'] == $st_code) {
+        $allowed_st_code[] = $st_code;
+      }
+      if ($iterate_booth_app['states'] == $st_code && $iterate_booth_app['districts'] == $dist_no) {
+        $allowed_dist_no[] = $dist_no;
+      }
+      if ($iterate_booth_app['states'] == $st_code && $iterate_booth_app['districts'] == $dist_no && in_array($ac_no, $iterate_booth_app['acs'])) {
+        $allowed_acs[] = $ac_no;
+      }
+    }
+  }
+
+  // Enable Booth App menu only for those ROs who is present in boothapp_enable_acs table 
+  if (Auth::user()->role_id == 19) {
+    $booth_acs = DB::table('boothapp_enable_acs')->where('st_code', $st_code)->where('dist_no', $dist_no)->where('ac_no', $ac_no)->first();
+    if ($booth_acs) {
+      $allowed_st_code = [$st_code];
+      $allowed_acs = [$ac_no];
+      $allowed_dist_no = [$dist_no];
+    }
+  }
+   else if(Auth::user()->role_id == 4){
+    $booth_acs = DB::table('boothapp_enable_acs')->where('st_code', $st_code)->first();
+    if ($booth_acs) {
+      $allowed_st_code = [$st_code];
+      $allowed_acs = [$ac_no];
+      $allowed_dist_no = [$dist_no];
+    }
+  }
+  
+?>
+  <header class="header">
+    <nav>
+      <div class="nav-header">
+        <div class="container-fluid d-flex flex-md-row align-items-md-center">
+          <div class="float-left mr-auto"><a href="#" class="navbar-brand "><img style="max-width: 40px;" src="{{ asset('theme/img/logo/eci-logo.png') }}" alt="" />&nbsp;<span class="text" style="color:#fff;">
+                Election Commission of India</span> </a></div>
+          <!-- ROAC Login Section-->
+          <div class="col-xs-1"><span class="text-white" style="font-size:30px;cursor:pointer" onclick="openNavR()"><small class="text-white" style="font-size: 18px; position: relative; top: -5px;">MENU
+                &nbsp;&nbsp;</small>☰</span>
+          </div>
+
+          <div id="mySidenavR" class="sidenavR">
+
+            <div class="Closedbtn">
+              <a href="javascript:void(0)" class="closebtn" onclick="closeNavR()">
+                <span>Close &nbsp;</span>×</a>
+            </div>
+            @if($user_data->role_id=='19')
+
+            @php
+            $finalize_ac_data = DB::table('candidate_finalized_ac')->where(['st_code'=>isset($user_data->st_code) ? $user_data->st_code : '', 'const_no'=> isset($user_data->ac_no) ? $user_data->ac_no : '', 'const_type'=>'AC'])->first();
+            @endphp
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/roac/dashboard')}}"> Home</a></li>
+              <li><a href="javascript:void(0)">Candidate<span class="arrow-down"></span></a>
+                <ul>
+                  @if(isset($finalize_ac_data->finalized_ac) && $finalize_ac_data->finalized_ac != '1')
+                  <li><a rel="" href="{{url('/roac/createnomination')}}"> <span>Nomination</span></a></li>
+                  <li><a rel="" href="{{url('/roac/multiplenomination')}}"> <span>Multiple Nomination</span></a></li>
+
+                  <li><a rel="" href="{{url('/roac/candidateaffidavit')}}"> <span>Upload Affidavit</span></a></li>
+                  <li><a rel="" href="{{url('/roac/candidateiscriminal')}}">Update Criminal Antecedents </a></li>
+                  <li><a rel="" href="{{url('/roac/counteraffidavit')}}"> <span>Upload Counter Affidavit</span></a></li>
+                  <!--  <li><a rel="" href="{{url('/roac/candidate_criminal_publication')}}">Upload Publication for CA </a></li> -->
+                  @endif
+                  <li><a rel="" href="{{url('/roac/listnomination')}}"> <span>List of Applicants</span></a></li>
+                  @if(isset($finalize_ac_data->finalized_ac) && $finalize_ac_data->finalized_ac != '1')
+                  <li><a rel="" href="{{url('/roac/scrutiny-candidates')}}"> <span>Scrutiny of Candidates</span></a></li>
+                  <li><a rel="" href="{{url('/roac/accepted-candidate')}}">Mark validly nominated candidates</a></li>
+                  <li><a rel="" href="{{url('/roac/withdrawn-candidates')}}"> <span>Withdrawl of Candidates</span></a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/symbol-upload')}}">Assign Symbol </a></li>
+                  <!--<li><a rel="" href="{{url('/roac/update-form7A-details')}}">Update Form 7A Details</a></li>-->
+                  @endif
+                  <li><a rel="" href="{{url('/roac/contested-application')}}"> Contesting Candidates</a></li>
+                  <!-- <li><a rel="" href="{{url('/roac/ElectorsDetails')}}"  > Electors Details</a></li> -->
+                  @if(isset($finalize_ac_data->finalized_ac) && $finalize_ac_data->finalized_ac != '1')
+                  <li><a class="dropdown-item" href="{!! url('roac/nomination/list-of-nomination') !!}">List of nominated
+                      candidate</a></li>
+                  @endif
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)">Permission<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/permission/allmasters')}}">Add/Update Master Data </a></li>
+                  <li><a rel="" href="{{url('/roac/permission/offlinePermission')}}"> Offline permission Module</a></li>
+                  <li><a rel="" href="{{url('/roac/permission/allPermissionRequest')}}"> Accept/Reject permission</a></li>
+                  <li><a rel="" href="{{url('/roac/permission/agentCreation')}}"> Create Agent</a></li>
+                </ul>
+
+              </li>
+              @if(Auth::user() && Auth::user()->st_code == 'S24' && Auth::user()->ac_no == '228')
+              <li><a href="javascript:void(0)">Booth App<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/booth-app/voter-list')}}">Booth Slip</a></li>
+                  <li><a rel="" href="{{url('/roac/booth-app/officer-list')}}">Assign Officer</a></li>
+                  <li><a rel="" href="{{url('/roac/booth-app/dashboard')}}">Dashboard</a></li>
+                </ul>
+              </li>
+              @elseif(in_array($st_code,$allowed_st_code) && in_array($ac_no,$allowed_acs) &&
+              in_array($dist_no,$allowed_dist_no))
+              <li><a href="javascript:void(0)">Booth App<span class="arrow-down"></span></a>
+                <ul>
+
+
+
+                  <li><a rel="" href="#">Officer assignment</a>
+                    <ul>
+                      <li><a rel="" href="{{url('/roac/booth-app-revamp/officer-list')}}">Assign Officer(PO)</a></li>
+                      <!--<li><a rel="" href="{{url('/roac/booth-app-revamp/officer-list')}}">Assign Officer(PRO/PO)</a></li>
+                    <li><a rel="" href="{{url('/roac/booth-app-revamp/assign-so-new')}}">Assign SM</a></li>
+                    <li><a rel="" href="{{url('/roac/booth-app-revamp/location')}}">Polling Station Location</a></li>
+                    <li><a rel="" href="{{url('/roac/booth-app-revamp/assign-blo')}}">Assign BLO</a></li>
+                    <li><a rel="" href="{{url('/roac/booth-app-revamp/import-excel')}}">Import PO/PRO</a></li>-->
+                      <li><a rel="" href="{{url('/roac/booth-app-revamp/import-excel')}}">Import PO</a></li>
+                    </ul>
+                  </li>
+                  <li><a rel="" href="{{url('roac/booth-app-revamp/electors-verification-by-ps')}}">Verify Electors</a>
+                  </li>
+                  <!-- <li><a rel="" href="{{url('roac/randomize-details')}}">Polling Party Schedule</a></li> -->
+                  <li><a rel="" href="{{url('/roac/booth-app-revamp/dashboard')}}">Dashboard</a></li>
+                  <!--<li><a rel="" href="{{url('/roac/booth-app-revamp/exempted')}}">Exempt Polling Station</a></li> -->
+                  <!--<li><a rel="" href="{{url('/roac/booth-app-revamp/exempted-turnout')}}">Exempted Turnout Form</a></li> -->
+
+                  <li><a rel="" href="{{url('/roac/booth-app-revamp/exempted-boothapp-pollingstation')}}">View Exempted Turnout Polling station </a></li>
+
+                  <li><a rel="" href="{{url('/roac/booth-app-revamp/view-exempted-pollingstation')}}"> Exempt Polling station Turnout</a></li>
+
+
+                  <!-- <li><a rel="" href="{{url('/roac/booth-app-revamp/get-form-17-a')}}">Forms</a></li> -->
+                  <li><a rel="" href="#">Reports</a>
+                    <ul>
+                      <!--<li><a href="{!! Common::generate_url('booth-app-revamp/poll-material/ac/ps') !!}">Poll Material
+                        Report</a></li> -->
+                      <li><a href="{{Common::generate_url('booth-app-revamp/officer-assignment-report/ac/ps')}}">Officer
+                          Assignment Report</a></li>
+                      <li><a href="{{url('roac/booth-app-revamp/poll-turnout-report/state/ac')}}">Poll Turnout Report</a>
+                      </li>
+                      <li><a href="{{url('roac/booth-app-revamp/poll-event-report')}}">Poll Event Report</a></li>
+
+                      <!--<li><a href="{{url('roac/booth-app-revamp/exempt-turnout-report/state/ac')}}">Exempted PS Turnout
+                        Report</a></li> -->
+                      <!--<li><a href="{{url('roac/booth-app-revamp/evm-comparision/state/ac')}}">Evm Comparision</a></li>
+					<li><a href="{{url('roac/booth-app-revamp/ac/blo-pro-difference')}}">BLO/PRO Turnout</a></li>-->
+
+
+                    </ul>
+                  </li>
+
+                </ul>
+              </li>
+              @endif
+
+
+              <li><a href="javascript:void(0)">Voter Turnout<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/turnout/estimate-turnout-entry')}}">Estimate Turnout Entry</a></li>
+                  <!--<li><a rel="" href="{{url('/roac/turnout/schedule-entry')}}">End of Poll Turnout </a></li>-->
+                  <li><a rel="" href="{{url('/roac/turnout/ElectorsDetails')}}">Electors Details</a></li>
+                  <li><a rel="" href="{{url('/roac/turnout/RoPsWiseDetails')}}?state={{$user_data->st_code}}&ac_id={{$user_data->ac_no}}">PS
+                      Wise Voter Turn Out</a></li>
+                </ul>
+                <?php /*<ul>
+        <li><a href="{{url('roac/turnout/RoPsWiseDetails?')}}ac_id={{$user_data->ac_no}}&state={{$user_data->st_code}}">PS Wise Voter Turnout</a></li>  
+		<li><a rel="" href="{{url('/roac/ElectorsDetails')}}"  >Electors Details</a></li>   
+        <!--<li><a rel="" href="{{url('/roac/voting/list-schedule')}}"  >List of Poll Turnout</a></li>-->
+        <?php /*
+        <li><a rel="" href="{{url('/roac/voting/schedule-entry')}}"  >End of Poll Turnout</a></li>
+        <li><a href="{{url('roac/RoPsWiseDetails')}}?state={{$user_data->st_code}}&ac_id={{$user_data->ac_no}}">PS Wise Voter Turnout</a></li>
+          </ul> */ ?>
+              </li>
+              <!-- look -->
+              @if($is_counting_prepration==='not_allow')
+              <li><a href="javascript:void(0)">Counting<span class="arrow-down"></span></a>
+                <ul>
+                  <!--  <li><a rel="" href="{{url('/roac/counting/prepare-counting')}}"  >Prepare Counting Data</a></li> -->
+                  <li><a rel="" href="{{url('/roac/counting/round-schedule')}}">1.- Round Schedule </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/counting-data-entry')}}">2.- EVM Votes Data Entry </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/postal-data-entry')}}">3.- Postal Ballot Votes </a></li>
+
+                  <li><a rel="" href="{{url('/roac/counting/counting-results')}}">4.- Results Declaration </a></li>
+
+                </ul>
+              </li>
+              @endif
+              @if($is_counting_prepration)
+              <li><a href="javascript:void(0)">Counting Preparation<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  @if($user_data->designation=="ROAC")
+                  <li><a rel="" href="{{url('/roac/counting/counting-user')}}">1.- User Creation </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/counting-center-details')}}">2.- Counting Center Details </a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/round-schedule-details')}}">3.- Round Schedule for AC</a></li>
+                  <li><a rel="" href="{{url('/roac/counting/user-assign-table-details')}}">4.- Table assignment </a></li>
+
+                  @endif
+                </ul>
+              </li>
+              @endif
+
+              @if($is_counting_enable)
+              <li><a href="javascript:void(0)">PS Wise Counting<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  @if($user_data->designation=="ROAC")
+                  <!--  <li><a rel="" href="{{url('/roac/counting/counting-user')}}">1.- User Creation </a></li>
+            <li><a rel="" href="{{url('/roac/counting/counting-center-details')}}">2.- Counting Center Details </a></li>
+            <li><a rel="" href="{{url('/roac/counting/round-schedule-details')}}">3.- Round Schedule for AC</a></li>
+            <li><a rel="" href="{{url('/roac/counting/user-assign-table-details')}}">4.- Table assignment </a></li>
+ -->
+                  <li><a rel="" href="{{url('/roac/counting/polling-station-wisevote-entry')}}">1.- PS Wise EVM Votes </a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/round-wise-results')}}">2.- Round Declaration </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/check-empty-ps-details')}}">3.- Pre-Finalization Of EVM & Postal Ballot Votes </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/evm-votes-finalized')}}">4.- Finalize EVM Votes </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/bpostal-data-entry')}}">5.- Entry of Postal Ballot Votes </a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/boothcounting-results')}}">6.- Result Declaration </a></li>
+
+
+                  @else
+                  <li><a rel="" href="{{url('/roac/counting/polling-station-wisevote-entry')}}">1.- PS Wise EVM Votes</a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/tabulating-trend-results')}}">2.- Roundwise Result</a></li>
+                  @endif
+                </ul>
+              </li>
+              @endif
+              @if($is_counting_prepration)
+              <li><a href="javascript:void(0)">PS Wise Counting Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/counting/constituency-wise-report')}}">AC Result Report</a></li>
+                  <li><a rel="" href="{{url('/roac/form-21c-report')}}">Form 21 C/D Details</a></li>
+                  <li><a rel="" href="{{url('/roac/form-21-report-upload')}}">Upload Form 21 C/D</a></li>
+
+                  <li><a rel="" href="{{url('/roac/counting/tabulating-trend-results')}}"> Trending Result</a></li>
+                  <li><a rel="" href="{{url('/roac/counting/generate-form20')}}"> Generate Form 20 </a></li>
+                  <li><a rel="" href="{{url('roac/counting/report_state/state/ac?')}}ac_no={{base64_decode($user_data->ac_no)}}">
+                      Table Scheduled</a></li>
+                  <li><a rel="" href="{{url('/roac/booth-counting/active-user-report')}}">Active User Report</a></li>
+                  <li><a rel="" href="{{url('/roac/booth-counting/candidate-wise-report')}}">Candidate Wise Report</a>
+                  </li>
+
+                </ul>
+              </li>
+              @endif
+              <?php /*
+          
+          */ ?>
+
+
+
+              <li><a href="javascript:void(0)">Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/datewisereport')}}">Nomination Report</a></li>
+                  <!-- #waseem -->
+                  <li><a rel="" href="{{url('/roac/report/scrutiny')}}">Scrutiny Report</a></li>
+
+                  <li><a rel="" href="{{url('/roac/reportro')}}">Datewise Permission Report</a></li>
+
+                  <li><a rel="" href="{{url('/roac/permissionrawview')}}"> Permission Raw Report</a></li>
+
+                  <li><a rel="" href="{{url('/roac/partywiseview')}}">PartyWise Permission Report</a></li>
+
+                  <li><a rel="" href="{{url('/roac/permissiontypeview')}}">PermissionWise Report</a></li>
+                  <!--                   <li><a rel="" href="{{url('/roac/timewisereport')}}"  >TimeWise Permission Report</a></li> 
+                   <li><a rel="" href="{{url('/roac/permissionsummaryreport')}}"  >Permission Summary Report</a></li>-->
+                  <!-- <li><a rel="" href="{{url('/roac/permission/permissioncount')}}"  > Permission Report</a></li>-->
+
+                  <?php /*
+        <li><a rel="" href="{{url('/ropc/datewisereport')}}"  >Nomination Report</a></li>  
+          <li><a rel="" href="{{url('/ropc/form3A-report')}}"  >Form 3A Report</a></li>   
+          <li><a rel="" href="{{url('/ropc/form4A-report')}}"  >Form 4A Report</a></li>     */ ?>
+
+
+                </ul>
+              </li>
+
+              <!-- <li><a href="javascript:void(0)" >Counting Report<span class="arrow-down"></span></a>
+        <ul>
+          <li class="active"><a href="{{url('/roac/round-wise-details')}}">Round Wise Details</a></li>
+          <li><a rel="" href="{{url('/roac/datewisereport')}}"  >Nomination Report</a></li> 
+          <li><a rel="" href="{{url('/roac/constituency-wise-report')}}"  >AC Result Report</a></li>
+          <li><a rel="" href="{{url('/eci/round-wise-report')}}"  >Round  Wise Report</a></li>
+          <li><a rel="" href="{{url('/roac/candidate-wise-report')}}"  >Candidate Wise Report</a></li>
+          <?php /*<li><a rel="" href="{{url('/roac/form-21-report')}}"  >Form 21 E Details</a></li> */ ?>
+          <li><a rel="" href="{{url('/roac/form-21c-report')}}"  >Form 21 C/D Details</a></li>
+          <li><a rel="" href="{{url('/roac/form-21-report-upload')}}"  >Upload Form 21 C/D</a></li>
+        </ul>
+       </li> -->
+
+              @if(true)
+              <li><a href="javascript:void(0)">Index Card<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a href="{{url('roac/elector/edit?')}}ac_no={{$user_data->ac_no}}&year={{getElectionYear()}}">Update
+                      Electors/Voters</a></li>
+                  <li><a href="{!! url('roac/voters/edit?') !!}ac_no={{$user_data->ac_no}}&year={{getElectionYear()}}">Update
+                      Voters</a></li>
+                  <!--<li><a   href="{!! url('roac/indexcard/finalize') !!}">Finalize Index Card</a></li> -->
+                  <li><a href="{!! url('roac/index-card') !!}">Index Card Report</a></li>
+                  <li><a href="{!! url('roac/nomination/list-of-nomination') !!}">List of nominated candidates</a></li>
+                </ul>
+              </li>
+              @endif
+              <!--<li><a href="javascript:void(0)">Feedback<span class="arrow-down"></span></a>
+            <ul>
+              <li><a rel="" href="{{url('/roac/feedback')}}"  >Feedback Form</a></li>
+            </ul>
+      </li>-->
+
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/profile/officer-details')}}">Update Officer Details</a></li>
+                  <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                  <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                  <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+
+            </ul>
+            @endif
+
+            @if($user_data->role_id=='21')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/roac/dashboard')}}"> Home</a></li>
+              <li><a href="javascript:void(0)">Permission<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/permission/offlinePermission')}}"> Offline permission Module</a></li>
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)">Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/reportro')}}">Datewise Permission Report</a></li>
+                  <li><a rel="" href="{{url('/roac/permissionraw')}}"> Permission Raw Report</a></li>
+                  <li><a rel="" href="{{url('/roac/partywise')}}">PartyWise Permission Report</a></li>
+                  <li><a rel="" href="{{url('/roac/permissiontype')}}">PermissionWise Report</a></li>
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/profile/officer-details')}}">Update Officer Details</a></li>
+                  <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                  <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                  <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+            </ul>
+            @endif
+            <!-- End RO ACModel-->
+
+            <!-- RO-Computer Assistant Login Section-->
+
+            @if($user_data->role_id=='36')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/roac/dashboard')}}"> Home</a></li>
+              @if($is_counting_enable)
+              <li><a href="javascript:void(0)">PS Wise Counting<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/counting/polling-station-wisevote-entry')}}">1.- PS Wise EVM Votes</a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/tabulating-trend-results')}}">2.- Roundwise Result</a></li>
+                </ul>
+              </li>
+              @endif
+
+
+
+              <!-- <li><a href="javascript:void(0)" >Counting Report<span class="arrow-down"></span></a>
+        <ul>
+          <li class="active"><a href="{{url('/roac/round-wise-details')}}">Round Wise Details</a></li>
+          <li><a rel="" href="{{url('/roac/datewisereport')}}"  >Nomination Report</a></li> 
+          <li><a rel="" href="{{url('/roac/constituency-wise-report')}}"  >AC Result Report</a></li>
+          <li><a rel="" href="{{url('/eci/round-wise-report')}}"  >Round  Wise Report</a></li>
+          <li><a rel="" href="{{url('/roac/candidate-wise-report')}}"  >Candidate Wise Report</a></li>
+          
+           
+          <li><a rel="" href="{{url('/roac/counting/tabulating-trend-results')}}"> Trending Result</a></li>
+          <li><a rel="" href="{{url('/roac/counting/generate-form20')}}"> Generate Form 20 </a></li>
+
+        </ul>
+       </li> -->
+
+
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                  <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                  <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+
+            </ul>
+            @endif
+            <!-- End RO-Computer Assistant-->
+
+
+            <!-- CEOAC Login Section-->
+            @if($user_data->role_id=='4')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/acceo/dashboard')}}">Home</a></li>
+
+              <li><a href="javascript:void(0)">Candidate<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/acceo/candidate-finalize')}}"> <span>List of Nomination Finalize</span></a>
+                  </li>
+                  <li><a class="dropdown-item" href="{!! url('acceo/nomination/list-of-nomination') !!}">List of nominated
+                      candidate</a></li>
+                  <!--<li><a class="dropdown-item" href="{!! url('acceo/ceo-form7A-details') !!}"> Update Form7A Detils </a>-->
+              </li>
+              <li><a rel="" href="{{url('/acceo/state-party-list')}}"> <span>List of Political Parties</span></a></li>
+              <li><a rel="" href="{{url('/acceo/symbol-list')}}"> <span>List of Symbol</span></a></li>
+            </ul>
+            </li>
+            @if(Session::has('DB_id') && !in_array(Session::get('DB_id'),[5,2]))
+            @if(in_array($st_code,$allowed_st_code))
+            <li><a href="javascript:void(0)">Booth App<span class="arrow-down"></span></a>
+              <ul>
+
+                <li><a rel="" href="{{url('/acceo/booth-app-revamp/dashboard')}}">Dashboard</a></li>
+                <li><a rel="" href="#">Reports</a>
+                  <ul>
+                    <!--<li><a href="{{url('acceo/booth-app-revamp/mapped-location-report')}}">PS Location Mapping</a></li>-->
+                    <li><a href="{{Common::generate_url('booth-app-revamp/officer-assignment-report/ac')}}">Officer
+                        Assignment Report</a></li>
+                    <li><a href="{{url('acceo/booth-app-revamp/elector-verify-report')}}">Electors verification
+                        report</a></li>
+                    <li><a href="{!! Common::generate_url('booth-app-revamp/poll-material/ac') !!}">Poll Material
+                        Report</a></li>
+                    <li><a href="{{url('acceo/booth-app-revamp/poll-turnout-report')}}">Poll Turnout Report</a></li>
+                    <li><a href="{{url('acceo/booth-app-revamp/poll-event-report')}}">Poll Event Report</a></li>
+                    <li><a href="{{url('acceo/booth-app-revamp/exemted-ps-count-report')}}">Exempted PS Count Report</a>
+                    </li>
+                    <li><a href="{{url('acceo/booth-app-revamp/poll-turnout-report-exempted')}}">Exempt Turnout Report</a></li>
+
+                </li>
+                <!--<li><a href="{{url('acceo/booth-app-revamp/exempt-turnout-report')}}">Exempted PS Turnout Report</a></li>
+		  <li><a href="{{url('acceo/booth-app-revamp/state/blo-pro-difference')}}">BLO/PRO Turnout</a></li>
+		  <li><a href="{{url('acceo/booth-app-revamp/evm-comparision/state')}}">Evm Comparision</a></li>-->
+
+              </ul>
+            </li>
+
+            </ul>
+            </li>
+            @endif
+            @endif
+
+            <!-- Online Nomination Count Report -->
+            @if(Auth::user()->election_id=='10')
+            <li><a href="javascript:void(0)">Online Nomination<span class="arrow-down"></span></a>
+              <ul>
+                <!--<li><a href="{{url('acceo/enable_payment_gateway')}}">Payment Service</a></li>-->
+                @if(Auth::user()->st_code=='S04')
+                <li><a href="{{url('acceo/treasury_account')}}">Treasury Account</a></li>
+                @endif
+                <li><a href="{{url('acceo/add_holiday')}}">Add Holidays</a></li>
+                <li><a href="{{url('acceo/online_nom/count-appointment-report')}}">Appointment Report</a></li>
+                <li><a href="{{url('acceo/online_nom/count-physicalverification-report')}}">Physical Verification Report</a></li>
+                <li><a href="{{url('acceo/online_nom/count-report')}}">Nomination Report</a></li>
+                <!--<li><a href="{{url('acceo/online_nom/count-payment-report')}}">Nomination Payment Details</a></li>
+                <li><a href="{{url('acceo/online_nom/party-wise-report')}}">Party Wise Nomination Report</a></li>-->
+              </ul>
+            </li>
+            @endif
+            <!-- End Online Nomination Count Report -->
+
+            <li><a href="javascript:void(0)">Voter Turn Out<span class="arrow-down"></span></a>
+              <ul>
+                <li><a href="{{url('acceo/turnout/AcCeoMissedAc')}}">ACs Not Filled</a></li>
+                <li><a href="{{url('acceo/turnout/estimate-poll-percent')}}">Estimate Poll Percentage</a></li>
+                <li><a href="{{url('acceo/turnout/CeoPsWiseDetails')}}">PS Wise Voter Turnout</a></li>
+                <li><a href="{{url('acceo/turnout/PsWiseElectoralDetails')}}">PS Wise Electoral Details</a></li>
+                <li><a href="{{url('acceo/turnout/AcCeoEndOfPoll')}}">End Of Poll</a></li>
+                <li><a href="{{url('acceo/turnout/EndOfPollFinalised')}}">End Of Poll Finalised</a></li>
+                <li><a href="{{url('acceo/turnout/enable-acs-for-missed-and-modification')}}">Enable Round For Missed/Modify Turnout</a></li>
+              </ul>
+            </li>
+
+
+
+
+
+            <li><a href="javascript:void(0)">Permission<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('/acceo/allmasters')}}">Add/Update Master Data </a></li>
+                <li><a rel="" href="{{url('/acceo/offlinePermission')}}"> Offline permission Module</a></li>
+                <li><a rel="" href="{{url('/acceo/allPermissionRequest')}}"> Accept/Reject permission</a></li>
+                <!--                <li><a rel="" href="{{url('/acceo/permissioncount')}}"  > Permission Report</a></li>-->
+                <li><a rel="" href="{{url('/acceo/agentCreation')}}"> Create CEO-Agent</a></li>
+              </ul>
+
+            </li>
+            <!-- look -->
+            @if($is_counting_prepration)
+            <li><a href="javascript:void(0)">PS Wise Counting Report<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('acceo/counting/report_state')}}">Table Scheduled</a></li>
+                <li><a rel="" href="{{url('/acceo/counting/BoothCountingStatusCeo')}}">Counting Status Report</a></li>
+                <li><a rel="" href="{{url('/acceo/counting/schedule-report')}}">Scheduled Rounds Report</a></li>
+                <li><a rel="" href="{{url('/acceo/counting/boothround-wise-report')}}">Round Wise Report</a></li>
+                <li><a rel="" href="{{url('/acceo/counting/constituency-wise-report')}}">AC Result Report</a></li>
+                <li><a rel="" href="{{url('/acceo/booth-counting/active-user-report')}}">Active User Report</a></li>
+                <li><a rel="" href="{{url('/acceo/booth-counting/candidate-wise-report')}}">Candidate Wise Report</a>
+                </li>
+                <li><a rel="" href="{{url('/acceo/counting/get_form_20')}}">Generate Form 20</a></li>
+                <li><a rel="" href="{{url('/acceo/booth-counting/form21-download')}}"> <span>Download Form 21
+                      C/D</span></a></li>
+                <li><a rel="" href="{{url('/acceo/counting/counting-ps-null-ac')}}">Report Of PS With Null Count</a></li>
+              </ul>
+            </li>
+            @endif
+
+            <li><a href="javascript:void(0)">Report<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('/acceo/nomination-report')}}">Nomination Report</a></li>
+                <!-- waseem asgar -->
+                <li><a rel="" href="{{url('/acceo/report/scrutiny')}}">Scrutiny Report</a></li>
+                <li><a rel="" href="{{url('/acceo/EciNominationReport')}}">Candidates Affidavit Report</a></li>
+                <li><a rel="" href="{{url('/acceo/districtvalue')}}">DistrictWise Permission Report</a></li>
+                <li><a rel="" href="{{url('/acceo/reportceo')}}">DateWise Permission Report</a></li>
+                <li><a rel="" href="{{url('/acceo/permissionrawview')}}">Permission Raw Report</a></li>
+                <li><a rel="" href="{{url('/acceo/partywiseview')}}">PartyWise Permission Report</a></li>
+                <li><a rel="" href="{{url('/acceo/permissiontypeview')}}">PermissionWise Report</a></li>
+                <li><a rel="" href="{{url('/acceo/timewisereport')}}">TimeWise Permission Report</a></li>
+                <li><a rel="" href="{{url('/acceo/permissionsummaryreport')}}">Permission Summary Report</a></li>
+                <!-- <li><a rel="" href="{{url('/acceo/customtimewisereport')}}">Disposal Time Left Permission Report</a></li> -->
+                <!-- End waseem asgar -->
+
+                <!--<li><a rel="" href="{{url('/acceo/aclist')}}"  >List Of acs With Candidate Details</a></li>
+              <li><a rel="" href="{{ url('acceo/duplicate-symbol-view') }}"  >Duplicate Symbols</a></li>
+              <li><a rel="" href="{{url('/acceo/duplicateparties')}}"  > Duplicate Parties  </a></li>
+              
+              
+              <li><a rel="" href="{{url('/acceo/candidate-symbol-no-200')}}"  >List of Candidates with Symbol No 200</a></li>
+      <li><a rel="" href="{{url('/acceo/login-detail')}}"  >CEO Officer Login Report</a></li>-->
+
+                <!--PRADEEP REPORTS LINKS STARTS-->
+                <li><a rel="" href="{{url('/acceo/CountingStatus')}}">Counting Status Report</a></li>
+                <!-- <li><a rel="" href="{{url('/acceo/CeoElectionSchedule')}}"  >Election Schedule</a></li>-->
+                <li><a rel="" href="{{url('/acceo/ElectionScheduleState')}}">Election Schedule</a></li>
+                <!--PRADEEP REPORTS LINKS ENDS-->
+
+              </ul>
+            </li>
+            <!-- <li><a href="javascript:void(0)" >Counting Report<span class="arrow-down"></span></a>
+            <ul>
+                 <li><a rel="" href="{{url('/acceo/CountingStatus')}}"  >Counting Status Report</a></li>
+                 <li><a rel="" href="{{url('/acceo/schedule-report')}}"  >Scheduled Rounds Report</a></li>
+                 <li><a rel="" href="{{url('/acceo/constituency-wise-report')}}"  >AC Result Report</a></li>
+                 <li><a rel="" href="{{url('/eci/round-wise-report')}}"  >Round  Wise Report</a></li>
+                 <li><a rel="" href="{{url('/acceo/candidate-wise-report')}}"  >Candidate Wise Report</a></li>
+                 <li><a rel="" href="{{url('/acceo/form21-download')}}"  > <span>Download Form 21 C/D</span></a></li>
+            </ul>
+          </li> -->
+
+            @if(true)
+            <li><a href="javascript:void(0)">Index Card<span class="arrow-down"></span></a>
+              <ul>
+
+                <!--WASEEM LINKS STARTS-->
+                <li><a href="{!! url('acceo/elector/edit') !!}">Update Electors</a></li>
+                <li><a href="{!! url('acceo/voters/edit') !!}">Update Voters</a></li>
+                <li><a href="{!! url('acceo/indexcard/finalize') !!}">Finalize AC's</a></li>
+                <li><a href="{!! url('acceo/index-card') !!}">Index Card Report</a></li>
+                <li><a rel="" href="{{url('/acceo/indexcard/IndexCardFinalize')}}">Index Card Finalization Report</a>
+                </li>
+                <!--<li><a   href="{!! url('/acceo/report/candidate') !!}">List of nominated candidate</a></li>-->
+                <!--WASEEM LINKS ENDS-->
+              </ul>
+            </li>
+            @endif
+
+            <!-- Expenditure Section Start -->
+            <li class="inactive"><a href="{{url('/acceo/statusExpdashboard')}}">Expenditure</a></li>
+            <!-- Expenditure Section End -->
+            <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('/acceo/officer-details')}}"> <span>Update Officer Details</span></a></li>
+                <li><a rel="" href="{{url('/acceo/reset-userpassword-from-ceo')}}"> <span>Officers Password Reset</span></a></li>
+                <li><a rel="" href="{{url('/acceo/officer/reset-password')}}"> Officer's Pin Reset</a></li>
+
+                <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+              </ul>
+            </li>
+            </ul>
+            @endif
+            <!-- End CEO AC Model-->
+            <!--  CEO Agent  AC Model-->
+            @if($user_data->role_id=='23')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/acceo/dashboard')}}">Home</a></li>
+
+              <li><a href="{{url('acceo/voting/list-schedule/state')}}">Poll Turn Out</a></li>
+
+              <li><a href="javascript:void(0)">Candidate<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/acceo/candidate-finalize')}}"> <span>List of Nomination Finalize</span></a>
+                  </li>
+
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)">Permission<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/acceo/offlinePermission')}}"> Offline permission Module</a></li>
+                </ul>
+
+              </li>
+
+
+
+              <li><a href="javascript:void(0)">Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/acceo/nomination-report')}}">Nomination Report</a></li>
+                  <!-- waseem asgar -->
+                  <li><a rel="" href="{{url('/acceo/report/scrutiny')}}">Scrutiny Report</a></li>
+                  <li><a rel="" href="{{url('/acceo/districtvalue')}}">DistrictWise Permission Report</a></li>
+                  <li><a rel="" href="{{url('/acceo/reportceo')}}">DateWise Permission Report</a></li>
+                  <li><a rel="" href="{{url('/acceo/ceoreport')}}">Permission Raw Report</a></li>
+                  <li><a rel="" href="{{url('/acceo/partywise')}}">PartyWise Permission Report</a></li>
+                  <li><a rel="" href="{{url('/acceo/permissiontype')}}">PermissionWise Report</a></li>
+                  <!-- End waseem asgar -->
+
+                  <!--<li><a rel="" href="{{url('/acceo/aclist')}}"  >List Of acs With Candidate Details</a></li>
+              <li><a rel="" href="{{ url('acceo/duplicate-symbol-view') }}"  >Duplicate Symbols</a></li>
+              <li><a rel="" href="{{url('/acceo/duplicateparties')}}"  > Duplicate Parties  </a></li>
+              
+              
+              <li><a rel="" href="{{url('/acceo/candidate-symbol-no-200')}}"  >List of Candidates with Symbol No 200</a></li>
+      <li><a rel="" href="{{url('/acceo/login-detail')}}"  >CEO Officer Login Report</a></li>-->
+
+                  <!--PRADEEP REPORTS LINKS STARTS-->
+                  <li><a rel="" href="{{url('/acceo/CountingStatus')}}">Counting Status Report</a></li>
+                  <li><a rel="" href="{{url('/acceo/CeoElectionSchedule')}}">Election Schedule</a></li>
+                  <!--PRADEEP REPORTS LINKS ENDS-->
+
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul>
+                  <!--<li><a rel="" href="{{url('/acceo/change-password')}}"  > Change Password</a></li>-->
+                  <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                  <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+            </ul>
+            @endif
+            <!--  End CEO Agent  AC Model-->
+
+            <!-- DEOAC Login Section-->
+            @if($user_data->role_id=='5')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/acdeo/dashboard')}}">Home</a></li>
+
+              @if(Session::has('DB_id') && !in_array(Session::get('DB_id'),[5,2]))
+              @if(in_array($st_code,$allowed_st_code) && in_array($dist_no,$allowed_dist_no) )
+              <li><a href="javascript:void(0)">Booth App<span class="arrow-down"></span></a>
+                <ul>
+
+                  <li><a rel="" href="{{url('/acdeo/booth-app-revamp/dashboard')}}">Dashboard</a></li>
+                  <li><a rel="" href="#">Reports</a>
+                    <ul>
+                      <!-- <li><a href="{{url('acdeo/booth-app-revamp/mapped-location-report/state/ac')}}">PS Location
+                        Mapping</a></li> -->
+                      <li><a href="{{Common::generate_url('booth-app-revamp/officer-assignment-report/ac/ps')}}">Officer
+                          Assignment Report</a></li>
+                      <li><a href="{{url('acdeo/booth-app-revamp/elector-verify-report/state/ac')}}">Electors verification
+                          report</a></li>
+                      <li><a href="{!! Common::generate_url('booth-app-revamp/poll-material/ac') !!}">Poll Material
+                          Report</a></li>
+                      <li><a href="{{url('acdeo/booth-app-revamp/poll-turnout-report/state/ac')}}">Poll Turnout Report</a>
+                      </li>
+                      <li><a href="{{url('acdeo/booth-app-revamp/poll-event-report')}}">Poll Event Report</a></li>
+                      <li><a href="{{url('acdeo/booth-app-revamp/exemted-ps-count-report/state/ac')}}">Exempted PS Count
+                          Report</a></li>
+                      <!--<li><a href="{{url('acdeo/booth-app-revamp/exempt-turnout-report/state/ac')}}">Exempted PS Turnout
+                        Report</a></li>
+                    <li><a href="{{url('acdeo/booth-app-revamp/exempt-turnout-report/state/ac')}}">Exempt Turnout Report</a></li>
+	   <li><a href="{{url('acdeo/booth-app-revamp/ac/blo-pro-difference')}}">BLO/PRO Turnout</a></li>
+	   <li><a href="{{url('acdeo/booth-app-revamp/evm-comparision/state/ac')}}">Evm Comparision</a></li>-->
+
+                    </ul>
+                  </li>
+
+                </ul>
+              </li>
+              @endif
+
+              @endif
+
+              <li><a href="javascript:void(0)">Candidate<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a class="dropdown-item" href="{!! url('acdeo/nomination/list-of-nomination') !!}">List of nominated
+                      candidate</a></li>
+                  <li><a rel="" href="{{url('/acdeo/candidate-finalize')}}"> <span>List of Nomination Finalize</span></a>
+                  </li>
+
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)">Permission<span class="arrow-down"></span></a>
+                <ul>
+                  <!-- <li><a rel="" href="{{url('/acdeo/allmasters')}}"  >Add/Update Master Data </a></li>-->
+                  @if($user_data->st_code=='U01' || $user_data->st_code=='U02' || $user_data->st_code=='U03' ||
+                  $user_data->st_code=='U04' || $user_data->st_code=='U05' || $user_data->st_code=='U06' ||
+                  $user_data->st_code=='U07' || $user_data->st_code=='S16')
+                  <li><a rel="" href="{{url('/acdeo/allmasters')}}">Add/Update Master Data </a></li>
+                  @endif
+                  <li><a rel="" href="{{url('/acdeo/offlinePermission')}}"> Offline permission Module</a></li>
+                  <li><a rel="" href="{{url('/acdeo/allPermissionRequest')}}"> Accept/Reject permission</a></li>
+                  <li><a rel="" href="{{url('/acdeo/agentCreation')}}"> Create DEO-Agent</a></li>
+                </ul>
+
+              </li>
+
+              <!-- Online Nomination Count Report -->
+              @if(Auth::user()->election_id=='10')
+              <li><a href="javascript:void(0)">Online Nomination Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a href="{{url('acdeo/online_nom/dist-wise-appointment-report')}}">Appointment Report</a></li>
+                  <li><a href="{{url('acdeo/online_nom/dist-wise-physicalverification-report')}}">Physical Verification Report</a></li>
+                  <li><a href="{{url('acdeo/online_nom/dist-wise-report')}}">Nomination Report</a></li>
+                  <!--<li><a href="{{url('acdeo/online_nom/dist-wise-payment-report')}}">Nomination Payment Details</a></li>
+                <li><a href="{{url('acdeo/online_nom/dist-party-wise-report')}}">Party Wise Nomination Report</a></li>-->
+                </ul>
+              </li>
+              @endif
+              <!-- End Online Nomination Count Report -->
+
+              <li><a href="javascript:void(0)">Voter Turn Out<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a href="{{url('acdeo/turnout/estimate-poll-percent/state/ac')}}">Estimate Poll Percentage</a></li>
+                  <li><a href="{{url('acdeo/turnout/AcDeoEndOfPollAc')}}">End Of Poll</a></li>
+                  <li><a href="{{url('acdeo/turnout/DeoPsWiseDetails')}}">PS Wise Voter Turnout</a></li>
+                  {{-- <li><a href="{{url('eci/turnout/EciPsWiseDetails')}}">PS Wise Voter Turnout</a>
+              </li>
+              <li><a href="{{url('eci/turnout/EndOfPollFinalised')}}">End Of Poll Finalised</a></li> --}}
+            </ul>
+            </li>
+            <!-- look -->
+            @if($is_counting_prepration)
+            <li><a href="javascript:void(0)">PS Wise Counting Report<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('acdeo/counting/report_state/state/ac?')}}/state={{base64_encode($user_data->st_code)}}">Table
+                    Scheduled</a></li>
+                <li><a rel="" href="{{url('acdeo/counting/BoothCountingStatusCeo')}}">Counting Status Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/counting/constituency-wise-report')}}">AC Result Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/booth-counting/active-user-report')}}">Active User Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/counting/get_form_20')}}">Generate Form 20</a></li>
+                <li><a rel="" href="{{url('/acdeo/booth-counting/form21-download')}}">Download Form21 C/D</a></li>
+                <li><a rel="" href="{{url('/acdeo/booth-counting/candidate-wise-report')}}">Candidate Wise Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/counting/boothround-wise-report')}}">Round Wise Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/counting/counting-ps-null-ac')}}">Report Of PS With Null Count</a></li>
+              </ul>
+            </li>
+            @endif
+
+
+
+            <li><a href="javascript:void(0)">Report<span class="arrow-down"></span></a>
+              <ul>
+                <!--<li><a rel="" href="{{url('/acdeo/datewisereport')}}"  >Nomination Report</a></li>
+               <li><a rel="" href="{{url('/acdeo/permissioncount')}}"  > Permission Report</a></li>-->
+                <li><a rel="" href="{{url('/acdeo/nomination-report')}}">Nomination Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/reportdeo')}}">DateWise Permission Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/permissionrawview')}}">Permission Raw Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/partywiseview')}}">PartyWise Permission Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/permissiontypeview')}}">PermissionWise Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/timewisereport')}}">TimeWise Permission Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/permissionsummaryreport')}}">Permission Summary Report</a></li>
+                <!-- <li><a rel="" href="{{url('/acdeo/customtimewisereport')}}">Disposal Time Left Permission Report</a></li> -->
+              </ul>
+            </li>
+
+
+
+            <!-- <li><a href="javascript:void(0)" >Counting Report<span class="arrow-down"></span></a>
+            <ul>
+       <li><a rel="" href="{{url('/acdeo/schedule-report')}}"  >Scheduled Rounds Report</a></li>
+       <li><a rel="" href="{{url('/acdeo/constituency-wise-report')}}"  >AC Result Report</a></li>
+           <li><a rel="" href="{{url('/eci/round-wise-report')}}"  >Round  Wise Report</a></li>
+            <li><a rel="" href="{{url('/acdeo/candidate-wise-report')}}"  >Candidate Wise Report</a></li>
+            </ul>
+          </li> -->
+            <!--
+		  <li><a href="javascript:void(0)">Feedback<span class="arrow-down"></span></a>
+            <ul>
+              <li><a rel="" href="{{url('/acdeo/feedback')}}"  >Feedback Form</a></li>
+            </ul>
+      </li>-->
+            <!-- Expenditure Section Start -->
+            <li class="inactive"><a href="{{url('/acdeo/expdashboard')}}">Expenditure</a></li>
+            <!-- Expenditure Section End -->
+            <li><a href="javascript:void(0)">Index Card<span class="arrow-down"></span></a>
+              <ul class="dropdown">
+                <li><a href="{{ url('/acdeo/index-card') }}">Index Card Report</a></li>
+              </ul>
+            </li>
+
+            <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('/acdeo/officer-details')}}"> <span>Update Officer Details</span></a></li>
+                <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+              </ul>
+            </li>
+            </ul>
+            @endif
+            <!-- End DEO ac Model-->
+            <!--DEO PC AGENT URLS STARTS-->
+            @if($user_data->role_id=='24')<ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/acdeo/dashboard')}}">Home</a></li>
+              <li><a href="javascript:void(0)">Permission<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  <li><a rel="" href="{{url('/acdeo/offlinePermission')}}" class="dropdown-item"> Offline permission
+                      Module</a></li>
+                </ul>
+
+              </li>
+              <li><a href="javascript:void(0)">Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/acdeo/reportdeo')}}">DateWise Permission Report</a></li>
+                  <li><a rel="" href="{{url('/acdeo/permissionraw')}}">Permission Raw Report</a></li>
+                  <li><a rel="" href="{{url('/acdeo/partywise')}}">PartyWise Permission Report</a></li>
+                  <li><a rel="" href="{{url('/acdeo/permissiontype')}}">PermissionWise Report</a></li>
+                  <li><a rel="" href="{{url('/acdeo/timewisereport')}}">TimeWise Permission Report</a></li>
+                  <li><a rel="" href="{{url('/acdeo/permissionsummaryreport')}}">Permission Summary Report</a></li>
+                </ul>
+              </li>
+
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  <li><a rel="" href="{{url('/acdeo/changepassword')}}" class="dropdown-item"> Change Password</a></li>
+                  <li><a rel="" href="{{url('/logout')}}" class="dropdown-item"><span class="d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+            </ul>
+            @endif
+            <!--DEO PC AGENT URLS ENDS-->
+            <!--DEO PCI URLS STARTS-->
+            @if($user_data->officerlevel=='PCI')<ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/acdeo/dashboard')}}">Home</a></li>
+              <li><a href="javascript:void(0)">Permission<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  <li><a rel="" href="{{url('/acdeo/allPermissionRequest')}}"> Accept/Reject permission</a></li>
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  <li><a rel="" href="{{url('/acdeo/changepassword')}}" class="dropdown-item"> Change Password</a></li>
+                  <li><a rel="" href="{{url('/logout')}}" class="dropdown-item"><span class="d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+            </ul>
+            @endif
+            <!--DEO PCI URLS ENDS-->
+
+            <!-- Index Card Eci Login Section-->
+            @if($user_data->role_id=='27')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/eci-index/dashboard')}}">Home</a></li>
+              <li><a href="#">Index Card<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a href="{{url('eci-index/index-card')}}">Index Card Report</a></li>
+                  <li><a href="#">Statistical Reports</a>
+                    <ul>
+                      <li><a href="{{url('eci-index/statistical-report-listing')}}">Gen-Election Statistical Reports</a>
+                      </li>
+                      <li><a href="{{url('eci-index/bye-election-verify-report')}}">Bye-Election Index Card Report</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li><a rel="" href="{{url('/eci-index/indexcard/IndexCardFinalizeTotal')}}">Index Card Finalization
+                      Report</a></li>
+                  <li><a rel="" href="{{url('/eci-index/indexcard/de-finalize-acs')}}">De-Finalize Constituency</a></li>
+                </ul>
+              </li>
+
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                  <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                  <li><a rel="" href="{{url('/logout')}}"><span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+
+            </ul>
+            @endif
+
+            <!-- Index Card Eci Login Section-->
+            @if($user_data->role_id=='28')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/eci-expenditure/dashboard')}}">Home</a></li>
+              <li><a href="#">Expenditure<span class="arrow-down"></span></a>
+                <ul>
+
+                </ul>
+              </li>
+
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                  <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                  <li><a rel="" href="{{url('/logout')}}"><span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+
+            </ul>
+            @endif
+
+            <!-- eci subagent -->
+            @if($user_data->role_id == '26')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('eci/dashboard')}}">Home</a></li>
+
+              <li><a href="javascript:void(0)">Voter Turn Out<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a href="{{url('eci/turnout/estimate-poll-percent')}}">Estimate Poll Percentage</a></li>
+                  <li><a href="{{url('eci/turnout/end-of-poll-percent')}}">End Of Poll Percent</a></li>
+                  <!--<li><a href="{{url('eci/turnout/EciPsWiseDetails')}}">PS Wise Voter Turnout</a></li>
+                <li><a href="{{url('eci/turnout/end-of-poll')}}">End Of Poll</a></li>
+                <li><a href="{{url('eci/turnout/EndOfPollFinalised')}}">End Of Poll Finalised</a></li>-->
+                  <li><a href="{{url('eci/turnout/get_missed')}}">Ac's not Filled</a></li>
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)">PS Wise Counting Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">Download Form21 C/D</a></li>
+                </ul>
+              </li>
+
+              <?php /* ?>
+            <li><a href="javascript:void(0)">Voter Turn Out<span class="arrow-down"></span></a>
+              <ul>
+                <li><a href="{{url('eci/turnout/estimate-poll-percent')}}">Estimate Poll Percentage</a></li>
+                <li><a href="{{url('eci/turnout/EciPsWiseDetails')}}">PS Wise Voter Turnout</a></li>
+                <li><a href="{{url('eci/turnout/end-of-poll')}}">End Of Poll</a></li>
+                <li><a href="{{url('eci/turnout/end-of-poll-percent')}}">End Of Poll Percent</a></li>
+                <li><a href="{{url('eci/turnout/EndOfPollFinalised')}}">End Of Poll Finalised</a></li>
+                <li><a href="{{url('eci/turnout/get_missed')}}">Ac's not Filled</a></li>
+                <li><a href="{{url('eci/report/voting/end-of-poll-summary')}}">End of Poll Consolidate Report</a></li>
+              </ul>
+            </li>
+
+            @if(Session::has('DB_id') && in_array(Session::get('DB_id'),[1,2,3,4,5,6]))
+            <li><a href="javascript:void(0)">Counting Report<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('/eci/EciCountingStatusReport')}}">Counting Status Report</a></li>
+                <li><a rel="" href="{{url('/eci/schedule-report')}}">Scheduled Rounds Report</a></li>
+                <li><a rel="" href="{{url('/eci/constituency-wise-report')}}">AC Result Report</a></li>
+                <li><a rel="" href="{{url('/eci/round-wise-report')}}">Round Wise Report</a></li>
+                <li><a rel="" href="{{url('/eci/candidate-wise-report')}}">Candidate Wise Report</a></li>
+                <li><a rel="" href="{{url('/eci/form21c-download')}}">Download Form21 C/D</a></li>
+              </ul>
+            </li>
+            @else
+            <li><a href="javascript:void(0)">Booth Counting Report<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('eci/counting/report_state')}}">Table Scheduled</a></li>
+                <!--<li><a rel="" href="{{url('/eci/EciCountingStatusReport')}}"  >Counting Status Report</a></li>-->
+                <li><a rel="" href="{{url('eci/counting/BoothCountingStatusReport')}}">Counting Status Report</a></li>
+                <li><a rel="" href="{{url('/eci/counting/BoothCountingScheduleReport')}}">Scheduled Rounds Report</a>
+                </li>
+
+                <li><a rel="" href="{{url('/eci/counting/boothround-wise-report')}}">Round Wise Report</a></li>
+                <li><a rel="" href="{{url('/eci/counting/constituency-wise-report')}}">AC Result Report</a></li>
+
+                <li><a rel="" href="{{url('/eci/booth-counting/active-user-report')}}">Active User Report</a></li>
+                <li><a rel="" href="{{url('/eci/counting/get_form_20')}}">Generate Form 20</a></li>
+                <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">Download Form21 C/D</a></li>
+                <li><a rel="" href="{{url('/eci/booth-counting/candidate-wise-report')}}">Candidate Wise Report</a></li>
+                <li><a rel="" href="{{url('/eci/booth-counting/winning-candidate-list')}}">Winning Candidate Details</a>
+                </li>
+
+              </ul>
+            </li>
+
+
+
+
+            @endif
+            @if($user_data->id=='1')
+            <!--  <li><a href="{{url('eci/voting/list-schedule')}}">Poll Turn Out</a></li> -->
+
+
+            <li><a href="javascript:void(0)">Report<span class="arrow-down"></span></a>
+              <ul>
+
+                <li><a rel="" href="{{url('/eci/EciActiveUsers')}}">Active Users Report</a></li>
+                <!--<li><a rel="" href="{{url('/eci/EciElectionSchedule')}}"  >Election Schedule</a></li>-->
+                <li><a rel="" href="{{url('/eci/ElectionScheduleState')}}">Election Schedule</a></li>
+                <li><a rel="" href="{{url('/eci/EciPartyData')}}">Party Data Report</a></li>
+                <li><a rel="" href="{{url('/eci/EciSymbolData')}}">Symbol Data Report</a></li>
+                <li><a rel="" href="{{url('/eci/EciPhaseInfoData')}}">Valid Nomination Report</a></li>
+                <li><a rel="" href="{{url('/eci/EciNominationFinalized')}}">ACs Finalized</a></li>
+
+                <li><a rel="" href="{{url('/eci/report/scrutiny/state')}}">Scrutiny Report</a></li>
+
+
+
+
+                <!--PRADEEP LINKS ENDS-->
+
+                <li><a rel="" href="{{url('/eci/report')}}">DateWise Permission Report</a></li>
+                <li><a rel="" href="{{url('/eci/districtreport')}}" class="dropdown-item">District DateWise Permission
+                    Report</a></li>
+                <li><a rel="" href="{{url('/eci/partywise')}}">PartyWise Permission Report</a></li>
+                <li><a rel="" href="{{url('/eci/permissiontype')}}">PermissionWise Report</a></li>
+
+              </ul>
+            </li>
+            @endif
+
+
+
+            <?php */ ?>
+
+
+
+
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  <li><a rel="" href="{{url('/logout')}}" class="dropdown-item"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+
+            </ul>
+            @endif
+            <!-- eci subagent ends-->
+
+            @if($user_data->role_id=='7' && $user_data->officername == 'reports')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/eci/dashboard')}}">1) Home</a></li>
+              <!--<li><a href="javascript:void(0)">2) Voter Turn Out<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a href="{{url('eci/turnout/estimate-poll-percent')}}">2.1) 2 Hourly Estimated Poll Percentage</a></li>
+                  <li><a href="{{url('eci/turnout/estimate-poll-percent-comparision/state/ac')}}">2.2) Comparision Report(Estimated Turnout)</a></li>
+                  <li><a href="{{url('eci/turnout/get_missed')}}">2.3) 2 Hourly Report Not Filled By ROs</a></li>
+                  <li><a href="{{url('eci/turnout/end-of-poll-percent')}}">2.4) End Of Poll Percentage</a></li>
+          <li><a href="{{url('eci/turnout/end-of-poll')}}">2.5) End Of Poll Detailed Voter Turnout</a></li>
+                  <li><a href="{{url('eci/turnout/end-of-poll-comparision/state/ac')}}">2.6) Comparision Report(End of Poll)</a></li>                 
+                  <li><a href="{{url('eci/turnout/EndOfPollFinalised')}}">2.7) End Of Poll Finalization Report By ROs</a></li>
+                  <li><a href="{{url('eci/turnout/EciPsWiseDetails')}}">2.8) PS Wise Voter Turnout</a></li>
+ 
+                </ul>
+              </li>-->
+              <li><a href="javascript:void(0)">1) Booth Counting Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/eci/booth-counting/active-user-report')}}">1.1) Active Counting User Report</a></li>
+                  <li><a rel="" href="{{url('eci/counting/report_state')}}">1.2) Tables Scheduled Report</a></li>
+                  <li><a rel="" href="{{url('/eci/counting/BoothCounting_main_ScheduleReport')}}">1.3) Rounds Scheduled Report</a>
+                  </li>
+                  <li><a rel="" href="{{url('eci/counting/BoothCountingStatusReport')}}">1.4) Counting Status Report</a></li>
+                  <li><a rel="" href="{{url('/eci/counting/boothround-wise-report')}}">1.5) Round Wise Report</a></li>
+                  <li><a rel="" href="{{url('/eci/counting/constituency-wise-report')}}">1.6) Constituency Wise Result Report</a></li>
+                  <li><a rel="" href="{{url('/eci/booth-counting/candidate-wise-report')}}">1.7) Candidate Wise Report</a>
+                  </li>
+                  <!-- <li><a rel="" href="{{url('/eci/booth-counting/winning-candidate-list')}}">3.8) Winning Candidate Report</a></li> -->
+                  <li><a rel="" href="{{url('/eci/counting/get_form_20')}}">1.9) Generate Form 20</a></li>
+                  <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">1.10) Download Form 21 C/D</a></li>
+
+                  <li><a rel="" href="{{url('/eci/booth-counting/result-sheet-report')}}">1.11) Result Sheet Report</a></li>
+                </ul>
+              </li>
+              <!--<li><a href="javascript:void(0)">4) Booth App<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('/eci/booth-app-revamp/dashboard')}}">4.1) Dashboard</a></li>
+                <li><a rel="" href="#">4.2) Reports</a>
+                  <ul>
+                    <li><a href="{{Common::generate_url('booth-app-revamp/officer-assignment-report')}}">4.2.1) Officer
+                        Assignment Report</a></li>
+                    <li><a href="{{url('eci/booth-app-revamp/elector-verify-report')}}">4.2.2) Electors verification report</a>
+                    </li>
+                    <li><a href="{{url('eci/booth-app-revamp/poll-turnout-report')}}">4.2.3) Poll Turnout Report</a></li>
+                    <li><a href="{{url('eci/booth-app-revamp/poll-event-report?phase_no='.$phase_no)}}">4.2.4) Poll Event
+                        Report</a></li>
+                    <li><a href="{{url('eci/booth-app-revamp/exemted-ps-count-report')}}">4.2.5) Exempted PS Count Report</a>
+                    </li>
+          <li><a href="{{url('eci/booth-app-revamp/poll-turnout-report-exempted')}}">4.2.6) Exempt Turnout Report</a></li>
+                    <li><a rel="" href="{{url('/eci/booth-app-revamp/get-form-17-a?phase_no='.$phase_no)}}">4.2.7) Forms</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>-->
+              <li><a href="javascript:void(0)">5) Account<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('eci/setting/broadcast')}}">5.1) Broadcast Message</a></li>
+                  <li><a rel="" href="{{url('/profile/password')}}">5.2) Change Password</a></li>
+                  <li><a rel="" href="{{url('/profile/pin')}}">5.3) Change PIN</a></li>
+                  <li><a rel="" href="{{url('/logout')}}"><span class="d-none d-sm-inline-block">5.4) Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+              </li>
+
+
+              @endif
+
+              <!-- eci subagent ends-->
+
+              @if($user_data->role_id=='7' && $user_data->officername == 'eciofficer')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/eci/dashboard')}}">1) Home</a></li>
+                <!--<li><a rel="" href="{{url('/eci/counting/get_form_20')}}">2) Generate Form 20</a></li> -->
+                <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">2) Download Form 21 C/D</a></li>
+                <li><a href="javascript:void(0)">3) Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/profile/password')}}">3.1) Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}">3.2) Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"><span class="d-none d-sm-inline-block">3.3) Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+
+              </ul>
+              @endif
+              @if($user_data->role_id=='7' && $user_data->officername == 'boothapp')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/eci/dashboard')}}">1) Home</a></li>
+                <li><a href="javascript:void(0)">2) Booth App<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/booth-app-revamp/dashboard')}}">Dashboard</a></li>
+
+                    <li><a rel="" href="#">Reports</a>
+                      <ul>
+                        <!--<li><a href="{{url('eci/booth-app-revamp/mapped-location-report')}}">4.1) PS Location Mapping</a></li> -->
+
+
+
+                        <li><a href="{{Common::generate_url('booth-app-revamp/officer-assignment-report')}}">4.1) Officer
+                            Assignment Report</a></li>
+                        <li><a href="{{url('eci/booth-app-revamp/elector-verify-report')}}">4.2) Electors verification
+                            report</a></li>
+                        <!-- <li><a href="{!! Common::generate_url('booth-app-revamp/poll-material') !!}">4.4) Poll Material
+                          Report</a></li> -->
+                        <li><a href="{{url('eci/booth-app-revamp/poll-turnout-report')}}">4.3) Poll Turnout Report</a></li>
+                        <li><a href="{{url('eci/booth-app-revamp/poll-event-report?phase_no='.$phase_no)}}">4.4) Poll Event
+                            Report</a></li>
+                        <li><a href="{{url('eci/booth-app-revamp/exemted-ps-count-report')}}">4.5) Exempted PS Count Report</a>
+                        </li>
+                        <li><a href="{{url('eci/booth-app-revamp/poll-turnout-report-exempted')}}">4.6) Exempt Turnout Report</a></li>
+                        <!--<li><a href="{{url('eci/booth-app-revamp/exempt-turnout-report')}}">4.8) Exempted PS Turnout Report</a>
+                      </li>
+
+                      <li><a href="{{url('eci/booth-app-revamp/state/blo-pro-difference')}}">4.9) BLO/PRO Turnout</a></li>
+                      <li><a href="{{url('eci/booth-app-revamp/evm-comparision/state/')}}">4.10) Evm Comparision</a></li>
+                      <li><a href="{{url('eci/booth-app-revamp/pro-diary?phase_no='.$phase_no)}}">4.11) PRO Diary</a></li> -->
+                        <li><a rel="" href="{{url('/eci/booth-app-revamp/get-form-17-a?phase_no='.$phase_no)}}">4.7) Forms</a>
+                        </li>
+                      </ul>
+                    </li>
+
+                  </ul>
+                </li>
+                <li><a href="javascript:void(0)">3) Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/profile/password')}}">3.1) Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}">3.2) Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"><span class="d-none d-sm-inline-block">3.3) Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+
+              </ul>
+              @endif
+
+              <!-- ECIac Login Section-->
+              @if($user_data->role_id=='7' && $user_data->officername != 'reports' && $user_data->officername != 'eciofficer' && $user_data->officername != 'boothapp' && $user_data->officername != 'ECIOFFICER')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/eci/dashboard')}}">Home</a></li>
+
+                <li><a href="javascript:void(0)">1) Master Data<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/ElectionScheduleState')}}">1.1) Election Schedule</a></li>
+                    <li><a rel="" href="{{url('/eci/EciActiveUsers')}}">1.2) Active Users Report</a></li>
+                    <li><a rel="" href="{{url('/eci/EciPartyData')}}">1.3) Party Data Report</a></li>
+                    <li><a rel="" href="{{url('/eci/EciSymbolData')}}">1.4) Symbol Data Report</a></li>
+                  </ul>
+                </li>
+
+                @if($user_data->id=='1')
+                <!--  <li><a href="{{url('eci/voting/list-schedule')}}">Poll Turn Out</a></li> -->
+
+
+                <li><a href="javascript:void(0)">2) Candidate<span class="arrow-down"></span></a>
+                  <ul>
+                    <!-- Online Nomination Count Report -look_eci -->
+                    @if(Auth::user()->election_id >='9')
+                    <li><a href="{{url('eci/online_nom/count-appointment-report')}}">2.1) Appointment Report</a></li>
+                    <li><a href="{{url('eci/online_nom/count-physicalverification-report')}}">2.2) Physical Verification Report</a></li>
+                    <li><a href="{{url('eci/online_nom/count-report')}}">2.3) Online Nomination Report</a></li>
+                    <li><a href="{{url('eci/online_nom/count-payment-report')}}">2.4) Online Nomination Security Deposit Report</a></li>
+                    <!--<li><a href="{{url('eci/online_nom/party-wise-report')}}">Party Wise Nomination Report</a></li>-->
+                    @endif
+                    <!-- waseem asgar -->
+                    <li><a rel="" href="{{url('/eci/report/scrutiny/state')}}">2.5). Nomination Scrutiny Report</a></li>
+
+                    <!-- End Online Nomination Count Report -->
+                    <!--PRADEEP LINKS STARTS-->
+                    <li><a rel="" href="{{url('/eci/EciPhaseInfoData')}}">2.6) Valid Nomination Report</a></li>
+                    <li><a href="{!! url('eci/nomination/list-of-nomination') !!}">2.7) Candidate Wise Nomination Report</a></li>
+                    <li><a rel="" href="{{url('/eci/EciNominationFinalized')}}">2.8) FORM 7A Finalized Report</a></li>
+                    <li><a rel="" href="{{url('eci/ca-candidate-list')}}">2.9) Candidates CA Report</a></li>
+
+                  </ul>
+                </li>
+
+                <li><a href="javascript:void(0)">3) Permission<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/report')}}">3.1) DateWise Permission Report</a></li>
+                    <li><a rel="" href="{{url('/eci/districtreport')}}">3.2) District DateWise Permission
+                        Report</a></li>
+                    <li><a rel="" href="{{url('/eci/partywise')}}">3.3) PartyWise Permission Report</a></li>
+                    <li><a rel="" href="{{url('/eci/permissiontype')}}">3.4) PermissionWise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/permissionmasterreport')}}">3.5) State wise Permission Master Report</a></li>
+                    <li><a rel="" href="{{url('/eci/modewisepermissionreport')}}">3.6) Permission Modewise Report</a></li>
+                  </ul>
+                </li>
+                @endif
+
+                <li><a href="javascript:void(0)">4) Booth App<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/booth-app-revamp/dashboard')}}">Dashboard</a></li>
+
+                    <li><a rel="" href="#">Reports</a>
+                      <ul>
+                        <!--<li><a href="{{url('eci/booth-app-revamp/mapped-location-report')}}">4.1) PS Location Mapping</a></li> -->
+
+
+
+                        <li><a href="{{Common::generate_url('booth-app-revamp/officer-assignment-report')}}">4.2) Officer
+                            Assignment Report</a></li>
+                        <li><a href="{{url('eci/booth-app-revamp/elector-verify-report')}}">4.3) Electors verification
+                            report</a></li>
+                        <!-- <li><a href="{!! Common::generate_url('booth-app-revamp/poll-material') !!}">4.4) Poll Material
+                          Report</a></li> -->
+                        <li><a href="{{url('eci/booth-app-revamp/poll-turnout-report')}}">4.5) Poll Turnout Report</a></li>
+                        <li><a href="{{url('eci/booth-app-revamp/poll-event-report?phase_no='.$phase_no)}}">4.6) Poll Event
+                            Report</a></li>
+                        <li><a href="{{url('eci/booth-app-revamp/exemted-ps-count-report')}}">4.7) Exempted PS Count Report</a>
+                        </li>
+                        <li><a href="{{url('eci/booth-app-revamp/poll-turnout-report-exempted')}}">Exempt Turnout Report</a></li>
+                        <!--<li><a href="{{url('eci/booth-app-revamp/exempt-turnout-report')}}">4.8) Exempted PS Turnout Report</a>
+                      </li>
+
+                      <li><a href="{{url('eci/booth-app-revamp/state/blo-pro-difference')}}">4.9) BLO/PRO Turnout</a></li>
+                      <li><a href="{{url('eci/booth-app-revamp/evm-comparision/state/')}}">4.10) Evm Comparision</a></li>
+                      <li><a href="{{url('eci/booth-app-revamp/pro-diary?phase_no='.$phase_no)}}">4.11) PRO Diary</a></li> -->
+                        <li><a rel="" href="{{url('/eci/booth-app-revamp/get-form-17-a?phase_no='.$phase_no)}}">4.12) Forms</a>
+                        </li>
+                      </ul>
+                    </li>
+
+                  </ul>
+                </li>
+                <li><a href="javascript:void(0)">5) Voter Turn Out<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a href="{{url('eci/turnout/estimate-poll-percent')}}">5.1) 2 Hourly Estimated Poll Percentage</a></li>
+                    <li><a href="{{url('eci/turnout/estimate-poll-percent-comparision/state/ac')}}">5.2) Comparision Report(Estimated Turnout)</a></li>
+                    <li><a href="{{url('eci/turnout/get_missed')}}">5.3) 2 Hourly Report Not Filled By ROs</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll-percent')}}">5.4) End Of Poll Percentage</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll')}}">5.5) End Of Poll Detailed Voter Turnout</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll-comparision/state/ac')}}">5.6) Comparision Report(End of Poll)</a></li>
+                    <li><a href="{{url('eci/turnout/EndOfPollFinalised')}}">5.7) End Of Poll Finalization Report By ROs</a></li>
+                    <li><a href="{{url('eci/turnout/EciPsWiseDetails')}}">5.8) PS Wise Voter Turnout</a></li>
+                    <li><a href="{{url('eci/turnout/EnableClosePollEntry?round=6')}}">5.9) Enable Close of poll Entry</a></li>
+                    <!--<li><a href="{{url('eci/report/voting/end-of-poll-summary')}}">End of Poll Consolidate Report</a></li>-->
+                  </ul>
+                </li>
+
+                @if(Session::has('DB_id') && in_array(Session::get('DB_id'),[1,2,3,4,5,6]))
+                <li><a href="javascript:void(0)">Counting Report<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/EciCountingStatusReport')}}">Counting Status Report</a></li>
+                    <li><a rel="" href="{{url('/eci/schedule-report')}}">Scheduled Rounds Report</a></li>
+                    <li><a rel="" href="{{url('/eci/constituency-wise-report')}}">AC Result Report</a></li>
+                    <li><a rel="" href="{{url('/eci/round-wise-report')}}">Round Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/candidate-wise-report')}}">Candidate Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/form21c-download')}}">Download Form21 C/D</a></li>
+                  </ul>
+                </li>
+                @else
+                <li><a href="javascript:void(0)">6) Booth Counting Report<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/booth-counting/active-user-report')}}">6.1) Active Counting User Report</a></li>
+                    <li><a rel="" href="{{url('eci/counting/report_state')}}">6.2) Tables Scheduled Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/BoothCounting_main_ScheduleReport')}}">6.3) Rounds Scheduled Report</a>
+                    </li>
+                    <li><a rel="" href="{{url('eci/counting/BoothCountingStatusReport')}}">6.4) Counting Status Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/boothround-wise-report')}}">6.5) Round Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/constituency-wise-report')}}">6.6) Constituency Wise Result Report</a></li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/candidate-wise-report')}}">6.7) Candidate Wise Report</a>
+                    </li>
+                    <!-- <li><a rel="" href="{{url('/eci/booth-counting/winning-candidate-list')}}">6.8) Winning Candidate Report</a></li> -->
+                    <li><a rel="" href="{{url('/eci/counting/get_form_20')}}">6.8) Generate Form 20</a></li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">6.9) Download Form 21 C/D</a></li>
+
+                    <li><a rel="" href="{{url('/eci/result-report')}}">6.10) Result Report</a></li>
+                    <!-- <li><a rel="" href="{{url('/eci/booth-counting/result-sheet-report')}}">6.11) Result Sheet Report</a></li> -->
+                  </ul>
+                </li>
+                @endif
+
+                <li><a href="javascript:void(0)">7) Index Card<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a href="{!! url('eci/nomination/list-of-nomination') !!}">7.1) Candidate Wise Nomination Report</a></li>
+                    <li><a href="{!! url('eci/index-card') !!}">7.2) Index Card Report</a></li>
+                    <li><a href="{!! url('eci/nomination/list-of-nomination') !!}">7.3) Index Card Brief Report</a></li>
+                    <li><a rel="" href="{{url('/eci/indexcard/IndexCardFinalizeTotal')}}">7.4) Index Card Finalization
+                        Report</a></li>
+                    <li><a href="{!! url('eci/de-finalize-log') !!}">7.5) Candidates Log Reports</a></li>
+
+                  </ul>
+                </li>
+
+                <li><a href="javascript:void(0)">8) Update Data <span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a href="{{url('eci/eci-mparty-data-list')}}">8.1) M_Party Data</a></li>
+                    <li><a href="{{url('eci/eci-dparty-data-list')}}">8.2) D_Party Data</a></li>
+                    <li><a href="{{url('eci/eci-msymbol-data-list')}}">8.3) M_Symbol Data</a></li>
+                    <li><a href="{{url('eci/turnout/fetchElectorsCountPanel')}}">8.4) Fetch PS Wise Electors Details From EROnet</a></li>
+                    <li><a href="{{url('eci/turnout/fetchACElectorsCountPanel')}}">8.4) Fetch AC Wise Electors Details From EROnet</a></li>
+                  </ul>
+                </li>
+
+
+
+
+                <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('eci/ceo-profile-details')}}">Update Officer Details</a></li>
+                    <li><a rel="" href="{{url('eci/setting/broadcast')}}">Broadcast Message</a></li>
+                    <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"><span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+              </ul>
+              @endif
+              <!-- End ECI ac Model-->
+              <!--Start ECI Expenditure AC Model-->
+              @if($user_data->role_id=='28')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/eci-expenditure/expdashboard')}}">Home</a></li>
+                <li class=""><a href="{{url('/eci-expenditure/mis-officer')}}">Expenditure</a></li>
+                <li><a href="{{url('/logout')}}" class="nav-link logout"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+
+              </ul>
+              @endif
+
+
+              <!-- only for boothapp users -->
+              @if(Session::has('DB_id') && !in_array(Session::get('DB_id'),[5,2]))
+              @if($user_data->role_id == '7' && $user_data->officername == 'ECIOFFICER')
+              <ul class="float-right mainmenu">
+                <li class="active"><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">Download Form21 C</a></li>
+              </ul>
+              @endif
+              @if($user_data->role_id == '7' && $user_data->officername == 'reports')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/eci/dashboard')}}">Home</a></li>
+
+                <li><a href="javascript:void(0)">Booth App<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/booth-app-revamp/dashboard')}}">Dashboard</a></li>
+
+                    <li><a rel="" href="#">Reports</a>
+                      <ul>
+                        <!--<li><a href="{{url('eci/booth-app-revamp/mapped-location-report')}}">PS Location Mapping</a></li> -->
+
+
+
+                        <li><a href="{{Common::generate_url('booth-app-revamp/officer-assignment-report')}}">Officer
+                            Assignment Report</a></li>
+                        <li><a href="{{url('eci/booth-app-revamp/elector-verify-report')}}">Electors verification
+                            report</a></li>
+                        <li><a href="{!! Common::generate_url('booth-app-revamp/poll-material') !!}">Poll Material
+                            Report</a></li>
+                        <li><a href="{{url('eci/booth-app-revamp/poll-turnout-report')}}">Poll Turnout Report</a></li>
+                        <li><a href="{{url('eci/booth-app-revamp/poll-event-report?phase_no='.$phase_no)}}">Poll Event
+                            Report</a></li>
+                        <!-- <li><a href="{{url('eci/booth-app-revamp/state/blo-pro-difference')}}">BLO/PRO Turnout</a></li>
+                      <li><a href="{{url('eci/booth-app-revamp/evm-comparision/state/')}}">Evm Comparision</a></li>
+                      <li><a href="{{url('eci/booth-app-revamp/pro-diary?phase_no='.$phase_no)}}">PRO Diary</a></li> -->
+
+
+                        <li><a rel="" href="{{url('/eci/booth-app-revamp/get-form-17-a?phase_no='.$phase_no)}}">Forms</a>
+                        </li>
+                      </ul>
+                    </li>
+
+                  </ul>
+                </li>
+                <li><a href="javascript:void(0)">Voter Turn Out<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a href="{{url('eci/turnout/estimate-poll-percent')}}">Estimate Poll Percentage</a></li>
+                    <li><a href="{{url('eci/turnout/EciPsWiseDetails')}}">PS Wise Voter Turnout</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll')}}">End Of Poll</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll-percent')}}">End Of Poll Percent</a></li>
+                    <li><a href="{{url('eci/turnout/EndOfPollFinalised')}}">End Of Poll Finalised</a></li>
+                    <li><a href="{{url('eci/turnout/get_missed')}}">Ac's not Filled</a></li>
+                    <!--<li><a href="{{url('eci/report/voting/end-of-poll-summary')}}">End of Poll Consolidate Report</a></li>-->
+                  </ul>
+                </li>
+
+                @if(Session::has('DB_id') && in_array(Session::get('DB_id'),[1,2,3,4,5,6]))
+                <li><a href="javascript:void(0)">Counting Report<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/EciCountingStatusReport')}}">Counting Status Report</a></li>
+                    <li><a rel="" href="{{url('/eci/schedule-report')}}">Scheduled Rounds Report</a></li>
+                    <li><a rel="" href="{{url('/eci/constituency-wise-report')}}">AC Result Report</a></li>
+                    <li><a rel="" href="{{url('/eci/round-wise-report')}}">Round Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/candidate-wise-report')}}">Candidate Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/form21c-download')}}">Download Form21 C/D</a></li>
+                  </ul>
+                </li>
+                @else
+                <li><a href="javascript:void(0)">Booth Counting Report<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('eci/counting/report_state')}}">Table Scheduled</a></li>
+                    <!--<li><a rel="" href="{{url('/eci/EciCountingStatusReport')}}"  >Counting Status Report</a></li>-->
+                    <li><a rel="" href="{{url('eci/counting/BoothCountingStatusReport')}}">Counting Status Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/BoothCountingScheduleReport')}}">Scheduled Rounds Report</a>
+                    </li>
+
+                    <li><a rel="" href="{{url('/eci/counting/boothround-wise-report')}}">Round Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/constituency-wise-report')}}">AC Result Report</a></li>
+
+                    <li><a rel="" href="{{url('/eci/booth-counting/active-user-report')}}">Active User Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/get_form_20')}}">Generate Form 20</a></li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">Download Form21 C/D</a></li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/candidate-wise-report')}}">Candidate Wise Report</a>
+                    </li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/winning-candidate-list')}}">Winning Candidate
+                        Details</a></li>
+                  </ul>
+                </li>
+
+
+
+
+                @endif
+                <li><a href="{{url('/logout')}}" class="nav-link logout"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+              </ul>
+              @endif
+              @endif
+
+              @if($user_data->role_id=='37')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/maintenance/dashboard')}}">Home</a></li>
+                <li class=""><a href="{{url('/maintenance/table')}}">Tables</a></li>
+                <li class=""><a href="{{url('/maintenance/setting/setting')}}">Setting</a></li>
+                <li class=""><a href="{{url('/maintenance/officer/reset-password')}}">Reset Password</a></li>
+                <li class=""><a href="{{url('/maintenance/booth-app-revamp/send_sms_to_boothapp')}}" target="_blank">Send
+                    BoothApp Link to Officers</a></li>
+                <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+
+              </ul>
+              @endif
+
+              @if($user_data->role_id=='39')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('etpbs/dashboard')}}">Home</a></li>
+                <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+
+              </ul>
+              @endif
+
+              @if($user_data->role_id=='42')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/nfd/dashboard')}}">Home</a></li>
+                <li class="active"><a href="{{url('/nfd/nomination')}}">Nomination</a></li>
+                <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+
+              </ul>
+              @endif
+
+
+              <!-- End ECI Expenditure AC Model-->
+              <!--MLC RO URLS STARTS-->
+              @if(Session::has('DB_id') && Session::get('DB_id')>12)
+              @if($user_data->role_id=='46')<ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/mlc/ro/dashboard')}}">Home</a></li>
+                <li><a href="javascript:void(0)">Online Nomination<span class="arrow-down"></span></a>
+                  <ul>
+                    <!-- 
+					<li><a rel="" href="{{url('/roac/qrscan')}}"> <span>Search Online Nomination</span></a></li> -->
+                    <li><a rel="" href="{{url('/mlc/ro/listallapplicant')}}"> <span>List Online Nomination</span></a></li>
+                  </ul>
+                </li>
+
+                <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+
+              </ul>
+              @endif
+              @endif
+              <!--MLC RO AGENT URLS ENDS-->
+              <!--MLC RO AGENT URLS ENDS-->
+              <!--Mparty URLS STARTS-->
+
+              @if($user_data->role_id=='44' || $user_data->role_id=='45')<ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/mparty/dashboard')}}">Home</a></li>
+                <li><a href="javascript:void(0)">Party Master<span class="arrow-down"></span></a>
+                  <ul class="dropdown">
+                    <li><a rel="" href="{{url('/mparty/new-party')}}" class="dropdown-item">Add New Political Party</a></li>
+                    <li><a rel="" href="{{url('/mparty/list-party')}}" class="dropdown-item">List of Political Party</a></li>
+                    <li><a rel="" href="{{url('/mparty/change-party-status')}}" class="dropdown-item">Change Party Status/Type</a></li>
+                    <li><a rel="" href="{{url('/mparty/state-party-recognized')}}" class="dropdown-item">State Wise Party Recognized</a></li>
+                    <li><a rel="" href="{{url('/mparty/party-symbol-assign')}}" class="dropdown-item">Assign Party Symbol</a></li>
+                    <li><a rel="" href="{{url('/mparty/delisting-party')}}" class="dropdown-item">List of Delisted Parties</a></li>
+                  </ul>
+
+                </li>
+                <li><a href="javascript:void(0)">Symbol Master<span class="arrow-down"></span></a>
+                  <ul class="dropdown">
+                    <li><a rel="" href="{{url('/mparty/add-symbol')}}" class="dropdown-item">Add New Symbol</a></li>
+                    <li><a rel="" href="{{url('/mparty/list-symbol')}}" class="dropdown-item">List Symbol</a></li>
+                    <li><a rel="" href="{{url('/mparty/free-symbol')}}" class="dropdown-item">List of Free Symbol</a></li>
+                  </ul>
+
+                </li>
+                <li><a href="javascript:void(0)">Report<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/mparty/list-party-report')}}" class="dropdown-item">List of Political Party</a></li>
+                    <li><a rel="" href="{{url('/mparty/state-wise-recognized-parties')}}" class="dropdown-item"> List of State wise Recognized Parties</a></li>
+                    <li><a rel="" href="{{url('/mparty/party-symbol-report')}}" class="dropdown-item">List of Party symbols</a></li>
+                    <li><a rel="" href="{{url('/mparty/delisting-report')}}" class="dropdown-item"> List of Delisted Parties</a></li>
+                    <li><a rel="" href="{{url('/mparty/list-symbol-report')}}" class="dropdown-item">List of Symbols</a></li>
+
+                  </ul>
+                </li>
+
+                <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+
+              </ul>
+              @endif
+              <!--Mparty PC AGENT URLS ENDS-->
+
+          </div>
+
+        </div>
+      </div>
+      <!--     <div class="nav-bg-header">
+        <div class="navbar-header"> <span></span> <span></span> <span></span> </div>
+        <a href="" class="title-mobile">Election Commission of India</a>
+      </div> -->
+
+    </nav>
+  </header>
+
+  <?php
+  $setting = \App\models\Admin\SettingModel::get_first_result('config');
+  if ($setting && $setting['key'] == 'message') {
+  ?>
+    <div class="alert-warning text-center">
+      <marquee>
+        {{$setting['value']}}
+      </marquee>
+    </div>
+  <?php }
+} else {
+  $is_counting_enable = false;
+  $is_counting_prepration = false;
+
+  ?>
+
+
+
+
+
+
+
+
+
+
+
+  <header class="header">
+    <nav>
+      <div class="nav-header">
+        <div class="container-fluid d-flex flex-md-row align-items-md-center">
+          <div class="float-left mr-auto"><a href="#" class="navbar-brand "><img style="max-width: 40px;" src="{{ asset('theme/img/logo/eci-logo.png') }}" alt="" />&nbsp;<span class="text" style="color:#fff;">
+                Election Commission of India</span> </a></div>
+          <!-- ROAC Login Section-->
+          <div class="col-xs-1"><span class="text-white" style="font-size:30px;cursor:pointer" onclick="openNavR()"><small class="text-white" style="font-size: 18px; position: relative; top: -5px;">MENU
+                &nbsp;&nbsp;</small>☰</span>
+          </div>
+
+          <div id="mySidenavR" class="sidenavR">
+
+            <div class="Closedbtn">
+              <a href="javascript:void(0)" class="closebtn" onclick="closeNavR()">
+                <span>Close &nbsp;</span>×</a>
+            </div>
+            @if($user_data->role_id=='19')
+
+            @php
+            $finalize_ac_data = DB::table('candidate_finalized_ac')->where(['st_code'=>isset($user_data->st_code) ? $user_data->st_code : '', 'const_no'=> isset($user_data->ac_no) ? $user_data->ac_no : '', 'const_type'=>'AC'])->first();
+            @endphp
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/roac/dashboard')}}"> Home</a></li>
+
+              <li><a href="javascript:void(0)">Voter Turnout<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/turnout/estimate-turnout-entry')}}">Estimate Turnout Entry</a></li>
+                  <!--<li><a rel="" href="{{url('/roac/turnout/schedule-entry')}}">End of Poll Turnout </a></li>-->
+                  <li><a rel="" href="{{url('/roac/turnout/ElectorsDetails')}}">Electors Details</a></li>
+                  <li><a rel="" href="{{url('/roac/turnout/RoPsWiseDetails')}}?state={{$user_data->st_code}}&ac_id={{$user_data->ac_no}}">PS
+                      Wise Voter Turn Out</a></li>
+                </ul>
+
+              </li>
+              <!-- look -->
+              @if($is_counting_prepration==='not_allow')
+              <li><a href="javascript:void(0)">Counting<span class="arrow-down"></span></a>
+                <ul>
+                  <!--  <li><a rel="" href="{{url('/roac/counting/prepare-counting')}}"  >Prepare Counting Data</a></li> -->
+                  <li><a rel="" href="{{url('/roac/counting/round-schedule')}}">1.- Round Schedule </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/counting-data-entry')}}">2.- EVM Votes Data Entry </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/postal-data-entry')}}">3.- Postal Ballot Votes </a></li>
+
+                  <li><a rel="" href="{{url('/roac/counting/counting-results')}}">4.- Results Declaration </a></li>
+
+                </ul>
+              </li>
+              @endif
+              @if($is_counting_prepration)
+              <li><a href="javascript:void(0)">Counting Preparation<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  @if($user_data->designation=="ROAC")
+                  <li><a rel="" href="{{url('/roac/counting/counting-user')}}">1.- User Creation </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/counting-center-details')}}">2.- Counting Center Details </a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/round-schedule-details')}}">3.- Round Schedule for AC</a></li>
+                  <li><a rel="" href="{{url('/roac/counting/user-assign-table-details')}}">4.- Table assignment </a></li>
+
+                  @endif
+                </ul>
+              </li>
+              @endif
+
+              @if($is_counting_enable)
+              <li><a href="javascript:void(0)">PS Wise Counting<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  @if($user_data->designation=="ROAC")
+
+                  <li><a rel="" href="{{url('/roac/counting/polling-station-wisevote-entry')}}">1.- PS Wise EVM Votes </a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/round-wise-results')}}">2.- Round Declaration </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/check-empty-ps-details')}}">3.- Pre-Finalization Of EVM & Postal Ballot Votes </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/evm-votes-finalized')}}">4.- Finalize EVM Votes </a></li>
+                  <li><a rel="" href="{{url('/roac/counting/bpostal-data-entry')}}">5.- Entry of Postal Ballot Votes </a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/boothcounting-results')}}">6.- Result Declaration </a></li>
+
+
+                  @else
+                  <li><a rel="" href="{{url('/roac/counting/polling-station-wisevote-entry')}}">1.- PS Wise EVM Votes</a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/tabulating-trend-results')}}">2.- Roundwise Result</a></li>
+                  @endif
+                </ul>
+              </li>
+              @endif
+              @if($is_counting_prepration)
+              <li><a href="javascript:void(0)">PS Wise Counting Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/counting/constituency-wise-report')}}">AC Result Report</a></li>
+                  <li><a rel="" href="{{url('/roac/form-21c-report')}}">Form 21 C/D Details</a></li>
+                  <li><a rel="" href="{{url('/roac/form-21-report-upload')}}">Upload Form 21 C/D</a></li>
+
+                  <li><a rel="" href="{{url('/roac/counting/tabulating-trend-results')}}"> Trending Result</a></li>
+                  <li><a rel="" href="{{url('/roac/counting/generate-form20')}}"> Generate Form 20 </a></li>
+                  <li><a rel="" href="{{url('roac/counting/report_state/state/ac?')}}ac_no={{base64_decode($user_data->ac_no)}}">
+                      Table Scheduled</a></li>
+                  <li><a rel="" href="{{url('/roac/booth-counting/active-user-report')}}">Active User Report</a></li>
+                  <li><a rel="" href="{{url('/roac/booth-counting/candidate-wise-report')}}">Candidate Wise Report</a>
+                  </li>
+
+                </ul>
+              </li>
+              @endif
+
+
+
+              <!--<li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('/roac/profile/officer-details')}}">Update Officer Details</a></li>
+                <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+              </ul>
+            </li>-->
+
+            </ul>
+            @endif
+
+
+
+            @if($user_data->role_id=='36')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/roac/dashboard')}}"> Home</a></li>
+              @if($is_counting_enable)
+              <li><a href="javascript:void(0)">PS Wise Counting<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/roac/counting/polling-station-wisevote-entry')}}">1.- PS Wise EVM Votes</a>
+                  </li>
+                  <li><a rel="" href="{{url('/roac/counting/tabulating-trend-results')}}">2.- Roundwise Result</a></li>
+                </ul>
+              </li>
+              @endif
+
+
+              <!-- <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+              </ul>
+            </li>-->
+
+            </ul>
+            @endif
+            <!-- End RO-Computer Assistant-->
+
+
+            <!-- CEOAC Login Section-->
+            @if($user_data->role_id=='4')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/acceo/dashboard')}}">Home</a></li>
+            </ul>
+            </li>
+
+
+            <!-- End Online Nomination Count Report -->
+
+            <li><a href="javascript:void(0)">Voter Turn Out<span class="arrow-down"></span></a>
+              <ul>
+                <li><a href="{{url('acceo/turnout/AcCeoMissedAc')}}">ACs Not Filled</a></li>
+                <li><a href="{{url('acceo/turnout/estimate-poll-percent')}}">Estimate Poll Percentage</a></li>
+                <li><a href="{{url('acceo/turnout/CeoPsWiseDetails')}}">PS Wise Voter Turnout</a></li>
+                <li><a href="{{url('acceo/turnout/AcCeoEndOfPoll')}}">End Of Poll</a></li>
+                <li><a href="{{url('acceo/turnout/EndOfPollFinalised')}}">End Of Poll Finalised</a></li>
+                <li><a href="{{url('acceo/turnout/enable-acs-for-missed-and-modification')}}">Enable Round For Missed/Modify Turnout</a></li>
+              </ul>
+            </li>
+
+
+            <!-- look -->
+            @if($is_counting_prepration)
+            <li><a href="javascript:void(0)">PS Wise Counting Report<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('acceo/counting/report_state')}}">Table Scheduled</a></li>
+                <li><a rel="" href="{{url('/acceo/counting/BoothCountingStatusCeo')}}">Counting Status Report</a></li>
+                <li><a rel="" href="{{url('/acceo/counting/schedule-report')}}">Scheduled Rounds Report</a></li>
+                <li><a rel="" href="{{url('/acceo/counting/boothround-wise-report')}}">Round Wise Report</a></li>
+                <li><a rel="" href="{{url('/acceo/counting/constituency-wise-report')}}">AC Result Report</a></li>
+                <li><a rel="" href="{{url('/acceo/booth-counting/active-user-report')}}">Active User Report</a></li>
+                <li><a rel="" href="{{url('/acceo/booth-counting/candidate-wise-report')}}">Candidate Wise Report</a>
+                </li>
+                <li><a rel="" href="{{url('/acceo/counting/get_form_20')}}">Generate Form 20</a></li>
+                <li><a rel="" href="{{url('/acceo/booth-counting/form21-download')}}"> <span>Download Form 21
+                      C/D</span></a></li>
+                <li><a rel="" href="{{url('/acceo/counting/counting-ps-null-ac')}}">Report Of PS With Null Count</a></li>
+              </ul>
+            </li>
+            @endif
+
+            <!-- Expenditure Section End 
+          <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+            <ul>
+              <li><a rel="" href="{{url('/acceo/officer-details')}}"> <span>Update Officer Details</span></a></li>
+              <li><a rel="" href="{{url('/acceo/reset-userpassword-from-ceo')}}"> <span>Officers Password Reset</span></a></li>
+              <li><a rel="" href="{{url('/acceo/officer/reset-password')}}"> Officer's Pin Reset</a></li>
+
+              <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+              <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+              <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+            </ul>
+          </li>
+		  
+		  -->
+            </ul>
+            @endif
+            <!-- End CEO AC Model-->
+            <!--  CEO Agent  AC Model-->
+            @if($user_data->role_id=='23')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/acceo/dashboard')}}">Home</a></li>
+
+              <li><a href="{{url('acceo/voting/list-schedule/state')}}">Poll Turn Out</a></li>
+
+              <!--
+            <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+              </ul>
+            </li> -->
+            </ul>
+            @endif
+            <!--  End CEO Agent  AC Model-->
+
+            <!-- DEOAC Login Section-->
+            @if($user_data->role_id=='5')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/acdeo/dashboard')}}">Home</a></li>
+
+
+              <li><a href="javascript:void(0)">Voter Turn Out<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a href="{{url('acdeo/turnout/estimate-poll-percent/state/ac')}}">Estimate Poll Percentage</a></li>
+                  <li><a href="{{url('acdeo/turnout/AcDeoEndOfPollAc')}}">End Of Poll</a></li>
+                  <li><a href="{{url('acdeo/turnout/DeoPsWiseDetails')}}">PS Wise Voter Turnout</a></li>
+                  {{-- <li><a href="{{url('eci/turnout/EciPsWiseDetails')}}">PS Wise Voter Turnout</a>
+              </li>
+              <li><a href="{{url('eci/turnout/EndOfPollFinalised')}}">End Of Poll Finalised</a></li> --}}
+            </ul>
+            </li>
+            <!-- look -->
+            @if($is_counting_prepration)
+            <li><a href="javascript:void(0)">PS Wise Counting Report<span class="arrow-down"></span></a>
+              <ul>
+                <li><a rel="" href="{{url('acdeo/counting/report_state/state/ac?')}}/state={{base64_encode($user_data->st_code)}}">Table
+                    Scheduled</a></li>
+                <li><a rel="" href="{{url('acdeo/counting/BoothCountingStatusCeo')}}">Counting Status Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/counting/constituency-wise-report')}}">AC Result Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/booth-counting/active-user-report')}}">Active User Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/counting/get_form_20')}}">Generate Form 20</a></li>
+                <li><a rel="" href="{{url('/acdeo/booth-counting/form21-download')}}">Download Form21 C/D</a></li>
+                <li><a rel="" href="{{url('/acdeo/booth-counting/candidate-wise-report')}}">Candidate Wise Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/counting/boothround-wise-report')}}">Round Wise Report</a></li>
+                <li><a rel="" href="{{url('/acdeo/counting/counting-ps-null-ac')}}">Report Of PS With Null Count</a></li>
+              </ul>
+            </li>
+            @endif
+
+
+
+
+            <!-- <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+            <ul>
+              <li><a rel="" href="{{url('/acdeo/officer-details')}}"> <span>Update Officer Details</span></a></li>
+              <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+              <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+              <li><a rel="" href="{{url('/logout')}}"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+            </ul>
+          </li> -->
+            </ul>
+            @endif
+
+
+
+
+            <!-- eci subagent -->
+            @if($user_data->role_id == '26')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('eci/dashboard')}}">Home</a></li>
+
+              <li><a href="javascript:void(0)">Voter Turn Out<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a href="{{url('eci/turnout/estimate-poll-percent')}}">Estimate Poll Percentage</a></li>
+                  <li><a href="{{url('eci/turnout/end-of-poll-percent')}}">End Of Poll Percent</a></li>
+                  <li><a href="{{url('eci/turnout/get_missed')}}">Ac's not Filled</a></li>
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)">PS Wise Counting Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">Download Form21 C/D</a></li>
+                </ul>
+              </li>
+
+
+              <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                <ul class="dropdown">
+                  <li><a rel="" href="{{url('/logout')}}" class="dropdown-item"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+
+            </ul>
+            @endif
+            <!-- eci subagent ends-->
+
+            @if($user_data->role_id=='7' && $user_data->officername == 'reports')
+            <ul class="float-right mainmenu">
+              <li class="active"><a href="{{url('/eci/dashboard')}}">1) Home</a></li>
+
+              <li><a href="javascript:void(0)">1) Booth Counting Report<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('/eci/booth-counting/active-user-report')}}">1.1) Active Counting User Report</a></li>
+                  <li><a rel="" href="{{url('eci/counting/report_state')}}">1.2) Tables Scheduled Report</a></li>
+                  <li><a rel="" href="{{url('/eci/counting/BoothCounting_main_ScheduleReport')}}">1.3) Rounds Scheduled Report</a>
+                  </li>
+                  <li><a rel="" href="{{url('eci/counting/BoothCountingStatusReport')}}">1.4) Counting Status Report</a></li>
+                  <li><a rel="" href="{{url('/eci/counting/boothround-wise-report')}}">1.5) Round Wise Report</a></li>
+                  <li><a rel="" href="{{url('/eci/counting/constituency-wise-report')}}">1.6) Constituency Wise Result Report</a></li>
+                  <li><a rel="" href="{{url('/eci/booth-counting/candidate-wise-report')}}">1.7) Candidate Wise Report</a>
+                  </li>
+                  <!-- <li><a rel="" href="{{url('/eci/booth-counting/winning-candidate-list')}}">3.8) Winning Candidate Report</a></li> -->
+                  <li><a rel="" href="{{url('/eci/counting/get_form_20')}}">1.9) Generate Form 20</a></li>
+                  <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">1.10) Download Form 21 C/D</a></li>
+
+                  <!--<li><a rel="" href="{{url('/eci/booth-counting/result-sheet-report')}}">1.11) Result Sheet Report</a></li>-->
+                </ul>
+              </li>
+
+              <li><a href="javascript:void(0)">5) Account<span class="arrow-down"></span></a>
+                <ul>
+                  <li><a rel="" href="{{url('eci/setting/broadcast')}}">5.1) Broadcast Message</a></li>
+                  <li><a rel="" href="{{url('/profile/password')}}">5.2) Change Password</a></li>
+                  <li><a rel="" href="{{url('/profile/pin')}}">5.3) Change PIN</a></li>
+                  <li><a rel="" href="{{url('/logout')}}"><span class="d-none d-sm-inline-block">5.4) Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                </ul>
+              </li>
+              </li>
+
+
+              @endif
+
+              <!-- eci subagent ends-->
+
+              @if($user_data->role_id=='7' && $user_data->officername == 'eciofficer')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/eci/dashboard')}}">1) Home</a></li>
+                <!--<li><a rel="" href="{{url('/eci/counting/get_form_20')}}">2) Generate Form 20</a></li> -->
+                <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">2) Download Form 21 C/D</a></li>
+                <li><a href="javascript:void(0)">3) Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/profile/password')}}">3.1) Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}">3.2) Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"><span class="d-none d-sm-inline-block">3.3) Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+
+              </ul>
+              @endif
+
+
+              <!-- ECIac Login Section-->
+              @if($user_data->role_id=='7' && $user_data->officername != 'reports' && $user_data->officername != 'eciofficer' && $user_data->officername != 'boothapp' && $user_data->officername != 'ECIOFFICER')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/eci/dashboard')}}">Home</a></li>
+
+                <li><a href="javascript:void(0)">1) Master Data<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/ElectionScheduleState')}}">1.1) Election Schedule</a></li>
+                    <li><a rel="" href="{{url('/eci/EciActiveUsers')}}">1.2) Active Users Report</a></li>
+                    <li><a rel="" href="{{url('/eci/EciPartyData')}}">1.3) Party Data Report</a></li>
+                    <li><a rel="" href="{{url('/eci/EciSymbolData')}}">1.4) Symbol Data Report</a></li>
+                  </ul>
+                </li>
+
+                @if($user_data->id=='1')
+                <!--  <li><a href="{{url('eci/voting/list-schedule')}}">Poll Turn Out</a></li> -->
+
+
+                <li><a href="javascript:void(0)">2) Candidate<span class="arrow-down"></span></a>
+                  <ul>
+                    <!-- Online Nomination Count Report -look_eci -->
+                    @if(Auth::user()->election_id >='9')
+                    <li><a href="{{url('eci/online_nom/count-appointment-report')}}">2.1) Appointment Report</a></li>
+                    <li><a href="{{url('eci/online_nom/count-physicalverification-report')}}">2.2) Physical Verification Report</a></li>
+                    <li><a href="{{url('eci/online_nom/count-report')}}">2.3) Online Nomination Report</a></li>
+                    <li><a href="{{url('eci/online_nom/count-payment-report')}}">2.4) Online Nomination Security Deposit Report</a></li>
+                    <!--<li><a href="{{url('eci/online_nom/party-wise-report')}}">Party Wise Nomination Report</a></li>-->
+                    @endif
+                    <!-- waseem asgar -->
+                    <li><a rel="" href="{{url('/eci/report/scrutiny/state')}}">2.5). Nomination Scrutiny Report</a></li>
+
+                    <!-- End Online Nomination Count Report -->
+                    <!--PRADEEP LINKS STARTS-->
+                    <li><a rel="" href="{{url('/eci/EciPhaseInfoData')}}">2.6) Valid Nomination Report</a></li>
+                    <li><a href="{!! url('eci/nomination/list-of-nomination') !!}">2.7) Candidate Wise Nomination Report</a></li>
+                    <li><a rel="" href="{{url('/eci/EciNominationFinalized')}}">2.8) FORM 7A Finalized Report</a></li>
+
+                  </ul>
+                </li>
+
+                <li><a href="javascript:void(0)">3) Permission<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/report')}}">3.1) DateWise Permission Report</a></li>
+                    <li><a rel="" href="{{url('/eci/districtreport')}}">3.2) District DateWise Permission
+                        Report</a></li>
+                    <li><a rel="" href="{{url('/eci/partywise')}}">3.3) PartyWise Permission Report</a></li>
+                    <li><a rel="" href="{{url('/eci/permissiontype')}}">3.4) PermissionWise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/permissionmasterreport')}}">3.5) State wise Permission Master Report</a></li>
+                    <li><a rel="" href="{{url('/eci/modewisepermissionreport')}}">3.6) Permission Modewise Report</a></li>
+                  </ul>
+                </li>
+                @endif
+
+
+                <li><a href="javascript:void(0)">5) Voter Turn Out<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a href="{{url('eci/turnout/estimate-poll-percent')}}">5.1) 2 Hourly Estimated Poll Percentage</a></li>
+                    <li><a href="{{url('eci/turnout/estimate-poll-percent-comparision/state/ac')}}">5.2) Comparision Report(Estimated Turnout)</a></li>
+                    <li><a href="{{url('eci/turnout/get_missed')}}">5.3) 2 Hourly Report Not Filled By ROs</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll-percent')}}">5.4) End Of Poll Percentage</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll')}}">5.5) End Of Poll Detailed Voter Turnout</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll-comparision/state/ac')}}">5.6) Comparision Report(End of Poll)</a></li>
+                    <li><a href="{{url('eci/turnout/EndOfPollFinalised')}}">5.7) End Of Poll Finalization Report By ROs</a></li>
+                    <li><a href="{{url('eci/turnout/EciPsWiseDetails')}}">5.8) PS Wise Voter Turnout</a></li>
+                    <li><a href="{{url('eci/turnout/EnableClosePollEntry?round=6')}}">5.9) Enable Close of poll Entry</a></li>
+                    <!--<li><a href="{{url('eci/report/voting/end-of-poll-summary')}}">End of Poll Consolidate Report</a></li>-->
+                  </ul>
+                </li>
+
+                @if(Session::has('DB_id') && in_array(Session::get('DB_id'),[1,2,3,4,5,6]))
+                <li><a href="javascript:void(0)">Counting Report<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/EciCountingStatusReport')}}">Counting Status Report</a></li>
+                    <li><a rel="" href="{{url('/eci/schedule-report')}}">Scheduled Rounds Report</a></li>
+                    <li><a rel="" href="{{url('/eci/constituency-wise-report')}}">AC Result Report</a></li>
+                    <li><a rel="" href="{{url('/eci/round-wise-report')}}">Round Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/candidate-wise-report')}}">Candidate Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/form21c-download')}}">Download Form21 C/D</a></li>
+                  </ul>
+                </li>
+                @else
+                <li><a href="javascript:void(0)">6) Booth Counting Report<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/booth-counting/active-user-report')}}">6.1) Active Counting User Report</a></li>
+                    <li><a rel="" href="{{url('eci/counting/report_state')}}">6.2) Tables Scheduled Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/BoothCounting_main_ScheduleReport')}}">6.3) Rounds Scheduled Report</a>
+                    </li>
+                    <li><a rel="" href="{{url('eci/counting/BoothCountingStatusReport')}}">6.4) Counting Status Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/boothround-wise-report')}}">6.5) Round Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/constituency-wise-report')}}">6.6) Constituency Wise Result Report</a></li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/candidate-wise-report')}}">6.7) Candidate Wise Report</a>
+                    </li>
+                    <!-- <li><a rel="" href="{{url('/eci/booth-counting/winning-candidate-list')}}">6.8) Winning Candidate Report</a></li> -->
+                    <li><a rel="" href="{{url('/eci/counting/get_form_20')}}">6.8) Generate Form 20</a></li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">6.9) Download Form 21 C/D</a></li>
+
+                    <li><a rel="" href="{{url('/eci/result-report')}}">6.10) Result Report</a></li>
+                    <!-- <li><a rel="" href="{{url('/eci/booth-counting/result-sheet-report')}}">6.11) Result Sheet Report</a></li> -->
+                  </ul>
+                </li>
+                @endif
+
+                <li><a href="javascript:void(0)">7) Index Card<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a href="{!! url('eci/nomination/list-of-nomination') !!}">7.1) Candidate Wise Nomination Report</a></li>
+                    <li><a href="{!! url('eci/index-card') !!}">7.2) Index Card Report</a></li>
+                    <li><a href="{!! url('eci/nomination/list-of-nomination') !!}">7.3) Index Card Brief Report</a></li>
+                    <li><a rel="" href="{{url('/eci/indexcard/IndexCardFinalizeTotal')}}">7.4) Index Card Finalization
+                        Report</a></li>
+                    <li><a href="{!! url('eci/de-finalize-log') !!}">7.5) Candidates Log Reports</a></li>
+
+                  </ul>
+                </li>
+
+                <li><a href="javascript:void(0)">8) Update Data <span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a href="{{url('eci/eci-mparty-data-list')}}">8.1) M_Party Data</a></li>
+                    <li><a href="{{url('eci/eci-dparty-data-list')}}">8.2) D_Party Data</a></li>
+                    <li><a href="{{url('eci/eci-msymbol-data-list')}}">8.3) M_Symbol Data</a></li>
+                    <!--  <li><a href="{{url('eci/turnout/fetchElectorsCountPanel')}}">8.4) Fetch PS Wise Electors Details From EROnet</a></li>
+                  <li><a href="{{url('eci/turnout/fetchACElectorsCountPanel')}}">8.4) Fetch AC Wise Electors Details From EROnet</a></li> -->
+                  </ul>
+                </li>
+
+
+
+
+                <li><a href="javascript:void(0)">Account<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('eci/ceo-profile-details')}}">Update Officer Details</a></li>
+                    <li><a rel="" href="{{url('eci/setting/broadcast')}}">Broadcast Message</a></li>
+                    <li><a rel="" href="{{url('/profile/password')}}"> Change Password</a></li>
+                    <li><a rel="" href="{{url('/profile/pin')}}"> Change PIN</a></li>
+                    <li><a rel="" href="{{url('/logout')}}"><span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                </li>
+              </ul>
+              @endif
+              <!-- End ECI ac Model-->
+
+
+              <!-- only for boothapp users -->
+              @if(Session::has('DB_id') && !in_array(Session::get('DB_id'),[5,2]))
+
+              @if($user_data->role_id == '7' && $user_data->officername == 'reports')
+              <ul class="float-right mainmenu">
+                <li class="active"><a href="{{url('/eci/dashboard')}}">Home</a></li>
+
+
+                <li><a href="javascript:void(0)">Voter Turn Out<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a href="{{url('eci/turnout/estimate-poll-percent')}}">Estimate Poll Percentage</a></li>
+                    <li><a href="{{url('eci/turnout/EciPsWiseDetails')}}">PS Wise Voter Turnout</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll')}}">End Of Poll</a></li>
+                    <li><a href="{{url('eci/turnout/end-of-poll-percent')}}">End Of Poll Percent</a></li>
+                    <li><a href="{{url('eci/turnout/EndOfPollFinalised')}}">End Of Poll Finalised</a></li>
+                    <li><a href="{{url('eci/turnout/get_missed')}}">Ac's not Filled</a></li>
+                    <!--<li><a href="{{url('eci/report/voting/end-of-poll-summary')}}">End of Poll Consolidate Report</a></li>-->
+                  </ul>
+                </li>
+
+                @if(Session::has('DB_id') && in_array(Session::get('DB_id'),[1,2,3,4,5,6]))
+                <li><a href="javascript:void(0)">Counting Report<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('/eci/EciCountingStatusReport')}}">Counting Status Report</a></li>
+                    <li><a rel="" href="{{url('/eci/schedule-report')}}">Scheduled Rounds Report</a></li>
+                    <li><a rel="" href="{{url('/eci/constituency-wise-report')}}">AC Result Report</a></li>
+                    <li><a rel="" href="{{url('/eci/round-wise-report')}}">Round Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/candidate-wise-report')}}">Candidate Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/form21c-download')}}">Download Form21 C/D</a></li>
+                  </ul>
+                </li>
+                @else
+                <li><a href="javascript:void(0)">Booth Counting Report<span class="arrow-down"></span></a>
+                  <ul>
+                    <li><a rel="" href="{{url('eci/counting/report_state')}}">Table Scheduled</a></li>
+                    <!--<li><a rel="" href="{{url('/eci/EciCountingStatusReport')}}"  >Counting Status Report</a></li>-->
+                    <li><a rel="" href="{{url('eci/counting/BoothCountingStatusReport')}}">Counting Status Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/BoothCountingScheduleReport')}}">Scheduled Rounds Report</a>
+                    </li>
+
+                    <li><a rel="" href="{{url('/eci/counting/boothround-wise-report')}}">Round Wise Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/constituency-wise-report')}}">AC Result Report</a></li>
+
+                    <li><a rel="" href="{{url('/eci/booth-counting/active-user-report')}}">Active User Report</a></li>
+                    <li><a rel="" href="{{url('/eci/counting/get_form_20')}}">Generate Form 20</a></li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/form21c-download')}}">Download Form21 C/D</a></li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/candidate-wise-report')}}">Candidate Wise Report</a>
+                    </li>
+                    <li><a rel="" href="{{url('/eci/booth-counting/winning-candidate-list')}}">Winning Candidate
+                        Details</a></li>
+                  </ul>
+                </li>
+
+                @endif
+                <li><a href="{{url('/logout')}}" class="nav-link logout"> <span class="d-none d-sm-inline-block">Logout</span> <i class="fa fa-sign-out"></i></a></li>
+              </ul>
+              @endif
+              @endif
+
+
+          </div>
+
+        </div>
+      </div>
+
+    </nav>
+  </header>
+
+
+<?php }  ?>

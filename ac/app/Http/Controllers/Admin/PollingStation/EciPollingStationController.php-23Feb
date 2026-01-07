@@ -1,0 +1,721 @@
+<?php 
+
+namespace App\Http\Controllers\Admin\PollingStation;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Redirect;
+use Carbon\Carbon;
+use DB, Validator, Config, Session;
+use Illuminate\Support\Facades\Hash;
+use \PDF;
+use App\commonModel;  
+use App\models\Admin\PollDayModel;
+use App\models\Admin\EndOfPollModel;
+use App\models\Admin\StateModel;
+use App\models\Admin\PhaseModel;
+use App\models\Admin\PcModel;
+use App\models\Admin\AcModel;
+
+//INCLUDING CLASSES
+use App\Classes\xssClean;
+use App\Classes\secureCode;
+
+use App\Exports\ExcelExport;
+use App\Http\Controllers\Admin\turnout\MissingTurnoutController;
+use App\models\Admin\ElectorModel;
+use Maatwebsite\Excel\Facades\Excel;
+
+//POLLING STATION MODELS
+use App\models\Admin\polling_station\PollingStationModel;
+use App\models\Admin\turnout\TurnoutModel;
+
+//current
+
+class EciPollingStationController extends Controller {
+  
+
+  public $base          = 'ro';
+  public $folder        = 'eci';
+  public $action        = 'eci/turnout/EciPsWiseDetails';
+  public $action_pc     = 'eci/turnout/EciPsWiseDetails/state';
+  public $action_ac     = 'eci/turnout/EciPsWiseDetails/state/ac';
+  public $action_ps     = 'eci/turnout/EciPsWiseDetails/state/ps';
+  public $action_electors     = 'eci/turnout/fetchElectorsCountPanel';
+  public $action_electors_ac     = 'eci/turnout/fetchACElectorsCountPanel';
+  public $fetch_electors_pc     = 'eci/turnout/fecthGetGenderWiseElectorsCountForPC';
+  public $fetch_electors_ac     = 'eci/turnout/fecthGetGenderWiseElectorsCountForAC';
+  public $view_path     = "admin.ac.eci";
+
+
+  public function __construct(){
+    //$this->middleware('clean_request');
+    $this->commonModel  = new commonModel();
+    $this->voting_model = new PollDayModel();
+    $this->PollingStationModel = new PollingStationModel();
+    $this->MissingTurnoutModel = new MissingTurnoutController();
+    $this->turnout = new TurnoutModel();
+    if(!Auth::user()){
+      return redirect('/officer-login');
+    }
+  }
+
+  
+
+  //ALL PCS BY STATE CODE
+  public function get_ac_list(Request $request) {
+
+    $data['state'] = NULL;
+    if($request->has('state')){
+      $data['state'] = $request->state;
+    }
+            $election_id = Auth::user()->election_id;
+      $AC_LIST = DB::table('m_ac')->join('m_election_details',[
+            ['m_election_details.ST_CODE', '=','m_ac.ST_CODE'],
+            ['m_election_details.CONST_NO', '=','m_ac.AC_NO']
+        ])
+      ->where('m_election_details.CONST_TYPE','AC')
+      ->where('m_election_details.election_status','1')
+      ->where('m_election_details.ELECTION_ID',$election_id)
+      ->where('m_ac.ST_CODE', '=', $data['state'])
+      ->orderBy('m_ac.AC_NAME', 'ASC')
+      ->get();
+
+      if($AC_LIST) {
+       
+        return response()->json(['error'=>false, 'status' =>200, 'data'=>$AC_LIST]);
+      } else {
+        return response()->json(['error'=>true, 'status' =>401, 'data'=>'']);
+        }
+  }
+
+
+  public function EciPsWiseDetails(Request $request){
+  
+
+      $data = [];
+    
+      $default_phase = PhaseModel::get_current_phase();
+
+      $request_array = []; 
+     
+      $data['phases'] = PhaseModel::get_phases();
+
+
+      //PHASE FILTER
+      /*$data['phase'] = NULL;
+      if($request->has('phase')){
+        if($request->phase != 'all'){
+          $data['phase'] = $request->phase;
+        }
+        $request_array[] =  'phase='.$request->phase;
+      }else{
+        $data['phase']    = $default_phase;
+        $request_array[]  =  'phase='.$default_phase; 
+      }*/
+
+      //set title
+      $title_array  = [];
+      $data['heading_title'] = "PS Wise Voter Turnout";
+
+      $data['state'] = NULL;
+      if($request->has('state')){
+        $data['state'] = $request->state;
+      }
+
+      $data['ac_id'] = NULL;
+      if($request->has('ac_id')){
+        $data['ac_id'] = $request->ac_id;
+      }
+
+     
+      //end set title
+      
+
+      $xss = new xssClean;
+      //CHECKING REQUEST VARIABES STARTS
+      if($request->has('state') && $request->has('ac_id')){
+
+        $validator = Validator::make($request->all(), [ 
+         
+            'state'          => 'required|string',
+            'ac_id'          => 'required|numeric',
+        ]);
+        
+        if ($validator->fails()) {
+           return Redirect::back()
+           ->withErrors($validator)
+           ->withInput();          
+        }    
+       
+        $state    = $xss->clean_input($request->state);
+        $ac_id    = $xss->clean_input($request->ac_id);
+
+
+        $filter_election = [
+          'state'         => $state,
+          'ac_no'         => $ac_id,
+        ];
+        
+        $request_array[] =  'state='.$state;
+        $request_array[] =  'ac_id='.$ac_id;
+        
+        $statename = getstatebystatecode($state);
+        $acame = getacbyacno($state,$ac_id);
+
+        
+        $title_array[] = "State: ".$statename->ST_NAME;
+        $title_array[] = "AC: ".$acame->AC_NAME; 
+      
+
+        $data['filter_buttons'] = $title_array;
+
+        //buttons
+        $data['buttons']    = [];
+        $data['buttons'][]  = [
+          'name' => 'Export Excel',
+          'href' =>  url($this->action.'/excel').'?'.implode('&', $request_array),
+          'target' => true
+        ];
+        $data['buttons'][]  = [
+          'name' => 'Export Pdf',
+          'href' =>  url($this->action.'/pdf').'?'.implode('&', $request_array),
+          'target' => true
+        ];
+
+
+      $data['action']         = url($this->action);
+
+      $results                = [];
+
+      $object         = PollingStationModel::get_ps_data($filter_election);
+
+      $data['results']    =   $object;
+    
+
+  }else{
+
+      $data['buttons']    = [];
+      $data['action']         = url($this->action);
+      $data['results'] = [];
+  }
+
+
+      $data['user_data']  =   Auth::user();
+     
+      if($request->has('is_excel')){
+        if(isset($title_array) && count($title_array)>0){
+          $data['heading_title'] .= "- ".implode(', ', $title_array);
+        }
+       
+        return $data;
+      }
+
+
+      return view($this->view_path.'.polling_station.PsWiseDetails', $data);
+
+  }
+  
+  
+  //EXCEL REPORT STARTS
+  public function EciPsWiseDetailsExcel(Request $request){
+// echo "ee";die;
+    set_time_limit(6000);
+    $data = $this->EciPsWiseDetails($request->merge(['is_excel' => 1]));
+
+    $export_data = [];
+    $export_data[] = [$data['heading_title']];
+    $export_data[] = ['PS No', 'PS Name','PS Type' ,'Electors Male','Electors Female','Electors Other' ,'Electors Total','Voter Male','Voter Female','Voter Other','Voter Total'];
+
+          $arr  = array();
+          $TotalElectorMale = 0;
+          $TotalElectorFeMale = 0;
+          $TotalElectorOther = 0;
+          $TotalElector = 0;
+          $TotalVoterMale = 0;
+          $TotalVoterFeMale = 0;
+          $TotalVoterOther = 0;
+          $TotalVoter = 0;
+          $totalvalues[]=[];
+    $headings[]=[];
+    foreach ($data['results'] as $lis) {
+      $export_data[] = [
+        ($lis->PS_NO)?($lis->PS_NO):'0',
+        ($lis->PS_NAME_EN)?($lis->PS_NAME_EN):'0',
+        ($lis->PS_TYPE)?($lis->PS_TYPE):'0',
+        ($lis->electors_male)?($lis->electors_male):'0',
+        ($lis->electors_female)?($lis->electors_female):'0',
+        ($lis->electors_other)?($lis->electors_other):'0',
+        ($lis->electors_total)?($lis->electors_total):'0',
+        ($lis->voter_male)?($lis->voter_male):'0',
+        ($lis->voter_female)?($lis->voter_female):'0',
+        ($lis->voter_other)?($lis->voter_other):'0',
+        ($lis->voter_total)?($lis->voter_total):'0',
+        
+      ];
+
+         $TotalElectorMale   +=$lis->electors_male;
+         $TotalElectorFeMale +=$lis->electors_female;
+         $TotalElectorOther  +=$lis->electors_other;
+         $TotalElector       +=$lis->electors_total;
+         $TotalVoterMale     +=$lis->voter_male;
+         $TotalVoterFeMale   +=$lis->voter_female;
+         $TotalVoterOther    +=$lis->voter_other;
+         $TotalVoter         +=$lis->voter_total;
+
+         $totalvalues = array('Total','','',$TotalElectorMale,$TotalElectorFeMale,$TotalElectorOther,$TotalElector,$TotalVoterMale,$TotalVoterFeMale,$TotalVoterOther,$TotalVoter);
+               
+    }
+    $export_data[] = $totalvalues;
+
+    $name_excel = strtolower(str_replace([',',': ',' '], ['_','-','_'], $data['heading_title']));
+
+    return Excel::download(new ExcelExport($headings, $export_data), $name_excel.'_'.date('d-m-Y').'_'.time().'.xlsx');
+
+    // \Excel::create($name_excel.'_'.date('d-m-Y').'_'.time(), function($excel) use($export_data) {
+    //     $excel->sheet('Sheet1', function($sheet) use($export_data) {
+    //       $sheet->mergeCells('A1:K1');
+    //       $sheet->cell('A1', function($cell) {
+    //         $cell->setAlignment('center');
+    //         $cell->setFontWeight('bold');
+    //       });
+    //       $sheet->fromArray($export_data,null,'A1',false,false);
+    //     });
+    // })->export('xls');
+
+  }
+  //EXCEL REPORT ENDS
+
+
+  public function EciPsWiseDetailsPdf(Request $request){
+    $data = $this->EciPsWiseDetails($request->merge(['is_excel' => 1]));
+    $name_excel = strtolower(str_replace([',',': ',' '], ['_','-','_'], $data['heading_title']));
+    $pdf = \PDF::loadView($this->view_path.'.polling_station.PsWiseDetailsPdf',$data);
+    return $pdf->download($name_excel.'_'.date('d-m-Y').'_'.time().'.pdf');
+  }
+
+  public function getEciAcsListForMissedEntry(Request $request)
+  {
+
+    //AC CEO ESTIMATE POLL TRUNOUT MISSED AC  REPORT NEW TRY CATCH STARTS HERE
+    try {
+
+      $users = Session::get('admin_login_details');
+      $user = Auth::user();
+      $uid = $user->id;
+
+
+      $user_data = $this->commonModel->getunewserbyuserid($uid);
+
+      $cur_time    = Carbon::now();
+      $st_code     = base64_decode($request->input('state', ''));
+      $st_name     = $user_data->placename;
+
+
+      $request->merge([
+        'is_excel' => 1,
+        'state' => ($st_code != 'all') ? base64_encode($st_code) : null
+      ]);
+
+      $data = $this->MissingTurnoutModel->get_enable_acs_for_update($request);
+      // dd($data);
+      //buttons
+      $data['buttons']    = [];
+
+      $data['action']         = url('eci/turnout/EnableClosePollEntry');
+
+      $results = [];
+      foreach ($data['results'] as $key => $result) {
+
+        $individual_filter    = implode('&', [
+          'state' => 'state=' . base64_encode($result['st_code']),
+          'phase' => 'phase=' . $data['phase']
+        ]);
+
+        $results[] = [
+
+          'label'                     => $result['label'],
+          'ac_no'                     => $result['ac_no'],
+          'st_code'                   => $result['st_code'],
+          'ac_name'                   => $result['ac_name'],
+          'name'                      => $result['name'],
+          'Phone_no'                  => $result['Phone_no'],
+          "est_turnout_round1"        => $result['est_turnout_round1'],
+          "est_turnout_round2"        => $result['est_turnout_round2'],
+          "est_turnout_round3"        => $result['est_turnout_round3'],
+          "est_turnout_round4"        => $result['est_turnout_round4'],
+          "est_turnout_round5"        => $result['est_turnout_round5'],
+          "missed_status_round1"      => $result['missed_status_round1'],
+          "missed_status_round2"      => $result['missed_status_round2'],
+          "missed_status_round3"      => $result['missed_status_round3'],
+          "missed_status_round4"      => $result['missed_status_round4'],
+          "missed_status_round5"      => $result['missed_status_round5'],
+          "missed_status_round6"      => $result['missed_status_round6'],
+          "modification_status_round1"  => $result['modification_status_round1'],
+          "modification_status_round2"  => $result['modification_status_round2'],
+          "modification_status_round3"  => $result['modification_status_round3'],
+          "modification_status_round4"  => $result['modification_status_round4'],
+          "modification_status_round5"  => $result['modification_status_round5'],
+          "modification_status_round6"  => $result['modification_status_round6'],
+          "est_poll_close"  => $result['est_poll_close'],
+          'href'                      => 'javascript:void(0)',
+        ];
+      }
+
+
+      $data['st_code'] = $st_code;
+      $data['results'] = $results;
+      $filter = [
+        // 'st_code'       => $data['st_code'],
+        'ac_no'         => $data['ac_no'],
+        'election_id'   => $user->election_id,
+        'phase_no'      => $data['phase'],
+        'pc_no'         => '',
+      ];
+      $estimated_time = $this->turnout->get_scheduletime($filter);
+      $data['estimated_time'] = $estimated_time;
+      $data['acs'] = AcModel::get_distinct_acs_with_state_name(['st_code'=>$st_code,'phase'=>$data['phase']]);
+      // dd($data['acs']);
+      // dd($data);
+      return view('admin.turnout.missed.enable-close-poll-entry', $data);
+    } catch (Exception $ex) {
+
+      return Redirect('/internalerror')->with('error', 'Internal Server Error');
+    }
+  }
+
+  public function fetchElectorsCountPanel(Request $request)
+  {
+    $data = [];
+    $request_array = [];
+    $data['phases'] = PhaseModel::get_phases();
+    //set title
+    $title_array  = [];
+    $filter_election = [];
+    $data['heading_title'] = "Fetch PS Wise Electors Details From EROnet";
+    $data['state'] = NULL;
+    if ($request->has('state') && $request->input('state') !='all') {
+      $data['state'] = $request->state;
+    }
+    $data['ac_id'] = NULL;
+    if ($request->has('ac_id') && $request->input('ac_id') != null) {
+      $data['ac_id'] = $request->ac_id;
+    }
+    $xss = new xssClean;
+    //CHECKING REQUEST VARIABES STARTS
+    if ($request->has('state') && $request->input('state') !='all') {
+      $condition = ['state' => 'required|string'];
+      if($request->has('ac_id') && $request->input('ac_id') != null){
+        $condition['ac_id'] = 'required|numeric';
+      }
+      // dd($request->all());
+      $validator = Validator::make($request->all(), $condition);
+
+      if ($validator->fails()) {
+        return Redirect::back()
+          ->withErrors($validator)
+          ->withInput();
+      }
+
+      $state    = $xss->clean_input($request->state);
+      $filter_election = [
+        'state'         => $state
+      ];
+      $request_array[] =  'state=' . $state;
+      $statename = getstatebystatecode($state);
+      $title_array[] = "State: " . $statename->ST_NAME;
+      if($request->has('ac_id') && $request->input('ac_id') != null){
+        $ac_id    = $xss->clean_input($request->ac_id);
+        $filter_election['ac_no'] = $ac_id;
+        $request_array[] =  'ac_id=' . $ac_id;
+        $acame = getacbyacno($state, $ac_id);
+        $title_array[] = "AC: " . $acame->AC_NAME;
+      }
+      
+      $data['filter_buttons'] = $title_array;
+
+      //buttons
+      $data['buttons']    = [];
+      // $data['buttons'][]  = [
+      //   'name' => 'Export Excel',
+      //   'href' =>  url($this->action . '/excel') . '?' . implode('&', $request_array),
+      //   'target' => true
+      // ];
+      // $data['buttons'][]  = [
+      //   'name' => 'Export Pdf',
+      //   'href' =>  url($this->action . '/pdf') . '?' . implode('&', $request_array),
+      //   'target' => true
+      // ];
+    } else {
+      $data['buttons']    = [];
+    }
+    $object         = PollingStationModel::get_ps_data($filter_election);
+    $data['results']    =   $object;
+    
+    $data['action']         = url($this->action_electors);
+    $data['fetch_electors_pc'] = url($this->fetch_electors_pc);
+    $data['user_data']  =   Auth::user();
+    $data['jobs_in_process']  =   PollingStationModel::getCurrentJobCount();
+    if ($request->has('is_excel')) {
+      if (isset($title_array) && count($title_array) > 0) {
+        $data['heading_title'] .= "- " . implode(', ', $title_array);
+      }
+      return $data;
+    }
+    return view($this->view_path . '.polling_station.PsWiseElectorsCountDetails', $data);
+  }
+
+  public function fetchACElectorsCountPanel(Request $request)
+  {
+    $data = [];
+    $request_array = [];
+    $data['phases'] = PhaseModel::get_phases();
+    //set title
+    $title_array  = [];
+    $data['heading_title'] = "Fetch AC Wise Electors Details From EROnet";
+    $data['state'] = NULL;
+    if ($request->has('state') && $request->input('state') !='all') {
+      $data['state'] = $request->state;
+    }
+    $data['ac_id'] = NULL;
+    if ($request->has('ac_id') && $request->input('ac_id') != null) {
+      $data['ac_id'] = $request->ac_id;
+    }
+    $xss = new xssClean;
+    //CHECKING REQUEST VARIABES STARTS
+    $filter_election = [];
+    if ($request->has('state') && $request->input('state') !='all') {
+      $condition = ['state' => 'required|string'];
+      if($request->has('ac_id') && $request->input('ac_id') != null){
+        $condition['ac_id'] = 'required|numeric';
+      }
+      // dd($request->all());
+      $validator = Validator::make($request->all(), $condition);
+
+      if ($validator->fails()) {
+        return Redirect::back()
+          ->withErrors($validator)
+          ->withInput();
+      }
+
+      $state    = $xss->clean_input($request->state);
+      $filter_election = [
+        'state'         => $state
+      ];
+      $request_array[] =  'state=' . $state;
+      $statename = getstatebystatecode($state);
+      $title_array[] = "State: " . $statename->ST_NAME;
+      if($request->has('ac_id') && $request->input('ac_id') != null){
+        $ac_id    = $xss->clean_input($request->ac_id);
+        $filter_election['ac_no'] = $ac_id;
+        $request_array[] =  'ac_id=' . $ac_id;
+        $acame = getacbyacno($state, $ac_id);
+        $title_array[] = "AC: " . $acame->AC_NAME;
+      }
+      
+      $data['filter_buttons'] = $title_array;
+
+      //buttons
+      $data['buttons']    = [];
+      // $data['buttons'][]  = [
+      //   'name' => 'Export Excel',
+      //   'href' =>  url($this->action . '/excel') . '?' . implode('&', $request_array),
+      //   'target' => true
+      // ];
+      // $data['buttons'][]  = [
+      //   'name' => 'Export Pdf',
+      //   'href' =>  url($this->action . '/pdf') . '?' . implode('&', $request_array),
+      //   'target' => true
+      // ];
+
+    } else {
+      $data['buttons']    = [];
+    }
+    $object         = ElectorModel::getList($filter_election);
+      // dd($object);
+    $data['results']    =   $object;
+    $data['action']         = url($this->action_electors_ac);
+    $data['fetch_electors_ac'] = url($this->fetch_electors_ac);
+    $data['user_data']  =   Auth::user();
+    $data['jobs_in_process']  =   PollingStationModel::getCurrentJobCount();
+    if ($request->has('is_excel')) {
+      if (isset($title_array) && count($title_array) > 0) {
+        $data['heading_title'] .= "- " . implode(', ', $title_array);
+      }
+      return $data;
+    }
+    return view($this->view_path . '.polling_station.ACWiseElectorsCountDetails', $data);
+  }
+
+  public function EndOfPollFinalizeReport(Request $request)
+  {
+    ini_set("memory_limit", "1500M");
+    set_time_limit('6000');
+    ini_set("pcre.backtrack_limit", "50000000");
+    $data = [];
+    //set title
+    $title_array  = [];
+    $data['heading_title'] = "End Of Poll Finalize Report";
+    
+    $xss = new xssClean;
+    $sql = "SELECT pdsd.scheduleid AS phase, pdsd.ELECTION_TYPEID, pdsd.st_code, state.st_name,
+    (SELECT COUNT(*) FROM pd_scheduledetail WHERE st_code= pdsd.st_code AND scheduleid = pdsd.scheduleid) AS totalac,
+    (SELECT COUNT(*) FROM pd_scheduledetail WHERE st_code= pdsd.st_code AND scheduleid = pdsd.scheduleid) AS totalac,
+    (SELECT COUNT(DISTINCT(AC_NO)) FROM polling_station WHERE ST_CODE= pdsd.st_code AND scheduleid = pdsd.scheduleid AND ro_ps_finalize = '1') AS ro_finalize,
+    (SELECT COUNT(DISTINCT(AC_NO)) FROM polling_station WHERE ST_CODE= pdsd.st_code AND scheduleid = pdsd.scheduleid AND deo_ps_finalize = '1') AS deo_finalize,
+    (SELECT COUNT(DISTINCT(AC_NO)) FROM polling_station WHERE ST_CODE= pdsd.st_code AND scheduleid = pdsd.scheduleid AND ps_finalize = '1') AS ceo_finalize,
+    (SELECT COUNT(*) FROM pd_scheduledetail WHERE ST_CODE= pdsd.st_code AND scheduleid = pdsd.scheduleid AND end_of_poll_finalize = '1') AS publish
+    FROM pd_scheduledetail AS pdsd, m_state AS state
+    WHERE state.st_code=pdsd.st_code
+    GROUP BY pdsd.scheduleid, pdsd.st_code";
+    $result = DB::select($sql);
+    $data['results']    =   [];
+    $data['buttons']    = [];
+    if($result){
+      $data['results']    =   $result;
+      $data['buttons'][]  = [
+        'name' => 'Export Excel',
+        'href' =>  url('eci/turnout/EndOfPollFinalizeReport/excel') ,
+        'target' => true
+      ];
+      $data['buttons'][]  = [
+        'name' => 'Export Details Report Excel',
+        'href' =>  url('eci/turnout/EndOfPollFinalizeReport/excel') . '?details=yes',
+        'target' => true
+      ];
+    }
+
+
+    $data['user_data']  =   Auth::user();
+    $data['self']  =   $this;
+    if ($request->has('is_excel')) {
+      if (isset($title_array) && count($title_array) > 0) {
+        $data['heading_title'] .= "- " . implode(', ', $title_array);
+      }
+      return $data;
+    }
+    return view($this->view_path . '.polling_station.EndOfPollFinalizeReport', $data);
+  }
+
+  public function EndOfPollFinalizeDetailsReport(Request $request)
+  {
+    ini_set("memory_limit", "1500M");
+    set_time_limit('6000');
+    ini_set("pcre.backtrack_limit", "50000000");
+    $data = [];
+    //set title
+    $title_array  = [];
+    $data['heading_title'] = "End Of Poll Finalize Detail Report";
+    $sql = "SELECT a.st_code,b.st_name,m.ac_no,m.ac_name, pdt.scheduleid,pdt.ELECTION_TYPEID,
+    a.ro_ps_finalize,a.deo_ps_finalize,a.ps_finalize AS ceo_finalize,pdt.end_of_poll_finalize AS publish
+      FROM polling_station a,m_state b,m_election_details c,m_ac m,pd_schedulemaster pd,pd_scheduledetail pdt
+      WHERE a.ST_CODE=b.ST_CODE
+      AND c.ST_CODE=a.ST_CODE
+      AND c.CONST_NO=a.AC_NO
+      AND c.CONST_TYPE='AC'
+      AND m.ac_no=c.const_no
+      AND m.st_code=b.st_code
+      AND pd.st_code=b.st_code
+      AND pd.ac_no=a.ac_no
+      AND pdt.st_code=b.st_code
+      AND pdt.ac_no=a.ac_no
+      GROUP BY st_code,m.ac_no
+      ORDER BY pdt.scheduleid, m.ac_no";
+    $result = DB::select($sql);
+    $data['results']    =   [];
+    
+    $data['buttons']    = [];
+    if($result){
+      $data['results']    =   $result;
+    }
+    if (isset($title_array) && count($title_array) > 0) {
+      $data['heading_title'] .= "- " . implode(', ', $title_array);
+    }
+    return $data;
+  }
+
+  public function EndOfPollFinalizeReportExcel(Request $request)
+  {
+        set_time_limit(6000);
+        $headings[]=[];
+        $export_data = [];
+        if ($request->has('details') && $request->input('details') == 'yes') {
+          $data = $this->EndOfPollFinalizeDetailsReport($request);
+          $export_data[] = [$data['heading_title']];
+          $export_data[] = ['Phase','Election Type', 'State Code', 'State','AC No','AC Name' ,'RO Finalize','DEO Finalize','CEO Finalize','Published'];
+          foreach ($data['results'] as $lis) {
+            $export_data[] = [
+              ($lis->scheduleid) ? $this->getPhaseForReport($lis->scheduleid) :'-',
+              ($lis->ELECTION_TYPEID)?$this->getElectionType($lis->ELECTION_TYPEID):'-',
+              ($lis->st_code)?($lis->st_code):'-',
+              ($lis->st_name)?($lis->st_name):'-',
+              ($lis->ac_no)?($lis->ac_no):'0',
+              ($lis->ac_name)?($lis->ac_name):'0',
+              ($lis->ro_ps_finalize)?($lis->ro_ps_finalize):'0',
+              ($lis->deo_ps_finalize)?($lis->deo_ps_finalize):'0',
+              ($lis->ceo_finalize)?($lis->ceo_finalize):'0',
+              ($lis->publish)?($lis->publish):'0',
+            ];   
+          }
+        }else{
+          $data = $this->EndOfPollFinalizeReport($request->merge(['is_excel' => 1]));
+          $export_data[] = [$data['heading_title']];
+          $export_data[] = ['Phase','Election Type', 'State Code', 'State','Total AC' ,'RO Finalize','DEO Finalize','CEO Finalize','Total Published'];
+          foreach ($data['results'] as $lis) {
+            $export_data[] = [
+              ($lis->phase) ? $this->getPhaseForReport($lis->phase) :'-',
+              ($lis->ELECTION_TYPEID)?$this->getElectionType($lis->ELECTION_TYPEID):'-',
+              ($lis->st_code)?($lis->st_code):'-',
+              ($lis->st_name)?($lis->st_name):'-',
+              ($lis->totalac)?($lis->totalac):'0',
+              ($lis->ro_finalize)?($lis->ro_finalize):'0',
+              ($lis->deo_finalize)?($lis->deo_finalize):'0',
+              ($lis->ceo_finalize)?($lis->ceo_finalize):'0',
+              ($lis->publish)?($lis->publish):'0',
+            ];   
+          }
+        }
+        $name_excel = strtolower(str_replace([',',': ',' '], ['_','-','_'], $data['heading_title']));
+    
+        return Excel::download(new ExcelExport($headings, $export_data), $name_excel.'_'.date('d-m-Y').'_'.time().'.xlsx');
+      }
+
+      public function getPhaseForReport($phase)
+      {
+        switch ($phase) {
+          case '8':
+             return 'Phase M1';
+            break;
+          case '9':
+              return 'Phase M2';
+             break;
+          default:
+              return 'Phase '.$phase;
+            break;
+        }
+      }
+
+      public function getElectionType($type)
+      {
+        switch ($type) {
+          case '4':
+             return 'BYE Election';
+            break;
+          case '3':
+              return 'General Election';
+             break;
+          case '2':
+              return 'BYE Election';
+             break;
+           case '1':
+               return 'General Election';
+              break;
+          default:
+              return $type;
+            break;
+        }
+      }
+
+
+}  // end class

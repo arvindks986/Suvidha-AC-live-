@@ -1,0 +1,56 @@
+.boxHeading {
+    font-size: 18px;
+    color: #000!important;
+    font-weight: 500!important;
+    padding-top: 14px;
+}
+
+.widget-icon {
+        color: #ffffff4f;
+    font-size: 90px;
+    /* background-color: rgba(114,124,245,.25); */
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    line-height: 146px;
+    border-radius: 0;
+    display: inline-block;
+    max-width: 200px;
+
+}
+
+.number.numberB {
+    font-size: 2.8rem;
+    padding: 0!important;   
+	    margin: 0!important;
+}
+.mdi-account-multiple:before {
+    content: "\F00E";
+}
+.btn-activelist {
+    background: #f9f9f9;
+    box-shadow: 0px 1px 4px 0px #00000003;
+    color: #9C27B0;
+    border: 1px solid #adadad70;
+}
+.btn-activelist.active {
+    background: #9C27B0;
+    box-shadow: 0px 1px 4px 0px #00000038;
+    color: #fff;
+    border: 1px solid #9C27B0;
+}
+.btn.btn-activelist.active:before {
+    content: "☑";
+    position: absolute;
+    left: 18px;
+    font-size: 40px;
+    top: 0;
+}
+
+.icon-block { float: left; width: 120px;  margin-left: 15px;}
+.icon-block img {opacity: 0.1;}
+.yellowbg{background-color:#fdc204!important;}
+.redbg{background-color: #FB6E51; color: #fff;}
+.greenbg{background-color: rgb(76, 175, 80) !important;}
+.bluebg{background-color: rgb(33, 150, 243) !important;}
+.orangebg{background-color: rgb(255, 152, 0) !important;}

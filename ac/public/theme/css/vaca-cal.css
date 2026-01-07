@@ -1,0 +1,534 @@
+/*Add Vaccancy division start*/
+.notify-bell-msg i{
+    font-size: 17px;
+    padding: 9px 5px;
+    color: #000;
+}
+.vaccancy_btn-tab{display: flex;justify-content: flex-end;  } /* margin-bottom: 25px; */
+.vaccancy_btn-tab button, .create-btn-vaccan button{ margin-left: 9px;border-radius: 20px;}
+.vaccancy_btn-tab button i{ margin:auto 5px;}
+.vaccancy_btn-tab button:hover, .vaccancy_btn-tab button:focus, .vaccancy_btn-tab button:active{ background-color: #bb4292!important; border-color: #b22682;}
+.create-vacc-title{font-size: 18px;font-weight: 500;margin-bottom: 2px;}
+.create-vacc-para{font-size: 13px;font-weight: normal;padding-bottom: 2px;margin-bottom: 14px!important;border-bottom: 1px solid #d5d5d5;font-style: normal;}
+.vacant-candidateNme{border: none;}
+.vacant-candidateNme::placeholder{ color: #212529;  font-size: 14px;}
+.vaacnt-dateFrm-ctr{background: transparent;}
+.vaacnt-dateFrm-ctr::placeholder{ color: #212529;  font-size: 14px;}
+.clder-box{border-radius: 0;}
+.uplod-vacct_btn::after{border-radius: 20px;}
+#notifi_remark::placeholder{color: #212529;  font-size: 14px;}
+.addVacancy-shw{ display: none;}
+.plus_btn-vacc, .ok_btn-vacc_lastScreen{ display: flex;  -webkit-box-orient: vertical;   -webkit-box-direction: normal;  -ms-flex-direction: column; flex-direction: column;   -webkit-box-align: center;  -ms-flex-align: center;   align-items: center;  -webkit-box-pack: center;  -ms-flex-pack: center;  justify-content: center;}
+.plus_btn-vacc img{width: 50%;  display: block;  margin: auto}
+.vacc-caption-box h4{ font-size: 24px;  font-weight: 600;  text-align: center;  color: #212529;  margin: 20px auto 10px;
+}
+.vacc-caption-box p{
+    font-size: 16px;
+    font-weight: normal;
+    text-align: center;
+}
+.confirm-msg-display{
+    text-align: center
+}
+.confirm-msg-display h4{
+    font-size: 15px;
+    color: #212529;
+    font-weight: 500
+}
+.confirm-msg-display p{
+    font-size: 18px;
+    font-weight: normal;
+}
+.ok_btn-vacc_lastScreen>h4{
+    font-size: 42px;
+    color: #212529;
+    font-weight: 500;
+    margin: 25px auto;
+}
+.ok_btn-vacc_lastScreen>p{
+    font-size: 32px;
+    color: #212529;
+    font-weight: normal;
+}
+.ok-Sign i{
+    font-size: 159px;
+    color: #1fa67a;
+}
+.lst-DDmsg{
+   font-size: 21px!important;
+    font-weight: 300;
+    color: #1fa67a;
+}
+.final-screen-VaccT{
+    font-size: 16px;
+    padding: 5px 25px;
+    border-radius: 23px;
+    margin: 15px auto;
+}
+.modal.modal-fullscreen .modal-dialog,
+.modal.modal-fullscreen .modal-content {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.modal.modal-fullscreen .modal-dialog {
+  margin: 0;
+  width: 100%;
+  animation-duration:0.6s;
+    max-width: unset;
+    
+}
+.modal.modal-fullscreen .modal-content {
+  border: none;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: inherit;
+  -moz-box-shadow: inherit;
+  -o-box-shadow: inherit;
+  box-shadow: inherit;
+}
+.modal.modal-fullscreen.force-fullscreen .modal-body {
+  padding: 0;
+}
+.modal.modal-fullscreen.force-fullscreen .modal-header,
+.modal.modal-fullscreen.force-fullscreen .modal-footer {
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+.modal.modal-fullscreen.force-fullscreen .modal-header {
+  top: 0;
+}
+.modal.modal-fullscreen.force-fullscreen .modal-footer {
+  bottom: 0;
+}
+/*Add Vaccancy division end*/
+
+/*Vacancy List Start*/
+.vacancy-list-card{display: flex;width: 100%}
+.vacancy-list-card .card{margin: 3px}
+.quick-sort-icons{display: flex;/* border-bottom: 1px solid #d5d5d5; *//* position:relative; */}
+.quick-sort-icons .input-group {background: #fff;/* border-bottom: 1px solid #d5d5d5; */}
+.quick-sort-icons .input-group-text{padding: 8px 19px;border-bottom: 0px;border-left:0px;}
+.quick-sort-icons .input-group-text input{    width: 16px;  height: 16px;}
+.quick-sort-icons .btn-group {margin: 6px 5px 5px 5px;align-items: unset;}
+ul.list-box-vacc {}
+
+.black {font-size: 14px;}
+.vaccancy-list_title{
+    padding: 20px
+}
+.vaccancy-list_title h1{
+    font-size: 21px;
+    font-weight: 500;
+    color: #2c2c2c!important;
+}
+.vaccancy-list_title p{
+    font-weight: 300;
+    color: #2c2c2c!important;
+    margin: 5px auto;
+}
+.list-box-vacc, .vaccSide-bar, .vaccTwo-way{padding: 0;margin: 0}
+.list-box-vacc li, .vaccSide-bar li{list-style: none;position:relative;background: #fff;}
+.list-box-vacc-details{display:flex;align-items: normal;}
+.list-box-vacc-details:hover{background:#f0f0f0; }
+.list-box-vacc-details:hover:after {  content: "VIEW";
+    position: absolute;
+    right: 8px;
+    top: 59%;
+    text-transform: uppercase;
+    font-size: 10px;
+    background: #d14b89;
+    padding: 3px 7px 2px 10px;
+    border-radius: 27px;
+    letter-spacing: 3px;
+    color: #fff;
+    border: 1px solid #b22682;
+}
+.list-box-vacc-details{ 
+    list-style: none;
+  cursor: pointer;
+    border-bottom: 1px solid #d7d7d7;
+}
+.CheckBoxdt{}
+.CheckBoxdt .input-group-text{border:transparent;background: transparent;cursor:pointer;padding-top: 0;padding-bottom: 0;}
+.CheckBoxdt .input-group-text input{width: 16px;height: 16px;}
+.list-descrip{display: flex; justify-content: space-between}
+.list-descrip:last-of-type p{margin-right: 30px}
+.list-box-vacc-details>i{
+    color: #cb488c;
+    font-size: 25px;
+    float: right;
+    position: relative;
+    right: 0px;
+    bottom: 35px;
+}
+.list-box-vacc-details a{
+    font-weight: bold;
+    color: #cb488c;
+}
+.date-ofVacc{position: relative; bottom: 9px}
+.vaccSide-bar{padding: 20px;}
+.vaccSide-bar li h3{
+    font-size: 16px;
+    font-weight: 700;
+    color: #2c2c2c!important;
+}
+.vaccSide-bar li p{
+    font-size: 14px;
+    font-weight: normal;
+}
+.vaccIDno-clr{ color: #cb488c;}
+.vaccTwo-way{display: flex; justify-content: space-between}
+.vaccTwo-way li{margin: unset;}
+.vacc-cityStyle{
+    display: inline-block;
+    font-weight: bold;
+    margin: auto 9px
+}
+.vacc-dwnload-btn{
+    color: #cb488c;
+    background: #f2f2f2;
+    border: 1px solid #cb488c;
+    padding: 11px 5px;
+    /* width: 175px; */
+    display: inline-block;
+}
+.vacc-dwnload-btn>i{
+    margin: 0;
+    font-size: 16px;
+}
+.vacc-dwnload-btn>span{
+    font-size: 8px;
+    background: #cb488c;
+    color: aliceblue;
+    padding: 6px 10px;
+    border-radius: 33px;
+    margin: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    float: right;
+}
+.vacc-rght-card{display: none;}
+
+#list-box-vacc-draft{
+    background: transparent;
+    border-bottom: 1px solid #d7d7d7;
+    border-top: 1px solid #d7d7d7;
+    -webkit-box-shadow: 1px 0px 9px 5px rgba(0,0,0,0.19); 
+box-shadow: 1px 0px 9px 5px rgba(0,0,0,0.19);
+}
+/*Vacancy List End*/
+
+/* Edited New CSS Starts Here */
+
+.left-sideBox {height: calc(100vh - 185px); }
+
+.wid-38{width: 38%;}
+.center-sideBox {height: calc(100vh - 185px);border-left: 6px solid #00709d;}
+.wid-center{max-width: 460px;}
+.right-sideBox {max-width: 260px; margin-left: 5px;height: calc(100vh - 185px);}
+.center-sideBox td {border: transparent!important;padding: 5px 0;} 
+.center-sideBox .alert {position: relative;  padding: 0.75rem 1.25rem;   margin-bottom: 1rem;    border: 1px solid #00000012;   border-radius: 0.25rem;}
+.grey{color:rgba(0,0,0,.56);}
+p.CandName {
+    padding: 0;
+    margin: 0;
+}
+strong.files {
+    padding-right: 30px;
+}
+label.lh-125.grey {
+    margin-right: 5px;
+    margin-bottom: 0;
+    font-size: 14px!important;
+}
+.rightListData{width:100%;}
+
+.display-5{font-size: 1rem;font-weight: 300;line-height: 1.2;}
+
+.historytime.text-center {border-top: 1px solid #dedede;position: relative;margin: 5% 0;}
+.historytime.text-center small {background:#fff;top: -13px;position: relative;padding: 20px;}
+
+.badge-prime {
+    padding: 5px 10px;
+    position: relative;
+    left: -12px;
+    border-radius: 5px;
+    background: #cb488c;     color: #fff;
+}
+
+/* .center-sideBox.card .card-header {position: fixed;  width: 48.39%;z-index: 99;} */
+/* .center-sideBox.card .card-body {margin-top:45px;} */
+/* .center-sideBox.card .card-footer {position: fixed;  width: 48.39%;z-index: 99; bottom:0;} */
+/* .Right-sideBox .card-header {position: fixed;  width: 19%;z-index: 98;} */
+/* .Right-sideBox .card-body {margin-top:45px;} */
+
+.Right-sideBox.card .card-body, .center-sideBox.card .card-body, .left-sideBox.card .card-body {height:50vh;overflow-y:scroll;/* overflow: hidden; */} 
+label{font-size:14px!important;}
+
+
+.greyBox {
+    background: #f2f2f2;
+    padding: 10px 20px;
+    width: 65%;
+}
+
+.display-8 {
+    font-size: 1.3em;
+    font-weight: 300;
+    line-height: 1.2;
+}
+
+li.list-box-vacc-details.p-2.active {
+    background: linear-gradient(-120deg, #00a089 0%, #006f9d 100%);
+    border-right: 3px solid rgba(0, 0, 0, 0.1);
+}
+
+li.list-box-vacc-details.p-2.active * {
+    color: #fff;
+}
+.badge-warning {
+    color: #212529;
+    background-color: #ffebae;
+}
+.left-sideBox.card small {
+    color: #2c2c2c;
+}
+.font-l{font-size:16px;}
+ .font-small{font-size: 13px;}
+
+ul.list-box-vacc {}
+.font-16 {
+    font-size: 18px;
+    position: relative;
+    top: -6px;
+}
+.badge-pill {
+    border-radius: 22px;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    padding: 4px 8px;
+}
+li.list-box-vacc-details.p-2.active .badge-pill {
+    color: #000000b3;
+}
+
+span.font-m .fa {
+    font-size: 12px;
+    background: #d4edda;
+    padding: 3px;
+    color: #006063;
+}
+
+.font-m {
+    font-size: 12px;
+    background: #006063;
+    padding-right: 6px;
+    padding: 0px 4px 0px 0;
+    color: #fff;
+}
+.formatStatus {
+    font-size: 14px;
+    color: #404040;
+}
+
+.formatStatus .fa {
+    color: #006063;
+    width: 15px;
+    height: 15px;
+    border: 1px solid;
+    padding: 2px 2px;
+    border-radius: 54px;
+    font-size: 9px;
+    position: relative;
+    top: -2px;
+    right: -8px;
+}
+marquee {
+    font-size: 12px;
+    margin-top: 3px;
+    height: 14px;
+}
+
+.badge-secondary {
+    color: #fff;
+    background-color: #9C27B0;
+}
+.container-fluid.navigationList {
+    background: #fff;
+    box-shadow: 0px 3px 4px 0px #bfbbbb;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 28px;
+}
+
+.text-badges {
+    font-size: 22px;
+    /* background: #009688; */
+    /* padding: 4px 12px; */
+    /* border-radius: 6px; */
+    color: #009688;
+    margin-left: 18px;
+    color: #FFC107;
+    position: relative;
+    top: 2px;
+}
+.brown-badges {
+    /* font-size: 18px; */
+    /* background: #b5157f; */
+    /* padding: 4px 12px; */
+    /* border-radius: 6px; */
+    color: rgba(0,0,0,.5);
+}
+
+.NavElect .nav-fill .nav-item {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    text-align: center;
+    border-right: 1px solid #d5d5d5;
+    border-radius: 0; padding: 15px 10px;
+}
+/* .NavElect a.nav-item.nav-link.selected {
+    display: block;
+    background: #bb4292;
+    color: #fff;
+    margin: 0;
+    height: 50px;
+    border: 1px solid transparent;
+    border-radius: 0;
+} */
+.navbar-nav{width:100%;}
+.navbar-nav .text-badges, .navbar-nav .brown-badges {font-size: 22px;color: #8e8e8e;margin-left: 18px;position: relative;top: 2px;padding: 13px 20px 14px;/* background: #f2f2f2; */border-right: 1px solid #00000052;}
+.NavElect a.nav-item.nav-link.selected {color: #fff;background: linear-gradient(-120deg, #00a089 0%, #006f9d 100%);}
+.NavElect a.nav-item.nav-link.selected .text-badges, .NavElect a.nav-item.nav-link.selected .brown-badges {color: #FFC107;background: #036662;}
+.NavElect a.nav-item.nav-link.selected:hover { color: #fff;  background: #006063;}
+.NavElect a.nav-item.nav-link:hover { color: #000;  background: #f2f2f2;  }
+#history_row td{padding: 6px 0px;border: transparent;}
+#history_row table { border: transparent;     margin-bottom: 0;}
+.navbar-light .navbar-nav .nav-link {padding: 10px 0 15px 15px;}
+.fc-event.fc-bg-lightgreen .fc-content {background: #9c27b0ed;}
+.fc-event.fc-bg-lightblue .fc-content {background: #69e05270;}
+.fc-day.fc-today.alert-info {background: rgba(255, 193, 7, 0.44);}
+.center-sideBox .card-header {
+    background: linear-gradient(-120deg, #00a089 0%, #006f9d 100%);
+    border-bottom-color: #3d4d76;
+}
+
+.center-sideBox .card-header p, .center-sideBox .card-header span { color: #fff;}
+
+.center-sideBox .card-header:first-child {
+    border-radius: 0 calc(0.25rem - 1px) 0 0!important;
+}
+.md-Base::-webkit-scrollbar { width: 4px;  background-color: #f0587e;  height: 6px;}
+.NavElect .navbar-light .navbar-nav .nav-link{color: #000;}
+
+
+    
+    .switch-field input {
+        position: absolute !important;
+        clip: rect(0, 0, 0, 0);
+        height: 1px;
+        width: 1px;
+        border: 0;
+        overflow: hidden;
+    }
+    
+    .switch-field label {
+        background-color: #e4e4e4;
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 14px;
+        line-height: 1;
+        text-align: center;
+        padding: 8px 16px;
+        margin-right: -1px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+        transition: all 0.1s ease-in-out;
+    }
+    
+    .switch-field label:hover {
+        cursor: pointer;
+    }
+    
+    .switch-field input:checked + label {
+        background-color: #a5dc86;
+        box-shadow: none;
+    }
+    
+    .switch-field label:first-of-type {
+        border-radius: 4px 0 0 4px;
+    }
+    
+    .switch-field label:last-of-type {
+        border-radius: 0 4px 4px 0;
+    }
+    
+    .option-custr li {
+        list-style: none
+    }
+	
+	 .gov-tablets-pils {   
+   
+   
+    position: relative;
+    bottom: -13px;
+    margin: 0px auto!important;
+    width: 104%;
+    left: -20px;
+}
+    
+    .gov-tablets-pils li {
+        padding: 0;
+    }
+    
+    .gov-tablets-pils li a {
+        color: #fff;
+        text-decoration: none;
+        width: 100%;
+        display: block;
+        padding: 12px;
+    }
+    .gov-tablets-pils li a.active,
+    .gov-tablets-pils li a:hover,
+    .gov-tablets-pils li a:focus {
+        background: #fff;
+		color:#000;
+    }
+    
+    .active,
+    .gov-tablets-pils li a:hover {
+        background: #fff;color:#000;
+    }
+	span#noti_remark {
+    font-size: 14px;
+}
+.list-box-vacc a:hover{text-decoration:none; background:linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);}
+.rightListData table { padding: 6px 0px;  border: transparent;}
+.rightListData td { padding: 6px 0px;  border: transparent;}
+.font-xl{font-size: 16px;font-weight: 500;}
+.md-Base .badge.badge-secondary, .md-Base .badge.badge-danger {
+    font-size: 14px;
+    padding: 3px 5px;
+    letter-spacing: .5px;
+    font-weight: 500;
+}
+*:focus {
+    outline: none;
+}
+.targetHistory {
+    position: absolute;
+    right: 27px;
+    z-index: 8;
+    top: 6px;
+}
+.wid-center-full{width:62%}
+.width-hide{ width:0; color:transparent; font-size:0!important; transition:all 0.3s ease-in-out; } 
+.width-hide *{ color:transparent; font-size:0!important; opacity:0; } 
+

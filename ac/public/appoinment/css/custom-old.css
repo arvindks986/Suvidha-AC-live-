@@ -1,0 +1,89 @@
+
+body{font-family: 'Poppins', sans-serif; color: #212121; background: url('../img/bg-body-001.jpg') repeat center;}
+ul>li{list-style-type: none;}
+.header{background-color: #ee577e; color: #fff;}
+.main-wrap{position: relative; display: flex; justify-content: space-between;}
+.lft-aside{width: 12vw;}
+.rght-section{width: 86.50vw; margin-left: 1.5rem;}
+.rght-section img{max-width: 100%;}
+.filter-area{position: absolute; width: 12.50%; height: 100%; top: 0; left: 0; background: rgb(215,143,190);
+background: linear-gradient(180deg, rgba(215,143,190,1) 0%, rgba(232,151,184,1) 50%, rgba(245,156,180,1) 100%);}
+.circle-box {width: 145px; height: 145px; text-align: center; border-radius: 50%; background-color: #fbdcf0; margin: 1.5rem auto; box-shadow: 0 0 3px #999; padding-top: 2.5rem; font-size: 24px; font-weight: 600;}
+.circle-box>span{display: block; font-weight: 100; margin-top: -10px; }
+.filter-list{font-weight: 500;}
+.filter-title{padding: 0.85rem; border-top: 1px solid #bc4292; border-bottom: 1px solid #bc4292; font-size: 18px;}
+.no-recrd{text-align: center; background-color: #fbfbfb; color: #f7f7f7; padding: 15rem; font-size: 2.5rem; text-shadow: 1px 1px 3px #666;}
+
+.val-box {float: right; padding: 0.5rem 1.5rem; background-color: #fbdcf0; font-weight: 600;}
+.ul-list>li {margin-top: 1rem; margin-bottom: 1rem; clear: both; display: table; width: 100%; font-weight: 600;}
+.card-shadow{box-shadow: 0 0 5px #d1d1d1; border: none;}
+.custom-table>thead>tr>th{color: #bc4291;}
+.custom-table>tbody>tr>td{font-size: 18px; font-weight: 600;}
+.parallex-effect{background: url('../img/parllex-img.jpg') no-repeat fixed; background-size: cover; height: 475px; color: #fff;}
+.parallex-content{background-color: rgba(255,255,255,0.70); min-height: 315px; }
+.para-list{padding-top: 1.5rem;}
+.para-list>li {color: #bc4291; text-shadow: 1px 1px 3px #888; font-size: 1.5rem; font-weight: 500; padding: 1.5rem 0;}
+.para-list>li:last-child{border-bottom: none;}
+.para-list>li>i{font-weight: 900; margin-right: 0.5rem; font-size: 1.85rem;}
+.para-list>li>i,.para-list>li>span {color: #212121;}
+.para-list>li>span {float: right; margin-right: 2.5rem; font-weight: 600;}
+.ul-li-ptb>li{padding: 17px 0;}
+
+
+/*Common CSS*/
+.max-hght{height: 545px;}
+.min-hght-md{min-height: 385px;}
+.ul-li{padding: 0 2rem; margin: 0; font-weight: 600;}
+.ul-li>li{font-size: 1.25rem; padding: 2rem 0; border-bottom: 1px solid #e8e8e8;}
+.ul-li>li:last-child{border-bottom: none;}
+.ul-li>li>span{color: #bc4291; float: right;}
+.ul-li>li>strong {width: 88%; font-weight: 500; display: inline-block;}
+.dark-pink-tcolor{color: #bc4291;}
+.result-table{font-size: 18px; font-weight: 500;}
+.result-table>thead>tr>th:first-child,.result-table>tbody>tr>td:first-child{width: 85px;}
+.result-table>tbody>tr>td{border-top: none !important;}
+.result-table>thead{background-color: #fdecf7; color: #bc4291;}
+.tfoot {background-color: #bc4291 !important; color: #fff !important; text-shadow:1px 1px 2px #111; letter-spacing: 1px;}
+
+
+
+/* Custom Checkbox CSS */
+.form-group {display: block; margin-bottom: 15px;}
+.form-group input {padding: 0; height: initial; width: initial; margin-bottom: 0; display: none; cursor: pointer;}
+.form-group label {position: relative; cursor: pointer;}
+.form-group label:before {content:''; -webkit-appearance: none; background-color: #b21515; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05); padding: 10px; display: inline-block; position: relative; vertical-align: middle; cursor: pointer; margin-right: 5px;}
+.form-group input:checked + label:after {content: ''; display: block; position: absolute; top: 4px; left: 8px; width: 6px; height: 14px; border: solid #fbdcf0; border-width: 0 2px 2px 0;
+  transform: rotate(45deg);}
+
+
+
+/*Responsive CSS*/
+@media all and (max-width:1920px){
+	.filter-area {width: 15.50vw;}
+	.rght-section {width: 82.5vw;}
+	.ul-list>li {margin-top: 0.25rem; margin-bottom: 0;}
+	.val-box {padding: 0.35rem 1.5rem;}	
+	.max-hght {height: 384px;}
+	.min-hght-md {min-height: 245px;}
+	.ul-li>li {padding: 1.25rem 0;}
+	
+	
+}
+
+@media all and (max-width: 1660px){
+	
+	.val-box {padding: 0.2rem 1.25rem;}
+	.max-hght {height: 335px;}
+}
+
+@media all and (max-width: 1440px){
+  .lft-aside{width: 18vw;}	
+  .filter-area {width: 18vw;}	
+  .filter-list label {font-size: 14px; margin-bottom: 0.25rem;}	
+  .para-list {padding-top: 1rem; padding-left: 1rem;}
+  .para-list>li {font-size: 1.25rem;}
+  .parallex-content { min-height: 258px;} 	
+  .parallex-effect {height: 425px;}
+  .ul-li>li {padding: 1rem 0; font-size: 1rem;}	
+
+}

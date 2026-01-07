@@ -1,0 +1,217 @@
+@font-face
+{
+	font-family:'gist_bengali_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/BNOTDurga_N_Ship.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/BNOTDurga_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_gujarati_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/GJOTAvantika_N_Ship.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/GJOTAvantika_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_hindi_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/DVOTYogesh_N_ship.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/DVOTYogesh_N_ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_malayalam_font';
+	font-style:normal;
+	font-weight:200 !important;
+    font-size:1.5em !important;
+	src:url('fonts/MLOTKarthika_N_Ship.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/MLOT-Karthika_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_marathi_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALMA0.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/Sakal Marathi Normal_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_punjabi_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/PNOTAmar_N_Ship.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/PNOTAmar_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_urdu_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/UROT-Ghalib_N_Ship.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/UROT-Ghalib_N_Ship.ttf')format( 'truetype' );
+}
+/*--------------------------*/
+@font-face
+{
+	font-family:'gist_kannada_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_assamese_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_bodo_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_dogri_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_kashmiridev_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_konkani_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_maithili_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_manipuri_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_meeteimayek_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/GIST-MNI-MMOTRavindo_N_Ship.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/GIST-MNI-MMOTRavindo_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_nepali_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face {
+    font-family: 'gist_olchiki_font';
+    font-style: normal;
+    font-weight: normal;
+    src: url('fonts/GIST-SAT-OLOTChandra_N_Ship.eot?')format('embedded-opentype'),
+    /* IE6-IE8 */ /* IE9 */ url('fonts/GIST-SAT-OLOTChandra_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_oriya_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_sanskrit_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_santhali_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_sindhidev_font';
+	font-style:normal;
+	font-weight:normal;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_tamil_font';
+	font-style:normal;
+	font-weight:normal;
+    font-size:1.5em !important;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}
+
+@font-face
+{
+	font-family:'gist_telugu_font';
+	font-style:normal;
+	font-weight:normal;
+    font-size:1.5em !important;
+	src:url('fonts/SAKALBH.eot?')format('embedded-opentype'),
+	/* IE6-IE8 *//* IE9 */url('fonts/SakalBharati_N_Ship.ttf')format( 'truetype' );
+}

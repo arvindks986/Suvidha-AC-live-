@@ -1,0 +1,374 @@
+
+<html>
+  <head>
+    <style>
+    td {
+    font-size: 12px !important;
+    font-weight: 500;
+    text-align: left;
+    padding: 6px 0px;
+    font-family: "Times New Roman", Times, serif;
+    }
+    h3{
+    font-size: 18px !important;
+    font-weight: 600;
+    }
+      .bold{
+    padding: 12px 0px 0px 30px !important;
+    font-weight: bold;
+  }
+.bolds{
+  font-weight: bold;
+}
+
+.bolds span{
+  font-weight: normal;
+}
+
+.bold span{
+  font-weight: normal;
+}
+    .table-bordered{
+    border:1px solid #000;
+    }
+    .table-bordered td,
+    .table-bordered th {
+    border: 1px solid #000 !important
+    }
+    .blc{
+    border-collapse: collapse;
+    border-bottom: 1px solid #000;
+    }
+    .blcs{
+    border-collapse: collapse;
+    border-bottom: 1px solid #000;
+    border-top: 1px solid #000;
+    border-spacing: 0px;
+    }
+    .border{
+    border: 1px solid #000;
+    text-align: left;
+    }
+    th {
+    font-size: 12px;
+    font-weight: bold !important;
+    }
+  
+    table{
+    width: 100%;
+    border-collapse: collapse;
+    font-weight: bold;
+    }
+    </style>
+  </head>
+  <div class="bordertestreport">
+    <table class="border">
+      <tr>
+        <td style="text-align: left;">
+          <p> <img src="<?php echo url('/'); ?>/admintheme/img/logo/eci-logo.png" alt=""  width="100" border="0"/>  </p>
+        </td>
+        <td style="text-align: right;">
+          <p style="float: right;width: 100%;font-size: 15px;"><b>SECRETARIAT OF THE <br>ELECTION COMMISSION OF INDIA
+            </b>
+          <br><b>Nirvachan Sadan, Ashoka Road, New Delhi-110001</b></p>
+        </td>
+      </tr>
+    </table>
+    <table class="border">
+      <tr>
+        <td style="text-align: left;">
+          <p style="font-size: 15px;"><b>6 - ELECTORS DATA SUMMARY
+          </b></p>
+        </td>
+        <td style="text-align: right;">
+          <p style="float: right;width: 100%;font-size: 15px;"><strong>State :</strong> Chhattisgarh </p>
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: left;"><b style="font-size: 15px; ">User</b>: ECI</td>
+        <td style="text-align: right;"><p style="float: right;width: 100%;font-size: 15px;"><b>Date of Print</b> 27-06-2019</p></td>
+      </tr>
+    </table>
+    
+    <table class="table" style="width: 100%;">
+      <thead>
+        <tr>
+          <td></td>
+          <td colspan="3" class="bolds" style="border-bottom: 1px solid #000;text-align: center;">TYPE OF CONSTITUENCY</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="bolds blc"></td>
+          <td class="bolds blc">GEN</td>
+          <td class="bolds blc">SC</td>
+          <td class="bolds blc">ST</td>
+          <td class="bolds blc">TOTAL</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="bolds">1. NO. OF CONSTITUENCIES
+          </td>
+          <td>{{$electorsvotersdataNew['GEN']['totalgenac']}}</td>
+          <td>{{$electorsvotersdataNew['SC']['totalscac']}}</td>
+          <td>{{$electorsvotersdataNew['ST']['totalstac']}}</td>
+          <td>{{$electorsvotersdataNew['GEN']['totalgenac']+$electorsvotersdataNew['SC']['totalscac']+$electorsvotersdataNew['ST']['totalstac']}}</td>
+        </tr>
+        <tr>
+          <td class="bolds" colspan="4">2. ELECTORS (including SERVICE VOTERS)
+          </td>
+        </tr>
+        <tr>
+          <td class="bold">a.MALE</td>
+          <td>{{$electorsvotersdataNew['GEN']['maleElectors']}}</td>
+          <td>{{$electorsvotersdataNew['SC']['maleElectors']}}</td>
+          <td>{{$electorsvotersdataNew['ST']['maleElectors']}}</td>
+          <td>{{$electorsvotersdataNew['GEN']['maleElectors']+$electorsvotersdataNew['SC']['maleElectors']+$electorsvotersdataNew['ST']['maleElectors']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">b.FEMALE</td>
+          <td>{{$electorsvotersdataNew['GEN']['femaleElectors']}}</td>
+          <td>{{$electorsvotersdataNew['SC']['femaleElectors']}}</td>
+          <td>{{$electorsvotersdataNew['ST']['femaleElectors']}}</td>
+          <td>{{$electorsvotersdataNew['GEN']['femaleElectors']+$electorsvotersdataNew['SC']['femaleElectors']+$electorsvotersdataNew['ST']['femaleElectors']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">c.THIRD GENDER</td>
+          <td>{{$electorsvotersdataNew['GEN']['thirdElectors']}}</td>
+          <td>{{$electorsvotersdataNew['SC']['thirdElectors']}}</td>
+          <td>{{$electorsvotersdataNew['ST']['thirdElectors']}}</td>
+          <td>{{$electorsvotersdataNew['GEN']['thirdElectors']+$electorsvotersdataNew['SC']['thirdElectors']+$electorsvotersdataNew['ST']['thirdElectors']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">d.TOTAL</td>
+          <td>{{$electorsvotersdataNew['GEN']['totalElectors']}}</td>
+          <td>{{$electorsvotersdataNew['SC']['totalElectors']}}</td>
+          <td>{{$electorsvotersdataNew['ST']['totalElectors']}}</td>
+          <td>{{$electorsvotersdataNew['GEN']['totalElectors']+$electorsvotersdataNew['SC']['totalElectors']+$electorsvotersdataNew['ST']['totalElectors']}}</td>
+        </tr>
+        <tr>
+          <td class="bolds" colspan="4">3. ELECTORS WHO VOTED
+          </td>
+        </tr>
+        <tr>
+          <td class="bold">a.MALE</td>
+          <td>{{$totalvoteNew['GEN']['totalMaleVoters']}}</td>
+          <td>{{$totalvoteNew['SC']['totalMaleVoters']}}</td>
+          <td>{{$totalvoteNew['ST']['totalMaleVoters']}}</td>
+          <td>{{$totalvoteNew['GEN']['totalMaleVoters']+$totalvoteNew['SC']['totalMaleVoters']+$totalvoteNew['ST']['totalMaleVoters']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">b.FEMALE</td>
+           <td>{{$totalvoteNew['GEN']['totalFemaleVoters']}}</td>
+          <td>{{$totalvoteNew['SC']['totalFemaleVoters']}}</td>
+          <td>{{$totalvoteNew['ST']['totalFemaleVoters']}}</td>
+          <td>{{$totalvoteNew['GEN']['totalFemaleVoters']+$totalvoteNew['SC']['totalFemaleVoters']+$totalvoteNew['ST']['totalFemaleVoters']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">c.THIRD GENDER</td>
+          <td>{{$totalvoteNew['GEN']['totalOtherVoters']}}</td>
+          <td>{{$totalvoteNew['SC']['totalOtherVoters']}}</td>
+          <td>{{$totalvoteNew['ST']['totalOtherVoters']}}</td>
+          <td>{{$totalvoteNew['GEN']['totalOtherVoters']+$totalvoteNew['SC']['totalOtherVoters']+$totalvoteNew['ST']['totalOtherVoters']}}</td>
+        </tr>
+
+        <tr>
+          <td class="bold">d. POSTAL <span style="font-weight: normal;">(Details given in Annxure-1)</span>
+          </td>
+          <td>{{$totalpostalvoteNew['GEN']['postaltotalreceived']}}</td>
+          <td>{{$totalpostalvoteNew['SC']['postaltotalreceived']}}</td>
+          <td>{{$totalpostalvoteNew['ST']['postaltotalreceived']}}</td>
+          <td>{{$totalpostalvoteNew['GEN']['postaltotalreceived']+$totalpostalvoteNew['SC']['postaltotalreceived']+$totalpostalvoteNew['ST']['postaltotalreceived']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">e.TOTAL</td>
+          <td>{{$totalvoteNew['GEN']['totalMaleVoters']+$totalvoteNew['GEN']['totalFemaleVoters']+$totalvoteNew['GEN']['totalOtherVoters']}}</td>
+          <td>{{$totalvoteNew['SC']['totalMaleVoters']+$totalvoteNew['SC']['totalFemaleVoters']+$totalvoteNew['SC']['totalOtherVoters']}}</td>
+          <td>{{$totalvoteNew['ST']['totalMaleVoters']+$totalvoteNew['ST']['totalFemaleVoters']+$totalpostalvoteNew['ST']['postaltotalreceived']}}</td>
+          <td>
+            {{$totalvoteNew['GEN']['totalMaleVoters']+$totalvoteNew['GEN']['totalFemaleVoters']+$totalvoteNew['GEN']['totalOtherVoters']+$totalvoteNew['SC']['totalMaleVoters']+$totalvoteNew['SC']['totalFemaleVoters']+$totalvoteNew['SC']['totalOtherVoters']+$totalvoteNew['ST']['totalMaleVoters']+$totalvoteNew['ST']['totalFemaleVoters']+$totalpostalvoteNew['ST']['postaltotalreceived']}}
+        </td>
+        </tr>
+        <tr>
+          <td class="bold">PROXY <span style="font-weight: normal;">[_already included in 3.a/3.b)</span>
+          </td>
+          <td>{{$totalvoteNew['GEN']['proxy_votes']}}</td>
+          <td>{{$totalvoteNew['SC']['proxy_votes']}}</td>
+          <td>{{$totalvoteNew['ST']['proxy_votes']}}</td>
+          <td>{{$totalvoteNew['GEN']['proxy_votes']+$totalvoteNew['SC']['proxy_votes']+$totalvoteNew['ST']['proxy_votes']}}</td>
+        </tr>
+        <tr>
+          <td class="bolds" colspan="4">4. OVERSEAS ELECTORS
+          </td>
+        </tr>
+        <tr>
+          <td class="bold">a.MALE</td>
+          <td>{{$electorsvotersdataNew['GEN']['overseasmaleElector']}}</td>
+          <td>{{$electorsvotersdataNew['SC']['overseasmaleElector']}}</td>
+          <td>{{$electorsvotersdataNew['ST']['overseasmaleElector']}}</td>
+          <td>{{$electorsvotersdataNew['GEN']['overseasmaleElector']+$electorsvotersdataNew['SC']['overseasmaleElector']+$electorsvotersdataNew['ST']['overseasmaleElector']}}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold">b.FEMALE</td>
+          <td>{{$electorsvotersdataNew['GEN']['overseasFemaleElector']}}</td>
+          <td>{{$electorsvotersdataNew['SC']['overseasFemaleElector']}}</td>
+          <td>{{$electorsvotersdataNew['ST']['overseasFemaleElector']}}</td>
+          <td>{{$electorsvotersdataNew['GEN']['overseasFemaleElector']+$electorsvotersdataNew['SC']['overseasFemaleElector']+$electorsvotersdataNew['ST']['overseasFemaleElector']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">c.THIRD GENDER</td>
+           <td>{{$electorsvotersdataNew['GEN']['overseasthirdElector']}}</td>
+          <td>{{$electorsvotersdataNew['SC']['overseasthirdElector']}}</td>
+          <td>{{$electorsvotersdataNew['ST']['overseasthirdElector']}}</td>
+          <td>{{$electorsvotersdataNew['GEN']['overseasthirdElector']+$electorsvotersdataNew['SC']['overseasthirdElector']+$electorsvotersdataNew['ST']['overseasthirdElector']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">d.TOTAL</td>
+          <td>{{$electorsvotersdataNew['GEN']['overseasmaleElector']+$electorsvotersdataNew['GEN']['overseasFemaleElector']+$electorsvotersdataNew['GEN']['overseasthirdElector']}}</td>
+          <td>{{$electorsvotersdataNew['SC']['overseasmaleElector']+$electorsvotersdataNew['SC']['overseasFemaleElector']+$electorsvotersdataNew['SC']['overseasthirdElector']}}</td>
+          <td>{{$electorsvotersdataNew['ST']['overseasmaleElector']+$electorsvotersdataNew['ST']['overseasFemaleElector']+$electorsvotersdataNew['ST']['overseasthirdElector']}}</td>
+          <td>
+            {{$electorsvotersdataNew['GEN']['overseasmaleElector']+$electorsvotersdataNew['GEN']['overseasFemaleElector']+$electorsvotersdataNew['GEN']['overseasthirdElector']+$electorsvotersdataNew['SC']['overseasmaleElector']+$electorsvotersdataNew['SC']['overseasFemaleElector']+$electorsvotersdataNew['SC']['overseasthirdElector']+$electorsvotersdataNew['ST']['overseasmaleElector']+$electorsvotersdataNew['ST']['overseasFemaleElector']+$electorsvotersdataNew['ST']['overseasthirdElector']}}
+
+          </td>
+        </tr>
+        <tr>
+          <td class="bolds" colspan="4">5. OVERSEAS ELECTORS WHO VOTED
+          </td>
+        </tr>
+        <tr>
+          <td class="bold">a.MALE</td>
+          <td>{{$totalvoteNew['GEN']['overseasmalevoters']}}</td>
+          <td>{{$totalvoteNew['SC']['overseasmalevoters']}}</td>
+          <td>{{$totalvoteNew['ST']['overseasmalevoters']}}</td>
+          <td>{{$totalvoteNew['GEN']['overseasmalevoters']+$totalvoteNew['SC']['overseasmalevoters']+$totalvoteNew['ST']['overseasmalevoters']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">b.FEMALE</td>
+          <td>{{$totalvoteNew['GEN']['overseasFemalevoters']}}</td>
+          <td>{{$totalvoteNew['SC']['overseasFemalevoters']}}</td>
+          <td>{{$totalvoteNew['ST']['overseasFemalevoters']}}</td>
+          <td>{{$totalvoteNew['GEN']['overseasFemalevoters']+$totalvoteNew['SC']['overseasFemalevoters']+$totalvoteNew['ST']['overseasFemalevoters']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">c.THIRD GENDER</td>
+           <td>{{$totalvoteNew['GEN']['overseasthirdvoters']}}</td>
+          <td>{{$totalvoteNew['SC']['overseasthirdvoters']}}</td>
+          <td>{{$totalvoteNew['ST']['overseasthirdvoters']}}</td>
+          <td>{{$totalvoteNew['GEN']['overseasthirdvoters']+$totalvoteNew['SC']['overseasthirdvoters']+$totalvoteNew['ST']['overseasthirdvoters']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">d.TOTAL</td>
+          <td>{{$totalvoteNew['GEN']['overseasmalevoters']+$totalvoteNew['GEN']['overseasFemalevoters']+$totalvoteNew['GEN']['overseasthirdvoters']}}</td>
+          <td>{{$totalvoteNew['SC']['overseasmalevoters']+$totalvoteNew['SC']['overseasFemalevoters']+$totalvoteNew['SC']['overseasthirdvoters']}}</td>
+          <td>{{$totalvoteNew['ST']['overseasmalevoters']+$totalvoteNew['ST']['overseasFemalevoters']+$totalvoteNew['ST']['overseasthirdvoters']}}</td>
+          <td>
+            {{$totalvoteNew['GEN']['overseasmalevoters']+$totalvoteNew['GEN']['overseasFemalevoters']+$totalvoteNew['GEN']['overseasthirdvoters']+$totalvoteNew['SC']['overseasmalevoters']+$totalvoteNew['SC']['overseasFemalevoters']+$totalvoteNew['SC']['overseasthirdvoters']+$totalvoteNew['ST']['overseasmalevoters']+$totalvoteNew['ST']['overseasFemalevoters']+$totalvoteNew['ST']['overseasthirdvoters']}}
+
+          </td>
+        </tr>
+        <tr>
+          <td class="bolds" colspan="4">6. REJECTED VOTES
+          </td>
+        </tr>
+        <tr>
+          <td class="bold">a. VOTES <span style="font-weight: normal;">(POSTAL)</span>
+          </td>
+          <td>{{$totalpostalvoteNew['GEN']['postalrejected']}}</td>
+          <td>{{$totalpostalvoteNew['SC']['postalrejected']}}</td>
+          <td>{{$totalpostalvoteNew['ST']['postalrejected']}}</td>
+          <td>{{$totalpostalvoteNew['GEN']['postalrejected']+$totalpostalvoteNew['SC']['postalrejected']+$totalpostalvoteNew['ST']['postalrejected']}}</td>
+        </tr>
+        <tr>
+          <td class="bold">b. PERCENTAGE <span style="font-weight: normal;">(to Postal <br> Votes)</span></td>
+          <td>{{round($totalpostalvoteNew['GEN']['postalrejected']/$totalpostalvoteNew['GEN']['postaltotalreceived']*100,2)}}</td>
+          <td>{{round($totalpostalvoteNew['SC']['postalrejected']/$totalpostalvoteNew['SC']['postaltotalreceived']*100,2)}}</td>
+          <td>{{round($totalpostalvoteNew['ST']['postalrejected']/$totalpostalvoteNew['ST']['postaltotalreceived']*100,2)}}</td>
+          <td>{{round(($totalpostalvoteNew['GEN']['postalrejected']+$totalpostalvoteNew['SC']['postalrejected']+$totalpostalvoteNew['ST']['postalrejected'])/($totalpostalvoteNew['GEN']['postaltotalreceived']+$totalpostalvoteNew['SC']['postaltotalreceived']+$totalpostalvoteNew['ST']['postaltotalreceived'])*100,2)}}</td>
+        </tr>
+        <tr>
+          <td class="bold">c. VOTES REJECTED FROM <br>EVM <span style="font-weight: normal;">(NOT RETRIVED+TEST <br> VOTES+REJECTED DUE TO OTHER <br> REASON)</span>
+          </td>
+          <td>{{$totalvoteNew['GEN']['votes_not_retreived_from_evm']+$totalvoteNew['GEN']['rejected_votes_due_2_other_reason']+$totalvoteNew['GEN']['test_votes_49_ma']}}</td>
+          <td>{{$totalvoteNew['SC']['votes_not_retreived_from_evm']+$totalvoteNew['SC']['rejected_votes_due_2_other_reason']+$totalvoteNew['SC']['test_votes_49_ma']}}</td>
+          <td>{{$totalvoteNew['ST']['votes_not_retreived_from_evm']+$totalvoteNew['ST']['rejected_votes_due_2_other_reason']+$totalvoteNew['ST']['test_votes_49_ma']}}</td>
+          <td>
+            {{$totalvoteNew['GEN']['votes_not_retreived_from_evm']+$totalvoteNew['GEN']['rejected_votes_due_2_other_reason']+$totalvoteNew['GEN']['test_votes_49_ma']+$totalvoteNew['SC']['votes_not_retreived_from_evm']+$totalvoteNew['SC']['rejected_votes_due_2_other_reason']+$totalvoteNew['SC']['test_votes_49_ma']+$totalvoteNew['ST']['votes_not_retreived_from_evm']+$totalvoteNew['ST']['rejected_votes_due_2_other_reason']+$totalvoteNew['ST']['test_votes_49_ma']}}
+
+          </td>
+        </tr>
+        <tr>
+          <td class="bolds">7. NOTA VOTES <span style="font-weight: normal;">(POSTAL + EVM)</span></td>
+          <td>{{$notavoteNew['GEN']['totalEvmPostalvotenota']}}</td>
+          <td>{{$notavoteNew['SC']['totalEvmPostalvotenota']}}</td>
+          <td>{{$notavoteNew['ST']['totalEvmPostalvotenota']}}</td>
+          <td>{{$notavoteNew['GEN']['totalEvmPostalvotenota']+$notavoteNew['SC']['totalEvmPostalvotenota']+$notavoteNew['ST']['totalEvmPostalvotenota']}}</td>
+        </tr>
+        <tr>
+          <td class="bolds">8. VALID VOTES <span style="font-weight: normal;">(EXCLUDING NOTA VOTES) <br>3.e-(6.a+6.c+7) </span>
+          </td>
+
+
+          <?php $total1 = ($totalvoteNew['GEN']['totalMaleVoters']+$totalvoteNew['GEN']['totalFemaleVoters']+$totalvoteNew['GEN']['totalOtherVoters'])-($totalpostalvoteNew['GEN']['postalrejected']+($totalvoteNew['GEN']['votes_not_retreived_from_evm']+$totalvoteNew['GEN']['rejected_votes_due_2_other_reason']+$totalvoteNew['GEN']['test_votes_49_ma'])+$notavoteNew['GEN']['totalEvmPostalvotenota']); ?>
+
+          <?php $total2 = ($totalvoteNew['SC']['totalMaleVoters']+$totalvoteNew['SC']['totalFemaleVoters']+$totalvoteNew['SC']['totalOtherVoters'])-($totalpostalvoteNew['SC']['postalrejected']+($totalvoteNew['SC']['votes_not_retreived_from_evm']+$totalvoteNew['SC']['rejected_votes_due_2_other_reason']+$totalvoteNew['SC']['test_votes_49_ma'])+$notavoteNew['SC']['totalEvmPostalvotenota']); ?>
+
+          <?php $total3 = ($totalvoteNew['ST']['totalMaleVoters']+$totalvoteNew['ST']['totalFemaleVoters']+$totalvoteNew['ST']['totalOtherVoters'])-($totalpostalvoteNew['ST']['postalrejected']+($totalvoteNew['ST']['votes_not_retreived_from_evm']+$totalvoteNew['ST']['rejected_votes_due_2_other_reason']+$totalvoteNew['ST']['test_votes_49_ma'])+$notavoteNew['ST']['totalEvmPostalvotenota']); ?>
+
+          <td>
+            {{ $total1 }}
+
+          </td>
+          <td>
+             {{ $total2 }}
+            
+          </td>
+          <td>
+             {{ $total3 }}
+
+          </td>
+          <td>{{$total1+$total2+$total3}}</td>
+          
+        </tr>
+        <tr>
+          <td class="bolds">9. POLL PERCENTAGE
+          </td>
+          <td>{{round($total1/$electorsvotersdataNew['GEN']['totalElectors']*100,2)}}</td>
+          <td>{{round($total2/$electorsvotersdataNew['SC']['totalElectors']*100,2)}}</td>
+          <td>{{round($total3/$electorsvotersdataNew['ST']['totalElectors']*100,2)}}</td>
+          <td>{{round(($total1+$total2+$total3)/($electorsvotersdataNew['GEN']['totalElectors']+$electorsvotersdataNew['SC']['totalElectors']+$electorsvotersdataNew['ST']['totalElectors'])*100,2)}}</td>
+        </tr>
+        <tr>
+          <td class="bolds">10. NO. OF POLLING STATIONS
+          </td>
+          <td>{{$totalvoteNew['GEN']['totalpollingstation']}}</td>
+          <td>{{$totalvoteNew['SC']['totalpollingstation']}}</td>
+          <td>{{$totalvoteNew['ST']['totalpollingstation']}}</td>
+          <td>{{$totalvoteNew['GEN']['totalpollingstation']+$totalvoteNew['SC']['totalpollingstation']+$totalvoteNew['ST']['totalpollingstation']}}</td>
+        </tr>
+        <tr>
+          <td class="bolds">11. AVERAGE NO. OF <br> ELECTORS PER POLLING <br>STATION <span style="font-weight: normal;">(including Service Electors)</span>
+          </td>
+          <?php 
+
+              $total4 = $electorsvotersdataNew['GEN']['totalElectors']/$totalvoteNew['GEN']['totalpollingstation'];
+              $total5 = $electorsvotersdataNew['SC']['totalElectors']/$totalvoteNew['SC']['totalpollingstation'];
+              $total6 = $electorsvotersdataNew['ST']['totalElectors']/$totalvoteNew['ST']['totalpollingstation'];
+
+          ?>
+          <td>{{round($electorsvotersdataNew['GEN']['totalElectors']/$totalvoteNew['GEN']['totalpollingstation'],0)}}</td>
+          <td>{{round($electorsvotersdataNew['SC']['totalElectors']/$totalvoteNew['SC']['totalpollingstation'],0)}}</td>
+          <td>{{round($electorsvotersdataNew['ST']['totalElectors']/$totalvoteNew['ST']['totalpollingstation'],0)}}</td>
+          <td>{{round($total4+$total5+$total6,0)}}</td>
+        </tr>
+        <tr><td colspan="5"><p style="border-top: 1px solid #000;"></p></td></tr>
+      </tbody>
+    </table>
+    <table>
+      <tr style="width: 100%;">
+        <td colspan="5" style="text-align: center;border-top: 1px solid #000;"><p><b style="font-size: 15px;">Nirvachan Sadan, Ashoka Road, New Delhi- 110001</b></p></td>
+      </tr>
+    </table>
+  </div>
+</html>

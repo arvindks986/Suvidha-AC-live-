@@ -1,0 +1,45 @@
+.widget-content .widget-content-wrapper {
+    display: flex;
+    flex: 1;
+    position: relative;
+    align-items: center;
+}
+.widget-content .widget-content-left .widget-heading {
+    opacity: .8;
+    font-weight: bold;
+}
+.widget-content .widget-content-left .widget-subheading {
+    opacity: .5;
+}
+.widget-content .widget-content-right {
+    margin-left: auto;
+}
+.widget-content .widget-numbers {
+    font-weight: bold;
+    font-size: 1.8rem;
+    display: block;
+}
+.bg-midnight-bloom {
+    background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%) !important;
+}
+.widget-content {
+    padding: 1rem;
+    flex-direction: row;
+    align-items: center;
+}
+.pollDashboard .card{margin-bottom:0px;}
+.pollDashboard .card.cardBox p{font-weight:400;    text-transform: initial;}
+.pollDashboard .card.cardBox a {font-size: 24px;  color: #000;  background: #ffffff36;    padding: 0px 10px;border-radius: 5px;}
+
+
+.card.income.cardBox.cardBottom {border-radius: 0 0 12px 12px;}
+.card.cardBox p strong {font-size: 22px;}
+.greenLite{background-color:#82ca9c;}
+.orangeLite{ background-color:#fbaf5d;}
+.purpleLite{background-color:#a864a8;}
+.blueLite{background-color:#448ccb;}
+.card {   
+    -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,.1);
+    box-shadow: 0 0 6px 1px rgba(0,0,0,.22);
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4,9,20,0.03), 0 0.9375rem 1.40625rem rgba(4,9,20,0.03), 0 0.25rem 0.53125rem rgba(4,9,20,0.05), 0 0.125rem 0.1875rem rgba(4,9,20,0.03);
+}

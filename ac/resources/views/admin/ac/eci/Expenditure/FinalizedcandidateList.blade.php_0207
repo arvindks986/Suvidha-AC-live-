@@ -1,0 +1,146 @@
+@extends('admin.layouts.ac.expenditure-theme')
+@section('title', 'Candidate Nomintion Details')
+@section('bradcome', 'Finalized Candidate List')
+@section('description', '')
+@section('content') 
+ <?php 
+	$st=getstatebystatecode($user_data->st_code);
+	$distname=getdistrictbydistrictno($user_data->st_code,$user_data->dist_no);
+	$pcdetails=getpcbypcno($user_data->st_code,$user_data->pc_no); 
+  
+    ?>
+<main role="main" class="inner cover mb-3">
+	<section class="mt-5">
+  <div class="container-fluid">
+  <div class="row">
+  <div class="card text-left" style="width:100%; margin:0 auto;">
+                <div class=" card-header">
+                   @if (Session::has('message'))
+                        <div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>{{ Session::get('message') }} </div> 
+                        @php Session::forget('message'); @endphp
+                        @elseif (Session::has('error'))
+                        <div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{ Session::get('error') }} <br/>
+
+                        </div>
+                        @php Session::forget('error'); @endphp
+                        @endif
+                <div class=" row">
+                 <div class="col"><h2 class="mr-auto">Finalized Candidate List</h2></div> 
+                   <div class="col"><p class="mb-0 text-right">
+												<b>State Name:</b> 
+												<span class="badge badge-info">ALL</span> &nbsp;&nbsp; 
+												<b></b><span class="badge badge-info"></span>&nbsp;&nbsp; 
+												<b>PC:</b> <span class="badge badge-info">ALL</span>
+									  </p></div>
+										</div><!-- end row-->
+	              </div><!-- end card-header-->
+<div class="card-body">  
+  <div class="table-responsive">
+      <table id="example" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+        <tr>
+          <th>Candidate Name</th>
+         
+<!-- 					<th>Candidate Name In Hindi</th>
+ --><!-- 					<th>Candidate Father Name</th>
+ -->          <th>Election Year</th>
+          <th>Election Type</th>
+<!--           <th>View</th> 
+ -->        
+ <th>Last Date of Submission</th>
+  
+<th>Date of Submission</th>
+
+ <th><div class="width-260">Status</div></th>
+        </tr>
+        </thead>
+<?php $j=0;  ?>
+		@if(!empty($candList))
+		@foreach($candList as $candDetails)  
+			<?php
+			// dd($candDetails);
+				$j++; 
+
+				?>
+<tr>
+<td>@if(!empty($candDetails->cand_name)) {{$candDetails->cand_name}} @endif - @if(!empty($candDetails->cand_hname)) {{$candDetails->cand_hname}} @endif</td>
+<td>@if(!empty($candDetails->YEAR)) {{$candDetails->YEAR}} @endif</td>
+<td>@if(!empty($candDetails->ELECTION_TYPE)) {{$candDetails->ELECTION_TYPE}} @endif</td>
+<td>30-06-2019</td>
+<td>
+<?php echo !empty($candDetails->finalized_date)?date('d-m-Y h:i A',strtotime($candDetails->finalized_date)):'N/A' ?>
+</td>
+  
+<td><button value="{{$candDetails->candidate_id}}" id="changeStatus" class="btn btn-info">Permission Of Scrutiny Report</button>
+</td>
+
+</tr>
+@endforeach 
+@endif 
+<tbody>
+             </tbody>
+            </table>
+           </div> <!-- end responcive-->
+          </div> <!-- end card-body-->
+        </div>
+      </div>
+     </div>
+   	</div>
+  </section>
+	
+	</main>
+ <!-- Modal -->
+<div class="modal fade" id="ModalProfile" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <?php //print_r($PreviewData);die;     ?>
+            <div class="modal-body">
+                <div class="col"><center><h4>Candidate Status</h4></center></div>
+                <br>
+                <div class="profileData"></div>
+            </div>
+
+            <!--            <button id='cmd' ids="">generate PDF</button>-->
+        </div>
+
+    </div>
+</div>
+<!-- ProfileRO-->
+ 
+<!-- end pop up -->
+
+<!-- Validation  JavaScript -->
+
+<!--**********FORM VALIDATION STARTS**********-->
+<script type="text/javascript" src="{{ asset('admintheme/js/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('jquery-validation/jquery.validate.min.js') }} "></script>
+<script type="text/javascript" src="{{ asset('jquery-validation/additional-methods.min.js') }}"></script>
+<script type="text/javascript">
+
+  
+    $(document).on('click', '#changeStatus', function (e) {
+    var candidate_id = $(this).val();
+	var confirms = confirm('Are you sure give permission to update scrutiny report?');
+	if (confirms==true) {
+   jQuery.ajax({
+    url: "{{url('/eci-expenditure/updateStatusReport')}}",
+            type: 'GET',
+            data: {candidate_id: candidate_id},
+            //dataType: 'html',
+            success: function (result) {
+				if(result=="1")
+				{
+				  location.reload();
+				}
+            }
+    });
+	}
+	
+	});
+    // end profile ECI pop up
+</script>
+<!--graph implementation start here-Manoj -->
+@endsection

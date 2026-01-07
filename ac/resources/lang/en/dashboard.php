@@ -1,0 +1,25 @@
+<?php
+    return [ 
+    'tag1'       => 'Nomination',
+    'tag2'       => 'Permissions',
+    'tag3'       => 'Advertisement',
+    'tag4'       => 'Affidavit',
+    'appoinmentScheduled'       => 'Appointment Scheduled For',
+	'pay_online'       => 'Pay Security Deposit Online',
+	'pay_online_done'       => 'Security Deposit Paid',
+	'step1'       => 'Submitted for Pre-Scrutiny',
+	'step2'       => 'Pre-Scrutiny Done',
+	'step3'       => 'Appointment Scheduled',
+	'step4'       => 'Physically Submitted',
+	'step5'       => 'Scrutiny of Nomination',
+	'step6'       => 'Nomination Accepted',
+	'step7'       => 'Nomination Withdrawn',
+	'step8'       => 'Nomination Rejected',
+	'viewAll'       => 'View All',
+	'Apply_New'       => 'Apply New', 
+	'my'       => 'My',
+	'new_nomination_message'       => 'Here you can apply for new nomination application',
+	'saved_and_submitted_nomination'       => 'All your saved and submitted applications are listed here',
+	'tag3'       => 'Advertisement',
+	];
+?>

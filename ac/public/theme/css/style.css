@@ -1,0 +1,119 @@
+   html, body {
+                background-color: #fff;
+                color: #636b6f;
+              
+                font-weight: 100;
+                height: 100vh;
+                margin: 0;
+				    font-family: 'Poppins', sans-serif;
+				/* background: url(../img/vendor/grid.png); */
+				background-size: 16px;
+            }
+
+            .full-height {
+                height: 100vh;
+            }
+
+            .flex-center {
+                align-items: center;
+                display: flex;
+                justify-content: center;
+            }
+
+            .position-ref {
+                position: relative;
+            }
+
+            .top-right {
+                position: absolute;
+                right: 10px;
+                top: 18px;
+            }
+
+            .content {
+                text-align: center;
+            }
+
+            .title {
+                /* font-size: 84px; */
+            }
+
+            .links > a {
+                color: #636b6f;
+                padding: 0 25px;
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: .1rem;
+                text-decoration: none;
+                text-transform: uppercase;
+            }
+
+            .m-b-md {
+                /* margin-bottom: 30px; */
+            }
+	
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    text-decoration: none;
+}
+.btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+}
+.btn-outline-danger:not(:disabled):not(.disabled).active, .btn-outline-danger:not(:disabled):not(.disabled):active, .show>.btn-outline-danger.dropdown-toggle {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+.btn-outline-danger {
+    color: #dc3545;
+border-color: #dc3545;}
+.btn-outline-danger:hover {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+.btn:hover {
+    color: #212529;
+    text-decoration: none;
+}
+.btn-outline-danger.focus, .btn-outline-danger:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220,53,69,.5);
+}
+.btn.focus, .btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.links {
+    position: relative;
+    width: 100%;
+    height: 40px;
+}
+
+.links p {
+    background: #fff;
+    position: relative;
+    top: -15px;
+    display: inline-block;
+    padding: 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 80%;
+    font-weight: 600;
+}
+.links hr{position:absolute;z-index: 0;width: 100%;}

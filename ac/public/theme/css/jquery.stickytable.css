@@ -1,0 +1,86 @@
+.sticky-table {
+    max-width: 100%;
+    max-height: 67vh;
+    overflow: auto;
+    border-top: 0px solid #ddd;
+    border-bottom: 0px solid #ddd;
+    padding: 0 !important;
+    transition: width 2s;
+}
+
+.sticky-table, .sticky-table * {
+    -webkit-transition: all 0s;
+    -moz-transition: all 0s;
+    -o-transition: all 0s;
+    transition: all 0s;
+}
+
+.sticky-table table {
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    border-spacing: 0;
+    padding: 0 !important;
+    border-collapse: collapse;
+}
+
+.sticky-table table tr.sticky-header th, .sticky-table table tr.sticky-header td,
+.sticky-table table tr.sticky-footer th, .sticky-table table tr.sticky-footer td {
+    background: #ebebeb;
+    border-top: 0;
+    position: relative;
+    position: -webkit-sticky;
+    position: -ms-sticky;
+    position: sticky;
+    outline: 1px solid #ddd;
+    z-index: 10;
+}
+.sticky-table table tr.sticky-header th, .sticky-table table tr.sticky-header td {
+    top: 0;
+    background: #ebebeb;
+}
+.sticky-table table tr.sticky-footer th, .sticky-table table tr.sticky-footer td {
+    bottom: 0;
+}
+
+.sticky-table table td.sticky-cell, .sticky-table table th.sticky-cell,
+.sticky-table table td.sticky-cell-opposite, .sticky-table table th.sticky-cell-opposite {
+    background-color: #f8f8f8;
+    outline: 1px solid #ddd;
+    position: relative;
+    position: -webkit-sticky;
+    position: -ms-sticky;
+    position: sticky;
+    z-index: 10;
+}
+.sticky-table.sticky-ltr-cells table td.sticky-cell, .sticky-table.sticky-ltr-cells table th.sticky-cell,
+.sticky-table.sticky-rtl-cells table td.sticky-cell-opposite, .sticky-table.sticky-rtl-cells table th.sticky-cell-opposite {
+    left: 0
+}
+.sticky-table.sticky-rtl-cells table td.sticky-cell, .sticky-table.sticky-rtl-cells table th.sticky-cell,
+.sticky-table.sticky-ltr-cells table td.sticky-cell-opposite, .sticky-table.sticky-ltr-cells table th.sticky-cell-opposite {
+    right: 0
+}
+
+.sticky-table table tr.sticky-header td.sticky-cell, .sticky-table table tr.sticky-header th.sticky-cell,
+.sticky-table table tr.sticky-header td.sticky-cell-opposite, .sticky-table table tr.sticky-header th.sticky-cell-opposite,
+.sticky-table table tr.sticky-footer td.sticky-cell, .sticky-table table tr.sticky-footer th.sticky-cell,
+.sticky-table table tr.sticky-footer td.sticky-cell-opposite, .sticky-table table tr.sticky-footer th.sticky-cell-opposite {
+    z-index: 15;
+}
+
+th.sticky-cell {
+    background: #ebebeb!important;
+    z-index: 13;
+}
+th.sticky-cell-opposite {
+    background: #8BC34A!important;
+    color: #fff;
+}
+table tr td.sticky-cell-opposite:last-child {
+    background: #8BC34A;
+    color: #fff;
+    text-align: center;
+}
+.sticky-table table tr th{color:#000;}
+.sticky-table table tr.sticky-header th{white-space:nowrap;}

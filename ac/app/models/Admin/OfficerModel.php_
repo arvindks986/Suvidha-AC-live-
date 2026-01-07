@@ -1,0 +1,89 @@
+<?php namespace App\models\Admin;
+
+use Illuminate\Database\Eloquent\Model;
+
+class OfficerModel extends Model
+{
+    protected $table = 'officer_login';
+	
+    public static function check_otp_time($request){
+        $date1 = date('Y-m-d H:i:s');
+        $sql = OfficerModel::select('otp_time');
+     
+        if($request->has('mobile')){
+            $sql->where('Phone_no',$request->mobile);
+        }
+        if($request->has('email')){
+            $sql->where('email',$request->email);
+        }
+        $object = $sql->first();
+        if(!$object){
+            return false;
+        }
+        $date2 = $object->otp_time;
+        $to_time = strtotime($date2);
+        $from_time = strtotime($date1);
+        return abs($to_time - $from_time);
+
+    }
+
+	public static function update_otp_by_mobile($mobile,$otp){
+        $object = OfficerModel::where('Phone_no', $mobile)->first();
+        $object->mobile_otp = $otp;
+        $object->otp_time  = NOW();
+        $object->otp_verify_by_string = OfficerModel::generate_unique_string($object->id);
+        return $object->save();
+    }
+
+    public static function update_otp_by_email($email,$otp){
+        $object = OfficerModel::where('email', $email)->first();
+        $object->mobile_otp = $otp;
+        $object->otp_time   = NOW();
+        $object->otp_verify_by_string = OfficerModel::generate_unique_string($object->id);
+        return $object->save();
+    }
+	
+    public static function generate_unique_string($id){
+        $length = 20;
+        $token = substr_replace(str_random($length). time(), $id, 10, 0);
+        \Session::put('forgot-token',$token);
+        return $token;
+    }
+
+    public static function get_user_by_toke($token){
+        $object = OfficerModel::where('otp_verify_by_string', $token)->first();
+        if(!$object){
+            return false;
+        }
+        return $object->toArray();
+    }
+
+    public static function get_user($data = array()){
+        $sql = OfficerModel::select();
+        if(!empty($data['token'])){
+            $sql->where('otp_verify_by_string', $data['token']);
+        }
+        if(!empty($data['mobile'])){
+            $sql->where('Phone_no', $data['mobile']);
+        }
+        if(!empty($data['otp'])){
+            $sql->where('mobile_otp', $data['otp']);
+        }
+        $object = $sql->first();
+        if(!$object){
+            return false;
+        }
+        return $object->toArray();
+    }
+
+    public static function update_password($data = array()){
+        $object = OfficerModel::where('otp_verify_by_string', $data['token'])->first();
+        $object->mobile_otp = '';
+        $object->otp_time   = NOW();
+        $object->password   = bcrypt($data['password']);
+        $object->otp_verify_by_string = '';
+        return $object->save();
+    }
+
+
+}

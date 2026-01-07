@@ -1,0 +1,35 @@
+.dash{}
+.dash .widget-icon {
+    color: green;
+    line-height: normal;
+    font-size: 68px;
+}
+.dash h4 b {text-transform: uppercase;  font-weight: 700;   letter-spacing: 1px;   font-size: 20px;}
+span.num {
+    padding: 20px;
+    /*background: #ff980033;*/
+    display: inline-block;
+    min-width: 150px;
+    min-height: 150px;
+    margin: auto;
+    /* padding: 100px; */
+    border-radius: 50%;
+    line-height: 90px;
+    font-size: 18px;
+    font-weight: 600;
+}
+span.non-num {
+    padding: 20px;
+    /* background: #d14b8a;*/
+    display: inline-block;
+    min-width: 150px;
+    min-height: 150px;
+    margin: auto;
+    /* padding: 100px; */
+    border-radius: 50%;
+    line-height: 90px;
+    font-size: 18px;
+    font-weight: 600;
+    /*color: #fff;*/
+}
+span.num:after {content: "\f054";position: absolute;left: 0;font-family: FontAwesome;font-size: 18px;color: #d34c89;}

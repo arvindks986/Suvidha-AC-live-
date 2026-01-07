@@ -1,0 +1,249 @@
+@extends('admin.layouts.ac.dashboard-theme')
+@section('content')
+<style type="text/css">
+    input.state_code_href {
+        border: 0px;
+        padding: 0;
+        margin: 0;
+        background: 0px;
+        letter-spacing: 2px;
+        cursor: pointer;
+    }
+
+    input.state_code_href:hover {
+        text-decoration: underline;
+    }
+
+    .loader {
+        position: fixed;
+        left: 50%;
+        right: 50%;
+        border: 16px solid #f3f3f3;
+        /* Light grey */
+        border-top: 16px solid #3498db;
+        /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        z-index: 99999;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    #acViewBody a {
+        text-decoration: none !important;
+        color: #000 !important;
+        cursor: default !important;
+    }
+
+    #acViewBody a:hover {
+        text-decoration: none !important;
+        color: #000 !important;
+        cursor: default !important;
+    }
+</style>
+<div class="loader" style="display:none;"></div>
+<section class="statistics color-grey pt-4 pb-2">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-9 pull-left">
+                <h4>{!! $heading_title !!}</h4>
+            </div>
+
+            <div class="col-md-3  pull-right text-right">
+                <span class="report-btn" id="export-csv-btn"><a class="btn btn-primary" href="{{url('eci/counting/boothschedule-report-main-excel')}}/{{$urlexcel}}" title="Download Excel" target="_blank">Export Excel</a></span>
+                <!-- <span class="report-btn" id="export-pdf-btn"><a class="btn btn-primary" href="{{url('eci/counting/boothschedule-report-main-pdf')}}/{{$urlpdf}}" title="Download PDF" target="_blank">Export PDF</a></span> -->
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="dashboard-header section-padding">
+    <div class="container-fluid">
+        <form  action="{{url('eci/counting/BoothCounting_main_ScheduleReport')}}" class="row"  >
+	
+            <div class="form-group col-md-3">
+                <label>Select State <span style="color:red">*</span></label>
+                <select name="state_code" id="state_code" class="form-control" required  onchange="getACList(this.value);">
+                    <option value="">Select State</option>
+					<option value="0" @if(isset($state) && $state==0 && $state!="") selected @endif>Select All</option>
+					@foreach($data['m_state'] as $data)
+                    <option value="{{$data->ST_CODE}}" @if(isset($state) && $state==$data->ST_CODE) selected @endif>{{$data->ST_NAME}} </option>
+					@endforeach
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Select AC <span style="color:red">*</span></label>
+                    @if(isset($state) && $state!="")
+				    <select name="ac_no" id="ac_no" class="form-control">
+					   <?php echo getAcListDropdown($state,$ac_no) ?>
+					</select>
+				     @else
+				     <select name="acno" id="ac_no" class="form-control">
+						<option value="">Select AC</option> 
+					</select>
+				     @endif
+                </select>
+				<div id="show_ac_list" style="display:inline"></div> 
+            </div>
+			 <div class="form-group col-md-3">
+                <button type="submit" name="search" id="submit-report" class="btn btn-success" style="margin-top:31px;">Search</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="container-fluid">
+    <!-- Start parent-wrap div -->
+    <div class="parent-wrap">
+        <!-- Start child-area Div -->
+        <div class="child-area">
+            <div class="page-contant">
+                <div class="random-area">
+                    <br>
+                    <div class="table-responsive">
+                        <table id="example" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th> S.No </th>
+                                    <th> State </th>
+                                    <th> Total ACs</th>
+                                    <th> Total Round Setup Done By ACs</th>
+                                    <th> Round Setup Pending By ACs</th>
+                                    @if(Auth::user()->officername == 'ECIECI2')
+                                    <th> Total Postal Publish By ACs</th>
+                                    <th> Finalize Publish By ACs</th>
+                                    @endif
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @php
+                                $count = 1;
+
+                                $GrandTotalScheduled = 0;
+                                $GrandCompletedRound = 0;
+
+
+
+
+                                @endphp
+
+                                @if(count($result)>0)
+                                @php $i=1;
+                                $grand_total = 0;
+                                $grandtotalacscheduledRound = 0;
+                                $grand_total_pending_ac = 0;
+                                $grand_total_postal_total_votes_publish = 0;
+                                $grand_total_finalize_type_publish = 0;
+                                @endphp
+                                @foreach($result as $data)
+                                <?php
+                                $total_ac = !empty($data->ac_no_count) ? $data->ac_no_count : 0;
+
+                                $grand_total += $total_ac;
+                                $completedRound = completeRound($data->STATE);
+                                $acscheduledRound = completeRound_ac_total($data->STATE);
+                                $grandtotalacscheduledRound += $acscheduledRound;
+
+                                $pending_ac = abs($total_ac - $acscheduledRound);
+                                $grand_total_pending_ac += $pending_ac;
+                                $GrandCompletedRound   += $completedRound;
+                                if(Auth::user()->officername == 'ECIECI2'){
+                                    $grand_total_postal_total_votes_publish  += $data->postal_total_votes_publish;
+                                    $grand_total_finalize_type_publish += $data->finalize_type_publish;
+
+                                }
+                                ?>
+                                <tr>
+                                    <td> <span>{{$i}}</span></td>
+                                    <td>
+                                        <form method="POST" action="{{ url('eci/counting/BoothCountingScheduleReport') }}">
+                                            <input type="hidden" name="state_code" value="{{ $data->STATE }}">
+                                            <input type="hidden" name="ac_no" value="0">
+
+                                            {!! csrf_field() !!}
+                                            @if(Auth::user()->officername == 'ECIECI2')
+                                            <input type="submit" class="state_code_href" value="{{$data->ST_NAME}}" style="color: #f0587e;">
+                                            @else
+                                            <input type="submit" class="state_code_href" value="{{getstatebystatecode($data->STATE)->ST_NAME}}" style="color: #f0587e;">
+                                            @endif
+                                        </form>
+                                    </td>
+                                    <td>{{ $total_ac }}</td>
+                                    <td>{{ $acscheduledRound }}</td>
+                                    <td>{{ abs($total_ac-$acscheduledRound) }}</td>
+                                    @if(Auth::user()->officername == 'ECIECI2')
+                                    <td>{{ $data->postal_total_votes_publish }}</td>
+                                    <td>{{ $data->finalize_type_publish }}</td>
+                                    @endif
+                                </tr>
+                                @php
+
+                                $i++
+
+
+
+                                @endphp
+                                @endforeach
+                                @else
+                                <tr>
+                                    <td colspan="8" style="text-align:center">--No Record Found--</td>
+                                </tr>
+                                @endif
+                            </tbody>
+                            <tr>
+                                <td><b>Total</b></td>
+                                <td></td>
+                                <td><b>{{$grand_total}}</b></td>
+                                <td><b>{{$grandtotalacscheduledRound}}</b></td>
+                                <td><b>{{$grand_total_pending_ac}}</b></td>
+                                @if(Auth::user()->officername == 'ECIECI2')
+                                <td><b>{{$grand_total_postal_total_votes_publish}}</b></td>
+                                <td><b>{{$grand_total_finalize_type_publish}}</b></td>
+                                @endif
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- End Of  table responsive -->
+                </div>
+            </div>
+            <!-- End Of random-area Div -->
+
+        </div>
+        <!-- End OF page-contant Div -->
+    </div>
+</div>
+<!-- End Of parent-wrap Div -->
+</div>
+<script>
+    function getACList(state) {
+        jQuery.ajax({
+            type: "GET",
+            url: "<?php echo url('/'); ?>/eci/counting/boothstate-by-ac/" + encodeURI(state),
+            dataType: "html",
+            success: function(response) {
+                jQuery("#show_ac_list").show();
+                jQuery("#ac_no").hide();
+                jQuery('#show_ac_list').html(response);
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError);
+            }
+        });
+    }
+</script>
+
+
+
+@endsection

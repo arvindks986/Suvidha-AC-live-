@@ -1,0 +1,41 @@
+@if(session::get("role_id") == 2)
+<section class="breadcrumb-section">
+<div class="container-fluid">
+<div class="row">
+  <div class="col" style="padding: 4px; margin-left: 64px;">
+	<a href="{{url('/dashboard-nomination-new')}}"><span class="icon icon-home"> <span class="icon icon-beaker"> </span></span> Nomination</a> 
+    <div class="nav-header float-right welcome">
+	<!--<ul class="float-right">
+    <li><a href="javascript:void(0)" >Welcome:- <b>{{$users=Session::get('Applicant_type')}}</b></a></li>
+    </ul>-->
+</div>
+  </div>
+</div>
+</div>
+</section>
+@else
+<section class="breadcrumb-section">
+<div class="container-fluid">
+<div class="row">
+  <div class="col">
+    <ul id="breadcrumb" class="pt-2 mr-auto">
+      <li><a href="{{url('/ropc/dashboard')}}"><span class="icon icon-home"> </span></a></li>
+      <li><a href="#"><span class="icon icon-beaker"> </span> Permission</a></li>
+      <li><span class="icon icon-double-angle-right"></span> @yield('bradcome')</li>  
+    </ul>
+	<div class="nav-header float-right welcome">
+	
+	<ul class="float-right">
+         
+          <li><a href="javascript:void(0)" >Welcome:- <b>{{$users=Session::get('Applicant_type')}}</b></a></li>
+        </ul>
+	
+
+
+
+</div>
+  </div>
+</div>
+</div>
+</section> 
+@endif

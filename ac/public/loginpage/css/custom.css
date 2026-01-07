@@ -1,0 +1,432 @@
+/*Custom CSS*/
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+body {
+  font-family: "Poppins", sans-serif !important;
+  font-size: 14px;
+}
+
+img {
+  max-width: 100%;
+}
+
+body.login-banner {
+  background: #ffffff url("../img/sveep-login-banner.png") no-repeat;
+  background-size: cover;
+}
+
+
+.eci-logo {
+  display: inline-block;
+  padding: 1rem 1.5rem;
+}
+
+.eci-logo img {
+  max-width: 100%;
+}
+
+.logo-rti {
+  text-align: center;
+  margin-bottom: 1.85rem;
+}
+
+div.logo-rti img:last-child {
+  display: none;
+}
+
+.menu-hnd-btn>ul {
+  display: flex;
+  justify-content: end;
+  list-style-type: none;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.menu-hnd-btn>ul>li {
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+}
+
+.menu-hnd-btn>ul>li:hover {
+  transform: scale(0.95);
+  -webkit-transform: scale(0.95);
+}
+
+.menu-hnd-btn>ul>li:first-child {
+  margin-right: 1rem;
+}
+
+.menu-hnd-btn>ul>li>a {
+  color: #ffffff;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+}
+
+.btn.btn-orange {
+  background-color: #f48120;
+  color: #ffffff;
+  transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+}
+
+.btn.btn-orange:hover,
+.btn.btn-oranger:focus {
+  background-color: #fc943f;
+  transform: scale(0.98);
+  -webkit-transform: scale(0.98);
+  transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+}
+
+.login-box {
+  position: relative;
+  display: block;
+}
+
+.shape-box {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: auto;
+}
+
+
+.left-shape {
+  position: relative;
+}
+
+.left-shape img {
+  max-width: 100%;
+  display: block;
+  margin: auto;
+}
+
+.login-wrap {
+  position: relative;
+  display: block;
+  margin-top: 1.5rem;
+}
+
+.login-form {
+  width: 615px;
+  max-width: 100%;
+  background-color: #ffffff;
+  margin: auto;
+  display: block;
+  padding: 2.5rem 1.5rem;
+  border-radius: 10px;
+}
+
+
+.logo-rti a {
+  display: block;
+}
+
+.logo-rti a>img {
+  max-width: 100%;
+}
+
+
+/* .form-control {
+  padding: 1rem 3rem;
+} */
+.login-form h2 {
+  text-align: center;
+  margin: 1.5rem auto;
+}
+
+.captcha>ul {
+  display: flex;
+  align-items: center;
+  list-style-type: none;
+  padding-left: 1rem;
+  margin-bottom: 0;
+}
+
+.captcha>ul>li>a {
+  display: inline-block;
+  color: #1A73E8;
+  font-size: 1.15rem;
+}
+
+.captcha>ul>li>a>img {
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+.captcha>ul>li:last-child {
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
+  margin-left: 1.5rem;
+  border-left: 1px solid #1A73E8;
+}
+
+.custom-field {
+  position: relative;
+  display: block;
+  margin: 1.85rem auto;
+}
+
+
+.custom-field>input,
+.custom-field>select {
+  font-size: 1rem;
+  height: 48px;
+}
+
+.custom-field>label {
+  font-size: 0.9rem;
+  position: absolute;
+  background-color: #ffffff;
+  color: #1A73E8;
+  padding: 0.25rem 0.5rem;
+  top: -0.9rem;
+  left: 0.5rem;
+  display: block;
+
+}
+
+/* .custom-field>input:focus+label {
+  display: block;
+}
+
+.custom-field>input:focus::placeholder {
+  opacity: 0;
+} */
+
+.sumt-btn {
+  margin: 1.5rem auto 0.25rem;
+}
+
+
+.copyright ul {
+  display: flex;
+  justify-content: space-around;
+  list-style-type: none;
+  color: #fff;
+  width: 48%;
+  margin: 1.5rem auto;
+  padding: 0;
+}
+
+.copyright ul>li:first-child {}
+
+.copyright a {
+  color: #fff;
+}
+
+/* OTP Page CSS */
+.multi-fields {
+  display: flex;
+  justify-content: center;
+}
+
+.multi-fields input {
+  width: 55px;
+  padding: 0.85rem;
+  display: block;
+  margin: 0 0.5rem;
+  text-align: center;
+  color: #f48120;
+  font-weight: 900;
+  font-size: 1.25rem;
+}
+
+.edit-otp ul {
+  list-style-type: none;
+  color: #515151;
+  font-size: 1.15rem;
+  padding-left: 0;
+  text-align: center;
+}
+
+.edit-otp li>a {
+  display: inline-block;
+  color: #1A73E8;
+}
+
+.login-form.otp-form {
+  padding: 5rem 5rem;
+}
+
+.otp-exp ul {
+  list-style-type: none;
+  display: flex;
+  margin: 1.85rem 0;
+  justify-content: center;
+  padding-left: 0;
+}
+
+.otp-exp ul>li {
+  color: #000;
+  font-size: 1rem;
+  padding: 0 0.5rem;
+  border-right: 1px solid #616161;
+}
+
+.otp-exp ul>li:last-child {
+  border-right: none;
+}
+
+.otp-exp ul>li:last-child a {
+  color: #1A73E8;
+  display: block;
+}
+
+.form {
+  position: relative;
+  padding: 1.5rem 2.5rem;
+}
+
+.form .custom-field {
+  margin: 1.85rem auto;
+}
+
+.form .custom-field input,
+.form .custom-field select {
+  padding: 1.15rem 0.85rem;
+}
+
+.form .custom-field.select::after {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  content: "";
+  background: url("../img/icons/down-arrow.png") no-repeat;
+  top: 1.35rem;
+  right: 0;
+  display: block;
+}
+
+.page-bg {
+  background-color: #fafafa;
+  overflow: hidden;
+}
+
+.action-btn {
+  margin: 1.5rem auto 3.5rem;
+}
+
+.action-btn ul {
+  display: flex;
+  align-items: center;
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.action-btn ul>li {
+  margin: 0 0.85rem;
+}
+
+.btn-orange-outline {
+  border: 1px solid #f48120;
+  color: #f48120;
+  display: inline-block;
+}
+
+.btn-orange-outline:hover,
+.btn-orange-outline:focus {
+  background-color: #f48120;
+  color: #ffffff;
+}
+
+.btn.btn-lg.btn-orange-outline {
+  padding: 0.5rem 2.5rem;
+  font-size: 1.25rem;
+}
+
+.page-wrap .form .custom-field input,
+.page-wrap .form .custom-field select {
+  padding: 1rem;
+}
+
+
+footer.stickyFooter {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  display: block;
+}
+
+.anchor-tab ul {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 0;
+  margin-bottom: 0;
+
+}
+
+.anchor-tab ul>li {
+  list-style-type: none;
+  width: 48%;
+}
+
+.anchor-tab ul>li>a {
+  display: block;
+  padding: 0.85rem 1.5rem;
+}
+
+.login-form.otp-form h2 {
+  text-align: center;
+  margin: 2.5rem 0;
+}
+
+.appDownload {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  display: block;
+  z-index: 0;
+  width: 48%;
+}
+
+.wrap-down {
+  display: flex;
+  align-items: flex-end;
+  list-style-type: none;
+  margin-bottom: 0;
+  padding-left: 0;
+  width: 100%;
+}
+
+.wrap-down li {
+  width: 22.50%;
+  font-size: 12px;
+  padding: 0.85rem;
+}
+
+.wrap-down li:first-child {
+  width: 42.50%;
+}
+
+.wrap-down li span {
+  display: block;
+}
+
+.wrap-down li img {
+  max-width: 100%;
+  margin: auto;
+  display: block;
+}
+
+
+.mob-app {
+  display: none;
+}

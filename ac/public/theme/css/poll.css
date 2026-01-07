@@ -1,0 +1,277 @@
+b, strong{font-weight:500;}
+.number.numberpoll small {
+    font-size: 16px;
+}
+table.table.mb-0.tableb-0 tr td {
+    border-top: 0px;
+}
+h1.numberset {
+    font-size: 34px;
+	margin-bottom:0px;
+}
+.btn-radius{border-radius:0px;}
+span.upperCase {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-bottom: 12px;
+    display: block;
+}
+.nav-header li a {  padding: 15px 12px!important;   
+}
+
+.card-header {
+    border-bottom: 1px solid #bb4292;
+}
+.section-padding {
+    padding: 1rem 0;
+}
+.container-fluid1 {
+    padding: 0 1rem;
+}
+.card-header h5 {
+font-weight: 500;}
+small {
+    color: #a7a7a7;
+}
+h1.numberset {
+    font-size: 30px;
+    margin-bottom: 0px;
+    font-weight: 500;     margin-top: 19px;
+}
+.dashboard-header .pie-chart{margin-left:0; width:50%; height:50%;}
+
+.greenbg{background:green;}
+	.boxHeading {
+    font-size: 18px;
+    color: #000!important;
+    font-weight: 500!important;
+    padding-top: 14px;
+}
+
+.widget-icon {
+        color: #ffffff4f;
+    font-size: 90px;
+    /* background-color: rgba(114,124,245,.25); */
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    line-height: 146px;
+    border-radius: 0;
+    display: inline-block;
+    max-width: 200px;
+
+}
+
+.number.numberB {
+    font-size: 2.8rem;
+    padding: 0!important;   
+	    margin: 0!important;
+}
+.mdi-account-multiple:before {
+    content: "\F00E";
+}
+.btn-activelist {
+    background: #f9f9f9;
+    box-shadow: 0px 1px 4px 0px #00000003;
+    color: #9C27B0;
+    border: 1px solid #adadad70;
+}
+.btn-activelist.active {
+    background: #9C27B0;
+    box-shadow: 0px 1px 4px 0px #00000038;
+    color: #fff;
+    border: 1px solid #9C27B0;
+}
+/* .btn.btn-activelist.active:before {
+    content: "✓";
+    position: absolute;
+    left: 14px;
+    font-size: 18px;
+    top: 8px;
+} */
+
+.page-title {
+    font-size: 18px;
+}
+
+
+	.rect-auto, .c100.p51 .slice, .c100.p52 .slice, .c100.p53 .slice, .c100.p54 .slice, .c100.p55 .slice, .c100.p56 .slice, .c100.p57 .slice, .c100.p58 .slice, .c100.p59 .slice, .c100.p60 .slice, .c100.p61 .slice, .c100.p62 .slice, .c100.p63 .slice, .c100.p64 .slice, .c100.p65 .slice, .c100.p66 .slice, .c100.p67 .slice, .c100.p68 .slice, .c100.p69 .slice, .c100.p70 .slice, .c100.p71 .slice, .c100.p72 .slice, .c100.p73 .slice, .c100.p74 .slice, .c100.p75 .slice, .c100.p76 .slice, .c100.p77 .slice, .c100.p78 .slice, .c100.p79 .slice, .c100.p80 .slice, .c100.p81 .slice, .c100.p82 .slice, .c100.p83 .slice, .c100.p84 .slice, .c100.p85 .slice, .c100.p86 .slice, .c100.p87 .slice, .c100.p88 .slice, .c100.p89 .slice, .c100.p90 .slice, .c100.p91 .slice, .c100.p92 .slice, .c100.p93 .slice, .c100.p94 .slice, .c100.p95 .slice, .c100.p96 .slice, .c100.p97 .slice, .c100.p98 .slice, .c100.p99 .slice, .c100.p100 .slice {
+  clip: rect(auto, auto, auto, auto);
+}
+
+.pie, .c100 .bar, .c100.p51 .fill, .c100.p52 .fill, .c100.p53 .fill, .c100.p54 .fill, .c100.p55 .fill, .c100.p56 .fill, .c100.p57 .fill, .c100.p58 .fill, .c100.p59 .fill, .c100.p60 .fill, .c100.p61 .fill, .c100.p62 .fill, .c100.p63 .fill, .c100.p64 .fill, .c100.p65 .fill, .c100.p66 .fill, .c100.p67 .fill, .c100.p68 .fill, .c100.p69 .fill, .c100.p70 .fill, .c100.p71 .fill, .c100.p72 .fill, .c100.p73 .fill, .c100.p74 .fill, .c100.p75 .fill, .c100.p76 .fill, .c100.p77 .fill, .c100.p78 .fill, .c100.p79 .fill, .c100.p80 .fill, .c100.p81 .fill, .c100.p82 .fill, .c100.p83 .fill, .c100.p84 .fill, .c100.p85 .fill, .c100.p86 .fill, .c100.p87 .fill, .c100.p88 .fill, .c100.p89 .fill, .c100.p90 .fill, .c100.p91 .fill, .c100.p92 .fill, .c100.p93 .fill, .c100.p94 .fill, .c100.p95 .fill, .c100.p96 .fill, .c100.p97 .fill, .c100.p98 .fill, .c100.p99 .fill, .c100.p100 .fill {
+  position: absolute;
+  /* border: 0.08em solid #ccc; */
+  width: 0.84em;
+  height: 0.84em;
+  clip: rect(0em, 0.5em, 1em, 0em);
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+
+.pie-fill, .c100.p51 .bar:after, .c100.p51 .fill, .c100.p52 .bar:after, .c100.p52 .fill, .c100.p53 .bar:after, .c100.p53 .fill, .c100.p54 .bar:after, .c100.p54 .fill, .c100.p55 .bar:after, .c100.p55 .fill, .c100.p56 .bar:after, .c100.p56 .fill, .c100.p57 .bar:after, .c100.p57 .fill, .c100.p58 .bar:after, .c100.p58 .fill, .c100.p59 .bar:after, .c100.p59 .fill, .c100.p60 .bar:after, .c100.p60 .fill, .c100.p61 .bar:after, .c100.p61 .fill, .c100.p62 .bar:after, .c100.p62 .fill, .c100.p63 .bar:after, .c100.p63 .fill, .c100.p64 .bar:after, .c100.p64 .fill, .c100.p65 .bar:after, .c100.p65 .fill, .c100.p66 .bar:after, .c100.p66 .fill, .c100.p67 .bar:after, .c100.p67 .fill, .c100.p68 .bar:after, .c100.p68 .fill, .c100.p69 .bar:after, .c100.p69 .fill, .c100.p70 .bar:after, .c100.p70 .fill, .c100.p71 .bar:after, .c100.p71 .fill, .c100.p72 .bar:after, .c100.p72 .fill, .c100.p73 .bar:after, .c100.p73 .fill, .c100.p74 .bar:after, .c100.p74 .fill, .c100.p75 .bar:after, .c100.p75 .fill, .c100.p76 .bar:after, .c100.p76 .fill, .c100.p77 .bar:after, .c100.p77 .fill, .c100.p78 .bar:after, .c100.p78 .fill, .c100.p79 .bar:after, .c100.p79 .fill, .c100.p80 .bar:after, .c100.p80 .fill, .c100.p81 .bar:after, .c100.p81 .fill, .c100.p82 .bar:after, .c100.p82 .fill, .c100.p83 .bar:after, .c100.p83 .fill, .c100.p84 .bar:after, .c100.p84 .fill, .c100.p85 .bar:after, .c100.p85 .fill, .c100.p86 .bar:after, .c100.p86 .fill, .c100.p87 .bar:after, .c100.p87 .fill, .c100.p88 .bar:after, .c100.p88 .fill, .c100.p89 .bar:after, .c100.p89 .fill, .c100.p90 .bar:after, .c100.p90 .fill, .c100.p91 .bar:after, .c100.p91 .fill, .c100.p92 .bar:after, .c100.p92 .fill, .c100.p93 .bar:after, .c100.p93 .fill, .c100.p94 .bar:after, .c100.p94 .fill, .c100.p95 .bar:after, .c100.p95 .fill, .c100.p96 .bar:after, .c100.p96 .fill, .c100.p97 .bar:after, .c100.p97 .fill, .c100.p98 .bar:after, .c100.p98 .fill, .c100.p99 .bar:after, .c100.p99 .fill, .c100.p100 .bar:after, .c100.p100 .fill {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.c100 {
+  position: relative;
+  font-size: 120px;
+  width: 1em;
+  height: 1em;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+  float: left;
+  margin: 0 0.1em 0.1em 0;
+  background-color: #307bbb;
+}
+.c100 *, .c100 *:before, .c100 *:after {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+.c100.center {
+  float: none;
+  margin: 0 auto;
+}
+.c100.big {
+  font-size: 240px;
+}
+.c100.small {
+  font-size: 80px;
+}
+.c100 > span {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 5em;
+  line-height: 5em;
+  font-size: 0.2em;
+  color: #cccccc;
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+  -webkit-transition-property: all;
+  -moz-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  -webkit-transition-timing-function: ease-out;
+  -moz-transition-timing-function: ease-out;
+  -o-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+}
+
+.c100:after { position: absolute;top: 0.08em; left: 0.08em; display: block; content: " "; -webkit-border-radius: 50%; -moz-border-radius: 50%; -ms-border-radius: 50%;  -o-border-radius: 50%;  border-radius: 50%;  background-color: whitesmoke;  width: 0.84em;  height: 0.84em;  -webkit-transition-property: all; -moz-transition-property: all; -o-transition-property: all;  transition-property: all; -webkit-transition-duration: 0.2s;  -moz-transition-duration: 0.2s;  -o-transition-duration: 0.2s;  transition-duration: 0.2s;  -webkit-transition-timing-function: ease-in; -moz-transition-timing-function: ease-in; -o-transition-timing-function: ease-in;  transition-timing-function: ease-in;}
+.c100 .slice {position: absolute; width: 1em; height: 1em; clip: rect(0em, 1em, 1em, 0.5em);}
+
+.c100:hover{cursor: default;}
+.c100:hover > span {width: 3.33em;line-height: 3.33em; font-size: 0.3em; color: #307bbb;}
+.c100:hover:after {top: 0.04em; left: 0.04em; width: 0.92em; height: 0.92em;}
+.c100.dark {background-color: #777777;}
+.c100.dark .bar,.c100.dark .fill {border-color: #c6ff00 !important;}
+.c100.dark > span {color: #777777;}
+.c100.dark:after {background-color: #666666;}
+.c100.dark:hover > span {color: #c6ff00;}
+.c100.green .bar, .c100.green .fill {border-color: #44a6e7 !important;}
+.c100.green:hover > span {color: #44a5e9;}
+.c100.green.dark .bar, .c100.green.dark .fill {border-color: #5fd400 !important;}
+.c100.green.dark:hover > span {color: #5fd400;}
+.c100.orange .bar, .c100.orange .fill {border-color: #dd9d22 !important;}
+.c100.orange:hover > span {color: #dd9d22;}
+.c100.orange.dark .bar, .c100.orange.dark .fill {border-color: #e08833 !important;}
+.c100.orange.dark:hover > span {color: #e08833;}
+
+.c100.pink .bar, .c100.pink .fill {border-color: #ff8e8e !important;}
+.c100.pink:hover > span {color: #ff8e8e;}
+.c100.pink.dark .bar, .c100.pink.dark .fill {border-color: #ff8e8e !important;}
+.c100.pink.dark:hover > span {color: #ff8e8e;}
+
+.dark-area {background-color: #666;padding: 40px;margin: 0 -40px 20px -40px;clear: both;}
+
+.clearfix:before,.clearfix:after {content: " "; display: table;}
+.clearfix:after {clear: both;}
+.clearfix {*zoom: 1;}
+.icon-block { float: left; width: 120px;  margin-left: 15px;}
+.icon-block img {opacity: 0.1;}
+.yellowbg{background-color:#fdc204!important;}
+.redbg{background-color: #FB6E51; color: #fff;}
+.greenbg{background-color: rgb(76, 175, 80) !important;}
+.bluebg{background-color: rgb(33, 150, 243) !important;}
+.orangebg{background-color: rgb(255, 152, 0) !important;}
+.divFull{}
+.card.card-box {box-shadow: 0px 0 4px 0px #0000004a; padding: 0!important;}
+
+.table th {font-weight: 500;}
+a.btn.btn-blue.refreshbtn { margin-bottom: 0; font-size: 16px;}
+tr.turnoutbg td{color: #fff; vertical-align: middle;}
+
+tr.turnoutbg td:first-child { font-size: 23px;}
+
+tr.turnoutbg td:last-child { font-size: 45px;}
+.poll-table td, .poll-table th{vertical-align:middle; color:#2c2c2c;}
+.poll-table th {vertical-align: middle; background: #dff9f8; text-align: center;}
+div#pinkcircle {float: right;}
+.table-min-height td{min-height:100px}
+.btn-group > .btn.refreshbtn:not(:last-child):not(.dropdown-toggle), .btn-group > .btn-group:not(:last-child) > .btn.refreshbtn {border-bottom-left-radius: 4px;   border-top-left-radius: 4px;   border-top-right-radius: 4px;   border-bottom-right-radius: 4px;}
+.refreshbtn {font-size: 15px;}
+.grey { color: #ccc;}
+.checked {
+    border: 2px solid #fff;
+    padding: 10px;
+    margin-right: 16px;
+    border-radius: 42px;
+    font-size: 55px;
+       position: relative;
+    top: -7px;
+}
+.booth-app .modal-content {
+    background: #dff9f8;
+    border: 0px;
+}
+
+.booth-app .modal-header {
+    background: #49a8a4;
+    color: #fff;
+}
+
+.booth-app .modal-header h3 {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.booth-app .modal-body table {
+    box-shadow: 0px 0 5px 1px #0003;
+}
+img.image-responsive {
+    max-width: 130px;
+}
+.timeSet {    position: absolute;    top: 35%;    right: 24px;    text-align: center;   width: 85px; font-size: 28px;
+    font-weight: 600;}
+.timeSet small {    font-size: 14px;
+    position: relative;
+    top: -23px;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;}
+	.nav-header.welcome ul.float-right {  margin-bottom: 0;    margin-top: 8px;}
+.nav-header.welcome ul.float-right li {  list-style: none;    margin: 3px 0 0 0; font-size:14px;}
