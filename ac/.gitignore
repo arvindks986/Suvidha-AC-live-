@@ -1,2 +1,7 @@
 .env
 storage
+/vendor/
+/public/
+
+vendor
+public
