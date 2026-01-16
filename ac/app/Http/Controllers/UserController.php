@@ -442,10 +442,15 @@ Session::put('device_key', $deviceKey);
 $userId = Auth::id();
             $sessionId = Session::getId();
 
-               $dbSession = DB::table('sessions')
-            ->where('id', Session::getId())
+            //    $dbSession = DB::table('sessions')
+            // ->where('id', Session::getId())
+            // ->where('user_id', Auth::id())
+            // ->first();
+
+          $dbSession=  DB::table('sessions')
             ->where('user_id', Auth::id())
-            ->first();
+            ->where('id', '!=', session()->getId())
+            ->delete();
 
 
            
@@ -468,7 +473,7 @@ cookie()->queue(
 
 
           
-            Auth::logoutOtherDevices($password);
+            Auth::logoutOtherDevices($request['password']);
 			
 			$dddata = DB::connection('mysql')
 			->table('profile')
