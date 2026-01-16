@@ -3,25 +3,45 @@
 use Illuminate\Database\Eloquent\Model;
 use DB, Auth;
 use App\models\Nomination\{NominationProposerModel,NominationPoliceCaseModel, ProfileModel, NominationProposerLogModel}; 
+use App\Classes\xssClean;
 
 class NominationProposerModel extends Model
 {
-
+   
   protected $table = 'nomination_application_proposer';
 
   public $fillable = ['id','candidate_id', 'nomination_id', 's_no', 'serial_no', 'part_no', 'fullname', 'date', 'epic_no_proposer_serch_part_2', 'status'];
 
   public static function add_proposer($data = array()){
 
+$values = (array) $data['fullname'];
+
+$fullnameArr = array_map(function ($value) {
+    $value = preg_replace('/[^A-Za-z0-9 ]/', ' ', $value);
+    $value = preg_replace('/\s+/', ' ', $value);
+    return trim($value);
+}, $values);
+  $epic =(array) $data['epic_no_proposer_serch_part_2'];
+
+$epicArr = array_map(function ($epic) {
+    $epic = preg_replace('/[^A-Za-z0-9 ]/', ' ', $epic);
+    $epic = preg_replace('/\s+/', ' ', $epic);
+    return trim($epic);
+}, $epic);
+
+$fullname = implode(' ', $fullnameArr);
+$epic_no_proposer_serch_part_2=implode(' ', $epicArr);
+
     $object = new NominationProposerModel();
     $object->candidate_id = \Auth::id(); 
     $object->nomination_id = $data['nomination_id']; 
     $object->status = 1; 
-    $object->epic_no_proposer_serch_part_2 = $data['epic_no_proposer_serch_part_2']; 
+    //$object->epic_no_proposer_serch_part_2 = $data['epic_no_proposer_serch_part_2']; 
+    $object->epic_no_proposer_serch_part_2 = $epic_no_proposer_serch_part_2;
     $object->s_no = ($data['s_no'])?$data['s_no']:''; 
     $object->serial_no = ($data['serial_no'])?$data['serial_no']:''; 
     $object->part_no = ($data['part_no'])?$data['part_no']:''; 
-    $object->fullname = ($data['fullname'])?$data['fullname']:'';  
+    $object->fullname = ($fullname)?$fullname:'';  
     $object->date =  ($data['date'])?date('Y-m-d', strtotime($data['date'])):'';
     $object->signature = ($data['signature'])?$data['signature']:''; 
 	
@@ -84,16 +104,33 @@ class NominationProposerModel extends Model
   ############################# RO Modal for the same ############################
 
   public static function add_proposer_ro($data = array()){
+  $values = (array) $data['fullname'];
 
+$fullnameArr = array_map(function ($value) {
+    $value = preg_replace('/[^A-Za-z0-9 ]/', ' ', $value);
+    $value = preg_replace('/\s+/', ' ', $value);
+    return trim($value);
+}, $values);
+
+$epic =(array)$data['epic_no_proposer_serch_part_2'];
+
+$epicArr = array_map(function ($epic) {
+    $epic = preg_replace('/[^A-Za-z0-9 ]/', ' ', $epic);
+    $epic = preg_replace('/\s+/', ' ', $epic);
+    return trim($epic);
+}, $epic);
+
+$fullname = implode(' ', $fullnameArr);
+$epic_no_proposer_serch_part_2=implode(' ', $epicArr);
     $object = new NominationProposerModel();
     $object->candidate_id = $data['candidate_id'];
     $object->nomination_id = $data['nomination_id']; 
     $object->status = 1; 
-    $object->epic_no_proposer_serch_part_2 = $data['epic_no_proposer_serch_part_2']; 
+    $object->epic_no_proposer_serch_part_2 = $epic_no_proposer_serch_part_2; 
     $object->s_no = ($data['s_no'])?$data['s_no']:''; 
     $object->serial_no = ($data['serial_no'])?$data['serial_no']:''; 
     $object->part_no = ($data['part_no'])?$data['part_no']:''; 
-    $object->fullname = ($data['fullname'])?$data['fullname']:'';  
+    $object->fullname = ($fullname)?$fullname:'';  
     $object->date =  ($data['date'])?date('Y-m-d', strtotime($data['date'])):'';
     $object->signature = ($data['signature'])?$data['signature']:''; 
 	

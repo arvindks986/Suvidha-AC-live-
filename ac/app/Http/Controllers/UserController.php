@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Crypt;
 //INCLUDING MODELS
 use App\commonModel;
 use App\UserLogin;
-
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cookie;
 //INCLUDING CLASSES AND HELPERS
 use App\Helpers\SmsgatewayHelper;
 use App\Classes\xssClean;
@@ -27,6 +28,7 @@ use Mail;
 use Session;
 
 use App\Helpers\LogNotification;
+use App\Services\EncryptionService;
 
 //INCLUDING TRAIT FOR COMMON FUNCTIONS
 use App\Http\Traits\CommonTraits;
@@ -160,7 +162,7 @@ class UserController extends Controller
 				$ErrorMessage['LogDescription']= 'OTP sent Successfully';
 				LogNotification::LogInfo($ErrorMessage);
 
-             return Redirect('/mobileotp/'.base64_encode($mobile))->with('success', 'OTP sent on your mobile number.');
+             return Redirect('/mobileotp/'. Crypt::encryptString($mobile))->with('success', 'OTP sent on your mobile number.');
               //USER COMES FIRST TIME OTP SEND ENDS
 
           }else{
@@ -260,10 +262,10 @@ class UserController extends Controller
 				LogNotification::LogInfo($ErrorMessage);
 
 
-                return Redirect('/mobileotp/'.base64_encode($mobile))->with('success', 'OTP sent on your mobile number.');
+                return Redirect('/mobileotp/'. Crypt::encryptString($mobile))->with('success', 'OTP sent on your mobile number.');
              }else{
                     //return 'Can Send only 1 OTP per minute.';
-                    return Redirect('/mobileotp/'.base64_encode($mobile))->with('success', 'Can Send only 1 OTP per minute');
+                    return Redirect('/mobileotp/'. Crypt::encryptString($mobile))->with('success', 'Can Send only 1 OTP per minute');
             }
 
         }
@@ -284,7 +286,9 @@ class UserController extends Controller
       //OTP PAGE TRY CATCH STARTS HERE
         try{
 
-          $mobile = base64_decode($request->mobile);
+          $mobile = Crypt::decryptString($request->mobile);
+
+          //dd($mobile);
           
           return view('otp',['mobile'=>$mobile]);
 
@@ -300,12 +304,10 @@ class UserController extends Controller
     //LOGIN STARTS HERE
     public function customlogin(Request $request)
     {
+      
+
       $input = $request->all();
-        array_walk_recursive($input, function(&$input) {
-             $input=Crypt::decrypt($input);
-            
-        });
-        $request->merge($input);
+      
         try{
 
             $validator = Validator::make($request->all(), [ 
@@ -345,10 +347,10 @@ class UserController extends Controller
 if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
   $failed_attempt=$otpuser->p_failed_attempts;
   if($failed_attempt >= 3){
-     // return Redirect('/')->with(['error' => 'To many failed login attempts. Please login after 2 minute']);
+     
     
      return redirect('/')->with(['msg' => 'To many failed login attempts. Please login after 5 min']);
-         // return Redirect::back()->withErrors(['msg' => 'To many failed login attempts. Please login after 3 min']);
+         
 
 
   }
@@ -360,38 +362,33 @@ if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
                        ]);
 
 }
-//dd("OK");
 
 
-           //   if(Hash::check($password, $otpuser->password))
-            
-        
-        //MATCHING OTP WITH DB STARTS
+
+           
         if($otpuser->otp != $otp){
 
-            //CHECKING MAXIMUM ATTEMPT FOR OTP STARTS
+            
             $attempts = $otpuser->otp_attempt;
-            //SETTING OTP TO NULL AFTER 3 FAILED ATTEMPTS STARTS
+            
             if($attempts > 2){
                
                UserLogin::where($user_where)
               ->update([
-                        //'is_login'                =>  '0',
+                        
                         'otp_attempt'             =>  '0',
-                         //'is_verified'             =>  '1',
+                         
                         'otp'                     =>  '',
-                        //'ipaddress'               =>  request()->ip(),
-                        //'request_resource_type'   =>  $request->server('HTTP_USER_AGENT'),//$request->header('User-Agent');
+                       
 
                     ]);
-              //return Redirect('/login')->with('success', 'Reached maximum OTP attempts. Request for new OTP.');
+              
 			  
 			  return Redirect('/login')->with('success', __('messages.otp_attempt_max'));
             }else{
 
                 $this->otp_attempt($otpuser->id, $attempts+1);
-                //return Redirect('/mobileotp/'.base64_encode($mobile))->with('error', 'Invalid OTP');
-				
+                
 				
 				$ErrorMessage['eventTime']= date('Y-m-d H:i:s');
 				$ErrorMessage['serverAdd']= isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1';
@@ -405,56 +402,71 @@ if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
 				$ErrorMessage['LogDescription']= 'OTP Invalid';
 				LogNotification::LogInfo($ErrorMessage);
 				
-				
-				
-				return Redirect('/mobileotp/'.base64_encode($mobile))->with('error', __('messages.otp_Invalid'));
+				return Redirect('/mobileotp/'.Crypt::encryptString($mobile))->with('error', __('messages.otp_Invalid'));
             }
-            //SETTING OTP TO NULL AFTER 3 FAILED ATTEMPTS ENDS
-            //CHECKING MAXIMUM ATTEMPT FOR OTP ENDS
+            
 
         }
-        //MATCHING OTP WITH DB ENDS
         
-        //SETTING IS_LOGIN FILED IN USERS TABLE TO 1 STARTS
         UserLogin::where($user_where)
               ->update([
                         //'is_login'                =>  '1',
                         'otp_attempt'             =>  '0',
-                        //'is_verified'             =>  '1',
-                        //'otp'                     =>  '123456',
-                        //'ipaddress'               =>  request()->ip(),
-                        //'request_resource_type'   =>  $request->server('HTTP_USER_AGENT'),//$request->header('User-Agent');
+                       
                     ]);
 
-
-            
-
-
-
-
-
-
-
-        //SETTING IS_LOGIN FILED IN USERS TABLE TO 1 ENDS
-        
-        //IF ELSE CONDITION FOR OTP MATCH STARTS
-        if ($otpuser->otp == $otp) {
+      if ($otpuser->otp == $otp) {
 
 
 
               if(Hash::check($password, $otpuser->password))
             { }else{
-                 return Redirect('/mobileotp/'.base64_encode($mobile))->with('error', __('Invalid Password'));
+                 return Redirect('/mobileotp/'.Crypt::encryptString($mobile))->with('error', __('Invalid Password'));
             }
 
 
 
             
             $user = UserLogin::where('mobile',$request->mobile)->first();
-            
-            //LOGIN AS AUTH OF LARAVEL
-                          
             $sessiondata = Auth::loginUsingId($user->id);
+            //LOGIN AS AUTH OF LARAVEL
+            $reg=$request->session()->regenerate();
+            $deviceKey = hash('sha256', Str::random(64));
+
+/* Store in PHP session */
+//
+
+       
+$deviceKey = hash('sha256', Str::uuid()->toString());
+Session::put('device_key', $deviceKey);
+$userId = Auth::id();
+            $sessionId = Session::getId();
+
+               $dbSession = DB::table('sessions')
+            ->where('id', Session::getId())
+            ->where('user_id', Auth::id())
+            ->first();
+
+
+           
+cookie()->queue(
+    cookie(
+        'device_key',
+        $deviceKey,
+        60 * 24,   // 1 day
+        '/',
+        null,
+        true,      // secure
+        true,      // httpOnly
+        false,
+        'Strict'   // SameSite
+    )
+);
+    
+
+
+
+
           
             Auth::logoutOtherDevices($password);
 			
@@ -483,22 +495,15 @@ if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
 			
 			
 			
-			if($sessiondata){
+			        if($sessiondata){
 
              
                 $user_data=Auth()->user();
                 //dd($user_data->mobile);
                 Auth::guard('web')->setUser($user_data);
-                // change stop
-                //dd($request->session()->regenerate(),Auth::guard('web')->setUser($user_data));
-               // dd($user_data->remember_token);
-                $credentials = $user_data->mobile;
-                //dd(Auth::attempt($credentials));
-               
-                Session::flash('sucess_message', 'You Are Successfully Logged In'); 
-
-              // $request->session()->regenerate();
                 
+                $credentials = $user_data->mobile;
+                Session::flash('sucess_message', 'You Are Successfully Logged In'); 
                 $login_history = array(
                                        'session_id'    =>$user_data->remember_token,
                                        'user_login_id' =>$user_data->id,
@@ -573,10 +578,10 @@ if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
 			    
 				 
 				 
-                //return Redirect('/mobileotp/'.base64_encode($mobile))->with('error', 'Invalid OTP');
-				return Redirect('/mobileotp/'.base64_encode($mobile))->with('error', __('messages.otp_Invalid'));
-                 //return view('welcome',['mobile_number' =>$mobile_number,'otperror' => "Invalid OTP"]);
-                }//IF ELSE CONDITION FOR OTP MATCH ENDS
+                
+				return Redirect('/mobileotp/'.Crypt::encryptString($mobile))->with('error', __('messages.otp_Invalid'));
+                 
+                }
 
 
 
@@ -586,9 +591,7 @@ if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
             
         
     }
-    //LOGIN ENDS HERE
-
-    //RESEND OTP FUNCTION STARTS
+    
     public function resendotp(Request $request)
     {  
 
@@ -602,7 +605,9 @@ if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
                 'mobile' => 'required|regex:/^\S*$/u|numeric|digits:10',
             ]);
 
-          $mob=base64_decode($request->mobile);
+          //$mob=base64_decode($request->mobile);
+            $mob=EncryptionService::decrypt($request->mobile);
+//
 
             $mobile = $xss->clean_input($mob);
 
@@ -710,9 +715,11 @@ if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
         //dd($request);
          $xss    = new xssClean;
        
-         $mobile=base64_decode($request->mobile);
-         $password=base64_decode($request->password);
-         $cpassword=base64_decode($request->cpassword);
+         $mobile=EncryptionService::decrypt($request->mobile);
+         $password=EncryptionService::decrypt($request->password);
+         $cpassword=EncryptionService::decrypt($request->cpassword);
+         
+         //dd($mobile,$password,$cpassword);
         //$mobile = $xss->clean_input($request->mobile);
         //$password = $xss->clean_input($request->password);
         //$cpassword = $xss->clean_input($request->cpassword);
@@ -796,12 +803,16 @@ if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
       public function Verifyotpfirst(Request $request)
       {
 
+    $otp=EncryptionService::decrypt($request->otp);
+    $mobile=EncryptionService::decrypt($request->mobile);
+    //dd($otp,$mobile);
          $xss    = new xssClean;
        
-       $mobile_decry = base64_decode($request->mobile);
+       /*$mobile_decry = base64_decode($request->mobile);
        $otp_decry    = base64_decode($request->otp);
        $mobile       = $xss->clean_input($mobile_decry);
        $otp          = $xss->clean_input($otp_decry);
+       */
 
     //dd($mobile_decry,$otp_decry,$otp,$mobile,$request->mobile,$request->otp);
        
@@ -859,8 +870,8 @@ if ($otpuser->otp != $otp ||  ! Hash::check($password, $otpuser->password)) {
 
    public function Forgotpassword(Request $request)
    {
-
-     $mobile = base64_decode($request->mobile);
+      $mobile=EncryptionService::decrypt($request->mobile);
+    // $mobile = base64_decode($request->mobile);
     // dd($request->mobile,"dfdfdfd",$mobile);
      // if(empty($mobile) )
       if(empty($mobile) || !is_numeric($mobile))

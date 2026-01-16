@@ -154,7 +154,9 @@
                 <div class="col">
                  <label>{{ __('step1.English') }} <sup>*</sup></label>
 
-                 <input type="text" name="name" id="name" class="form-control alphaonly" value="{{$name}}" onkeyup="this.value = this.value.toUpperCase();" > 
+                 <input type="text" name="name" id="name" class="form-control alphanumeric" value="{{$name}}" onkeyup="this.value = this.value.toUpperCase();" > 
+
+                  <!-- <input type="text" name="name" id="name" class="form-control alphaonly alphanumeric" value="{{$name}}"  >  -->
 
                  @if ($errors->has('name'))
                  <span class="error">{{ $errors->first('name') }}</span>
@@ -162,7 +164,7 @@
                </div>  
                <div class="col">
                  <label>{{ __('step1.Hindi') }} </label> <!-- data-trigger-keyboard="true" -->
-                 <input type="text" name="hname" id="hname" class="form-control" value="{{$hname}}"  data-id="hname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('hname');"> 
+                 <input type="text" name="hname" id="hname" class="form-control alphanumeric" value="{{$hname}}"  data-id="hname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('hname');"> 
 
                  @if ($errors->has('hname'))
                  <span class="error">{{ $errors->first('hname') }}</span>
@@ -186,7 +188,7 @@
                 <div class="col">
                  <label>{{ __('step1.English') }} <sup>*</sup></label>
 
-                 <input type="text" name="father_name" id="father_name" class="form-control alphaonly" value="{{$father_name}}"  onkeyup="translationInOtherLang('father_name','father_hname')" > 
+                 <input type="text" name="father_name" id="father_name" class="form-control alphanumeric" value="{{$father_name}}"  onkeyup="translationInOtherLang('father_name','father_hname')" > 
 
                  @if ($errors->has('father_name'))
                  <span class="error">{{ $errors->first('father_name') }}</span>
@@ -194,7 +196,7 @@
                </div>  
                <div class="col">
                  <label>{{ __('step1.Hindi') }}  </label>
-                 <input type="text" name="father_hname" id="father_hname" class="form-control alphaonly" value="{{$father_hname}}" data-id="father_hname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('father_hname');"> 
+                 <input type="text" name="father_hname" id="father_hname" class="form-control alphanumeric" value="{{$father_hname}}" data-id="father_hname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('father_hname');"> 
 
                  @if ($errors->has('father_hname'))
                  <span class="error">{{ $errors->first('father_hname') }}</span>
@@ -202,7 +204,7 @@
                </div>
                <div class="col">
                 <label>{{ __('step1.Vernacular') }}   <sup>*</sup></label>
-                <input type="text" name="father_vname" id="father_vname" class="form-control alphaonly" value="{{$father_vname}}" data-id="father_vname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('father_vname');">
+                <input type="text" name="father_vname" id="father_vname" class="form-control" value="{{$father_vname}}" data-id="father_vname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('father_vname');">
                 @if ($errors->has('father_vname'))
                 <span class="error">{{ $errors->first('father_vname') }}</span>
                 @endif 
@@ -214,21 +216,21 @@
             <div class="form-group row">
              <label class="col-sm-3">{{ __('step1.Candidate_Alias_Name') }}</label>
              <div class="col">
-              <input type="text" name="alias_name" id="alias_name"  class="form-control alphaonly" value="{{$alias_name}}" placeholder="{{ __('step1.alias_en') }}" onkeyup="translationInOtherLang('alias_name','alias_hname')"> 
+              <input type="text" name="alias_name" id="alias_name"  class="form-control alphanumeric" value="{{$alias_name}}" placeholder="{{ __('step1.alias_en') }}" onkeyup="translationInOtherLang('alias_name','alias_hname')"> 
               @if ($errors->has('alias_name'))
               <span class="error">{{ $errors->first('alias_name') }}</span>
               @endif 
 
             </div>  
             <div class="col">
-              <input type="text" name="alias_hname" id="alias_hname" class="form-control alphaonly" value="{{$alias_hname}}" placeholder="{{ __('step1.alias_hindi') }}"  data-id="alias_hname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('alias_hname');" > 
+              <input type="text" name="alias_hname" id="alias_hname" class="form-control alphanumeric" value="{{$alias_hname}}" placeholder="{{ __('step1.alias_hindi') }}"  data-id="alias_hname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('alias_hname');" > 
               @if ($errors->has('alias_hname'))
               <span class="error">{{ $errors->first('alias_hname') }}</span>
               @endif 
             </div>
 			
 			 <div class="col">
-                <input type="text" name="alias_vname" id="alias_vname" class="form-control alphaonly" value="{{$alias_vname}}" placeholder="{{ __('messages.anameVer') }}" data-id="alias_vname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('alias_vname');"> 
+                <input type="text" name="alias_vname" id="alias_vname" class="form-control" value="{{$alias_vname}}" placeholder="{{ __('messages.anameVer') }}" data-id="alias_vname" data-error=".errorTxt11111" onclick="return langKeyboardFunc('alias_vname');"> 
                 @if ($errors->has('alias_vname'))
                 <span class="error">{{ $errors->first('alias_vname') }}</span>
                 @endif 
@@ -237,7 +239,7 @@
           </div>        
        <div class="line"></div>
 	   
-     <div class="line"></div>
+     <div class="line"></div> 
      <div class="form-group row">
        <div class="col-sm-2"><label for="statename">{{ __('step1.State') }}<sup>*</sup></label></div>
        <div class="col">
@@ -791,18 +793,18 @@ $( document ).ready(function() {
 		// }
 		
 		$("#chkccnd").val('test');
-		$("#candnomination").prop('disabled', true);
+		//$("#candnomination").prop('disabled', true);
 		
 		
 
 		$.ajax({
 		url: "{!! url('nomination/check-email-mobile-onsubmit') !!}",
 		type: 'GET',
-		data: 'mobile='+mobile+'&email='+email,
+		data: 'mobile='+encryptData(mobile)+'&email='+encryptData(email),
 		dataType: 'html',     
 		success: function(json) { 
 		if(json!=0){
-		  alert(json);
+		  //alert(json);
 		} else {
 			document.myform.submit();
 		}
@@ -1286,7 +1288,7 @@ $(document).ready(function(e){
 
 
 
- 
+ <script type="text/javascript" src="{{ asset('affidavit/js/remove_special_character.js') }}"></script>
 <script type="text/javascript" src="{{ asset('appoinment/js/keyboard.js') }}"></script> 
  <script>
 
@@ -1307,9 +1309,9 @@ $(document).keyboard({
   <link rel="stylesheet" href="{{ asset('nomination/keytext/css/GistFloatingKeyboard.css') }}" id="theme-stylesheet">
   <script type="text/javascript" src="{{ asset('nomination/keytext/js/KeyboardScript.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('nomination/keytext/js/LanguagesArray.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('nomination/keytext/js/jquery.min.js') }}"></script> 
-  <script type="text/javascript" src="{{ asset('nomination/keytext/js/jquery-ui.min.js') }}"></script> 
   
+  <script type="text/javascript" src="{{ asset('nomination/keytext/js/jquery-ui.min.js') }}"></script> 
+  <script type="text/javascript" src="{{ asset('appoinment/js/crypto-js.min.js') }}"></script> 
 <script>
 	function langKeyboardFunc(id){ 
 	 document.getElementById(id).focus();
@@ -1330,7 +1332,40 @@ $(".address").keypress(
         this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '');
       }
     });
-	 
+	 $(document).on('input', '#address,#haddress', function () {
+    let value = $(this).val();
+
+    // allow letters, numbers, space and , . # _ -
+    let cleaned = value.replace(/[^a-zA-Z0-9 ,.#_-]/g, '');
+
+    if (value !== cleaned) {
+        $(this).val(cleaned);
+    }
+});
+     $('#age').change(function(e) {
+
+      if (this.value.match(/[^0-9]/g)) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+      }
+
+      var parsed_val = parseInt(this.value);
+      
+      if (parsed_val < 25 || parsed_val > 120) {
+        alert('candidate Min Age should be 25');
+        $('#age').val('');
+        ('#messages').show().html('candidate Min Age should be 25');
+        //alert('candidate Min Age should be 25');
+      }
+
+    });
+
+    function encryptData(data) {
+    var SECRET_KEY="AwdL2cXoGHtULolv"
+  return CryptoJS.AES.encrypt(
+    JSON.stringify(data),
+    SECRET_KEY
+  ).toString();
+}
  </script>		
 
 

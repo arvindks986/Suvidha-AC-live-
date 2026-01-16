@@ -373,17 +373,18 @@
                 <div class="form-group mt-2 mb-2">
                   <label for="" class="lbl-mandry">{{ __('part3.spre') }}</label>
 				  <div class="d-flex">
-					<div class="col-sm-4 col-12">1.<input list="sym1" type="text" name="suggest_symbol_1"  id="suggest_symbol_1" class="form-control" value="{{$suggest_symbol_1}}" onmouseover="return getSymbol(1);" onkeypress="return getSymbol(1);" >
+					<div class="col-sm-4 col-12">1.<input list="sym1" type="text" name="suggest_symbol_1"  id="suggest_symbol_1" class="form-control alphanumeric" value="{{$suggest_symbol_1}}" onmouseover="return getSymbol(1);" onkeypress="return getSymbol(1);" oncopy="return false" onpaste="return false">
 					  <datalist id="sym1">
 						<option value="Edge">
 					  </datalist>
 					  </div>
-					  <div class="col-sm-4 col-12">2. <input list="sym2" type="text" name="suggest_symbol_2" id="suggest_symbol_2" class="form-control" value="{{$suggest_symbol_2}}" onmouseover="return getSymbol(2);" onkeypress="return getSymbol(2);">
+					  <div class="col-sm-4 col-12">2. <input list="sym2" type="text" name="suggest_symbol_2" id="suggest_symbol_2" class="form-control alphanumeric" value="{{$suggest_symbol_2}}" onmouseover="return getSymbol(2);" onkeypress="return getSymbol(2);" oncopy="return false"
+       onpaste="return false">
 					  <datalist id="sym2">
 						<option value="Edge">
 					  </datalist>
 					  </div>
-					    <div class="col-sm-4 col-12">3. <input list="sym3" type="text" name="suggest_symbol_3" id="suggest_symbol_3" class="form-control"  value="{{$suggest_symbol_3}}" onmouseover="return getSymbol(3);" onkeypress="return getSymbol(3);">
+					    <div class="col-sm-4 col-12">3. <input list="sym3" type="text" name="suggest_symbol_3" id="suggest_symbol_3 alphanumeric" class="form-control"  value="{{$suggest_symbol_3}}" onmouseover="return getSymbol(3);" onkeypress="return getSymbol(3);" oncopy="return false"onpaste="return false">
 						<datalist id="sym3">
 						<option value="Edge">
 					  </datalist>
@@ -412,7 +413,8 @@
                 <div class="d-flex align-items-center my-3">
                   <div class="lbl-mandry mr-4">(d)&nbsp; {{ __('part3.lang') }}</div>
 				<div style="width: 12.50%;">
-                  <input type="text" list="language" id="langData" name="language" class="form-control alphaonly" value="{{$language}}" onmouseover="return getLangauge();" style="width: 120%;" autocomplete="off">
+                  <input type="text" list="language" id="langData" name="language" class="form-control alphaonly" value="{{$language}}" onmouseover="return getLangauge();" style="width: 120%;" autocomplete="off" oncopy="return false"
+       onpaste="return false">
 				</div>		
 				<datalist id="language">
 						<option >
@@ -542,7 +544,8 @@
                @endif
              @endforeach
            </select>
-			{{ __('part3.rel') }} <input type="text" name="part3_address" id="part3_address" class="form-control" value="{{$part3_address}}">{{ __('part3.area') }}.
+			{{ __('part3.rel') }} <input type="text" name="part3_address" id="part3_address" class="form-control alphanumeric" value="{{$part3_address}}" oncopy="return false"
+       onpaste="return false" >{{ __('part3.area') }}.
 			 </span>  
 			@endif
 			@endif
@@ -624,7 +627,7 @@
 	<script type="text/javascript" src="{{ asset('appoinment/js/jQuery.min.v3.4.1.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('appoinment/js/bootstrap.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('appoinment/js/owl.carousel.js') }}"></script>
-	
+	<script type="text/javascript" src="{{ asset('affidavit/js/remove_special_character.js') }}"></script>
 	<!--<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>-->
     <link rel="stylesheet" href="{{ asset('appoinment/select-search/select2.min.css') }}" id="theme-stylesheet">	

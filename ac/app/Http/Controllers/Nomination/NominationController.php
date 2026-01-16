@@ -30,7 +30,7 @@ use App\Http\Requests\Nomination\NominationPart3aRequest;
 use App\Helpers\LogNotification;
 use App\Mail\CandidateOtpMail;
 use Illuminate\Support\Facades\Mail;
-
+use App\Services\EncryptionService;
 
 class NominationController extends Controller
 {
@@ -7699,8 +7699,8 @@ class NominationController extends Controller
    
    public function check_email_mobile_onsubmit(){
 	   
-	$email =  $_REQUEST['email'];   
-	$mob   =  $_REQUEST['mobile'];   
+	$email =  EncryptionService::decrypt($_REQUEST['email']);   
+	$mob   =  EncryptionService::decrypt($_REQUEST['mobile']); 
 	
 	$chk=0;
 		

@@ -1,31 +1,51 @@
 <?php
-
 namespace App\Http\Middleware;
-use Illuminate\Contracts\Encryption\DecryptException;
-use Closure,Response,Redirect,Request;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Crypt;
+
+use Closure;
+use Illuminate\Http\Request;
+use App\Services\EncryptionService;
 
 class EncryptDecrypt
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     * Fields that should be decrypted
      */
-    public function handle($request, Closure $next)
+    protected $decryptFields = [
+        'mobile',
+        'otp',
+        'password',
+    ];
+
+    /**
+     * Handle an incoming request.
+     */
+    public function handle(Request $request, Closure $next)
     {
+        $data = $request->all();
 
+        foreach ($this->decryptFields as $field) {
 
-        $input = $request->all();
-        array_walk_recursive($input, function(&$input) {
-             $input=Crypt::encrypt($input);
-            
-        });
-        $request->merge($input);
+            if ($request->filled($field)) {
+
+                try {
+                    $decrypted = EncryptionService::decrypt(
+                        $request->input($field)
+                    );
+
+                    // Only replace if decryption succeeded
+                    if ($decrypted !== null) {
+                        $data[$field] = $decrypted;
+                    }
+
+                } catch (\Exception $e) {
+                    // Fail silently or log if required
+                }
+            }
+        }
+
+        // Replace request data with decrypted values
+        $request->merge($data);
+
         return $next($request);
-       
     }
 }

@@ -3,18 +3,19 @@
 use Illuminate\Database\Eloquent\Model;
 use DB, Auth, Session;
 use App\models\Nomination\{NominationProposerModel,NominationPoliceCaseModel, ProfileModel};  
-
+use App\Classes\xssClean;
 class NominationApplicationModel extends Model
 {
 	
   protected $table = 'nomination_application'; 
-  public $fillable = ['id', 'is_apply_prescrutiny', 'prescrutiny_apply_datetime', 'recognized_type', 'unrecognized_type', 'candidate_id', 'st_code', 'election_type', 'pc_no', 'ac_no', 'added_create_at', 'created_at', 'added_update_at', 'updated_at', 'created_by', 'updated_by','qrcode', 'name', 'email', 'mobile', 'hname', 'vname', 'alias_name', 'alias_hname', 'father_name', 'father_hname', 'father_vname', 'category', 'pan_number', 'dob', 'age', 'address', 'haddress', 'vaddress', 'epic_no', 'part', 'serial', 'gender', 'resident_ac_no', 'epic_no_proposer_serch', 'party_id', 'party_id2', 'election_type_id'];
+  public $fillable = ['id', 'is_apply_prescrutiny', 'prescrutiny_apply_datetime', 'recognized_type', 'unrecognized_type', 'candidate_id', 'st_code', 'election_type', 'pc_no', 'ac_no', 'added_create_at', 'created_at', 'added_update_at', 'updated_at', 'created_by', 'updated_by','qrcode', 'name', 'email', 'mobile', 'hname', 'vname', 'alias_name', 'alias_hname', 'father_name', 'father_hname', 'father_vname', 'category', 'pan_number', 'dob', 'age', 'address', 'haddress', 'vaddress', 'epic_no', 'part', 'serial', 'gender', 'resident_ac_no', 'epic_no_proposer_serch', 'party_id', 'party_id2', 'election_type_id','img_count','img_time'];
  
   public static function get_last_nomination_application(){
     return NominationApplicationModel::where('candidate_id', Auth::id())->latest('id')->first()->toArray();
   }
 
   public static function get_nomination_application($id){ 
+    
     $object = NominationApplicationModel::where('candidate_id', Auth::id())->find($id);
     if(!$object){
       return false;
@@ -41,23 +42,24 @@ class NominationApplicationModel extends Model
   }
   
   public static function add_nomination_application($data = array()){ 
+     $xss = new xssClean; 
     if(!empty($data['nomination_id']) && isset($data['nomination_id'])){
 		
         $object = NominationApplicationModel::where('candidate_id', Auth::id())->find(decrypt_String($data['nomination_id']));
-        $object->st_code = $data['st_code']; 
-        $object->ac_no = $data['ac_no']; 
+        $object->st_code = $xss->clean_input($data['st_code']); 
+        $object->ac_no = $xss->clean_input($data['ac_no']); 
         $object->updated_at = date('Y-m-d h:i:s'); 
         $object->step = 1; 
-        $object->election_id = $data['eid']; 
+        $object->election_id = $xss->clean_input($data['eid']); 
         $object->election_type_id = $data['election_id']; 
 		
     }else{
         
 		$object = new NominationApplicationModel();
         $object->candidate_id = Auth::id();
-        $object->st_code = $data['st_code']; 
-        $object->ac_no = $data['ac_no']; 
-		$object->election_id = $data['eid']; 
+        $object->st_code = $xss->clean_input($data['st_code']); 
+        $object->ac_no = $xss->clean_input($data['ac_no']); 
+		$object->election_id = $xss->clean_input($data['eid']); 
         $object->election_type_id = $data['election_id']; 
         $object->updated_at = date('Y-m-d h:i:s'); 
         $object->step = 1; 
@@ -70,26 +72,25 @@ class NominationApplicationModel extends Model
 	//echo "<pre>"; print_r(   $candidate ); die;	
     if($candidate){
     
-		$object->name = $candidate['name'];
-        $object->email = $candidate['email'];
-        $object->mobile = $candidate['mobile']; 
-        $object->hname = $candidate['hname']; 
-        $object->vname = $candidate['vname']; 
-        $object->alias_name = $candidate['alias_name']; 
-        $object->alias_hname = $candidate['alias_hname']; 
-        $object->father_name = $candidate['father_name']; 
-        $object->father_hname      = $candidate['father_hname']; 
-        $object->father_vname = $candidate['father_vname']; 
-        $object->category = $candidate['category']; 
-        $object->pan_number = $candidate['pan_number'];
+		$object->name = $xss->clean_input($candidate['name']);
+        $object->email = $xss->clean_input($candidate['email']);
+        $object->mobile = $xss->clean_input($candidate['mobile']); 
+        $object->hname = $xss->clean_input($candidate['hname']); 
+        $object->vname = $xss->clean_input($candidate['vname']); 
+        $object->alias_name = $xss->clean_input($candidate['alias_name']); 
+        $object->alias_hname = $xss->clean_input($candidate['alias_hname']); 
+        $object->father_name = $xss->clean_input($candidate['father_name']); 
+        $object->father_hname      = $xss->clean_input($candidate['father_hname']); 
+        $object->father_vname =$xss->clean_input( $candidate['father_vname']); 
+        $object->category = $xss->clean_input($candidate['category']); 
+        $object->pan_number = $xss->clean_input($candidate['pan_number']);
         $object->dob = $candidate['dob']; 
         $object->age = $candidate['age']; 
-        $object->address = $candidate['address']; 
-        $object->haddress      = $candidate['haddress']; 
-        $object->vaddress = $candidate['vaddress']; 
-        $object->epic_no = $candidate['epic_no']; 
-        $object->part = $candidate['part_no']; 
-        $object->serial = $candidate['serial_no']; 
+        $object->address = $xss->clean_input($candidate['address']); 
+        $object->haddress      = $xss->clean_input($candidate['haddress']); 
+        $object->vaddress = $xss->clean_input($candidate['vaddress']); 
+        $object->part = $xss->clean_input($candidate['part_no']); 
+        $object->serial = $xss->clean_input($candidate['serial_no']); 
 		$object->nomination_type = 1; 
         $object->updated_at = date('Y-m-d h:i:s'); 
         $object->gender = $candidate['gender'];
@@ -104,21 +105,23 @@ class NominationApplicationModel extends Model
     return true;
   }
 
-  public static function add_nomination_part1($data = array()){    
+  public static function add_nomination_part1($data = array()){ 
+   $xss = new xssClean; 
+  //dd($data) ; 
     //$object = NominationApplicationModel::where('finalize','0')->where('candidate_id', Auth::id())->find($data['nomination_id']);
     $object = NominationApplicationModel::where('candidate_id', Auth::id())->find($data['nomination_id']);
     $object->recognized_party = $data['recognized_party']; 
     $object->legislative_assembly = $data['legislative_assembly']; 
-    $object->name = $data['name']; 
-    $object->father_name = $data['father_name']; 
-    $object->address = $data['address']; 
-    $object->serial_no = $data['serial_no']; 
-    $object->part_no = $data['part_no']; 
+    $object->name =  $xss->clean_input($data['name']); 
+    $object->father_name =  $xss->clean_input($data['father_name']); 
+    $object->address =  $xss->clean_input($data['address']); 
+    $object->serial_no =  $xss->clean_input($data['serial_no']); 
+    $object->part_no =  $xss->clean_input($data['part_no']); 
     $object->resident_ac_no = $data['resident_ac_no']; 
     $object->epic_no_proposer_serch = $data['epic_no_proposer_serch']; 
-    $object->proposer_name = $data['proposer_name']; 
-    $object->proposer_serial_no = $data['proposer_serial_no']; 
-    $object->proposer_part_no = $data['proposer_part_no']; 
+    $object->proposer_name =  $xss->clean_input($data['proposer_name']); 
+    $object->proposer_serial_no =  $xss->clean_input($data['proposer_serial_no']); 
+    $object->proposer_part_no =  $xss->clean_input($data['proposer_part_no']); 
     $object->proposer_assembly = $data['proposer_assembly']; 
     $object->apply_date = date('Y-m-d', strtotime($data['apply_date'])); 
 	$object->updated_at = date('Y-m-d h:i:s'); 
@@ -127,18 +130,20 @@ class NominationApplicationModel extends Model
     return $object->save();
   }
 
-  public static function add_nomination_part2($data = array()){ 
+  public static function add_nomination_part2($data = array()){
+  $xss = new xssClean; 
+    //dd($data,"dsds");
     //$object = NominationApplicationModel::where('finalize','0')->where('candidate_id' , Auth::id())->find($data['nomination_id']);
     $object = NominationApplicationModel::where('candidate_id' , Auth::id())->find($data['nomination_id']);
 	//echo "<pre>"; print_r($object ); die; unrecognized_type
     $object->recognized_party = $data['recognized_party']; 
     $object->legislative_assembly = $data['legislative_assembly']; 
-    $object->name = $data['name']; 
-    $object->father_name = $data['father_name']; 
-    $object->address = $data['address']; 
-    $object->serial_no = $data['serial_no']; 
-    $object->part_no = $data['part_no']; 
-    $object->resident_ac_no = $data['resident_ac_no']; 
+    $object->name =  $xss->clean_input($data['name']); 
+    $object->father_name =  $xss->clean_input($data['father_name']); 
+    $object->address =  $xss->clean_input($data['address']); 
+    $object->serial_no =  $xss->clean_input($data['serial_no']); 
+    $object->part_no =  $xss->clean_input($data['part_no']); 
+    $object->resident_ac_no =  $xss->clean_input($data['resident_ac_no']); 
     $object->apply_date = date('Y-m-d', strtotime($data['apply_date'])); 
 	$object->updated_at = date('Y-m-d h:i:s'); 
 	$object->step = 2;         
@@ -197,7 +202,7 @@ class NominationApplicationModel extends Model
    }
   
    public static function add_nomination_part3a($data = array()){	//echo "<pre>"; print_r(   $data ); die;	
-   
+    $xss = new xssClean;
 	function checkdata($data){
 		if(empty($data)){
 			return '0'; 
@@ -212,26 +217,27 @@ class NominationApplicationModel extends Model
    
     //$object                         = NominationApplicationModel::where('finalize','0')->where('candidate_id' , Auth::id())->find($data['nomination_id']);
     $object                         = NominationApplicationModel::where('candidate_id' , Auth::id())->find($data['nomination_id']);
-    $object->have_police_case       =  checkdata($data['have_police_case']);
-    $object->profit_under_govt      =  checkdata($data['profit_under_govt']);
-    $object->office_held            =  ($data['office_held'])?$data['office_held']:''; 
-    $object->court_insolvent        =  checkdata($data['court_insolvent']);
-    $object->discharged_insolvency  =  ($data['discharged_insolvency'])?$data['discharged_insolvency']:''; 
-    $object->allegiance_to_foreign_country  =  checkdata($data['allegiance_to_foreign_country']); 
-    $object->country_detail                 = ($data['country_detail'])?$data['country_detail']:'';
-    $object->disqualified_section8A         = checkdata($data['disqualified_section8A']);
-    $object->disqualified_period       = ($data['disqualified_period'])?$data['disqualified_period']:''; 
-    $object->disloyalty_status         = checkdata($data['disloyalty_status']);
+    $object->have_police_case       =  $xss->clean_input(checkdata($data['have_police_case']));
+    $object->profit_under_govt      =  $xss->clean_input(checkdata($data['profit_under_govt']));
+    $object->office_held            =  ($data['office_held'])?$xss->clean_input($data['office_held']):''; 
+    $object->court_insolvent        =  $xss->clean_input(checkdata($data['court_insolvent']));
+    $object->discharged_insolvency  =  ($data['discharged_insolvency'])?$xss->clean_input($data['discharged_insolvency']):''; 
+    $object->allegiance_to_foreign_country  = $xss->clean_input( checkdata($data['allegiance_to_foreign_country'])); 
+    $object->country_detail                 = ($data['country_detail'])?$xss->clean_input($data['country_detail']):'';
+    $object->disqualified_section8A         = $xss->clean_input(checkdata($data['disqualified_section8A']));
+    $object->disqualified_period       = ($data['disqualified_period'])?$xss->clean_input($data['disqualified_period']):''; 
+    $object->disloyalty_status         = $xss->clean_input(checkdata($data['disloyalty_status']));
     $object->date_of_dismissal         = ($data['date_of_dismissal'])?date('Y-m-d', strtotime($data['date_of_dismissal'])):''; 
-    $object->subsiting_gov_taken       = checkdata($data['subsiting_gov_taken']);
-    $object->subsitting_contract       = ($data['subsitting_contract'])?$data['subsitting_contract']:''; 
-    $object->managing_agent                   = checkdata($data['managing_agent']); 
+    $object->subsiting_gov_taken       = $xss->clean_input(checkdata($data['subsiting_gov_taken']));
+    $object->subsitting_contract       = ($data['subsitting_contract'])?$xss->clean_input($data['subsitting_contract']):''; 
+    $object->managing_agent                   = $xss->clean_input(checkdata($data['managing_agent'])); 
 	$object->updated_at				   = date('Y-m-d h:i:s'); 
 	$object->step 					   = 4;         
-    $object->gov_detail                       = ($data['gov_detail'])?$data['gov_detail']:''; 
-    $object->disqualified_by_comission_10Asec = checkdata($data['disqualified_by_comission_10Asec']);
+    $object->gov_detail                       = ($data['gov_detail'])?$xss->clean_input($data['gov_detail']):''; 
+    $object->disqualified_by_comission_10Asec = $xss->clean_input(checkdata($data['disqualified_by_comission_10Asec']));
     $object->date_of_disqualification         = ($data['date_of_disqualification'])?date('Y-m-d', strtotime($data['date_of_disqualification'])):'';  
     $object->date_of_disloyal                 = ($data['date_of_disloyal'])?date('Y-m-d', strtotime($data['date_of_disloyal'])):'';  
+   
     $object->save();
 	return $object['id'];
   }

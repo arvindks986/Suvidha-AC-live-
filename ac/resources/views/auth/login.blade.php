@@ -123,7 +123,8 @@ if(Session::has('DB_id')){
                       <strong>{{ Session::get('log_message') }}</strong>
                   </span>
                   <div class="custom-field">
-                  <input type="text" id="mobile" class="form-control" id=""  name="mobile" value="{{old('mobile')}}" autocomplete="off" maxlength="10" minlength="10" autofocus placeholder="">
+                  <input type="text" id="mobile" class="form-control" id=""  name="mobile" value="{{old('mobile')}}" autocomplete="off" maxlength="10" minlength="10" autofocus placeholder="" oncopy="return false"
+       onpaste="return false" >
 
                     
                   <label for="" class="form-label">Enter Mobile No.</label>
@@ -140,7 +141,7 @@ if(Session::has('DB_id')){
 
                       
                                                           
-                       <li><span id="btn-refresh" class="btn-refresh captcha-img"><a href="#">Reload Captcha <img src="{{ asset('loginpage/img/icons/reload-icon.png') }}" alt="" height="20px"></span></a></span></li>
+                       <li><span id="btn-refresh" class="btn-refresh captcha-img"><a href="#">Reload Captcha <img src="{{ asset('loginpage/img/icons/reload-icon.png') }}" alt=""></span></a></span></li>
                       <!-- <li><span id="btn-refresh" class="btn btn-success btn-refresh captcha-img">Reload Captcha <img src="img/icons/reload-icon.png" alt=""></span></li> -->
                       <!-- <li><button type="button" data-refresh-config="default" id="btn-refresh" class="btn btn-success btn-refresh captcha-img"></i>Reload Captcha <img src="img/icons/reload-icon.png" alt=""></a></li> -->
                     </ul>

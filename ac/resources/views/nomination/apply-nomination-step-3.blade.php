@@ -29,8 +29,8 @@
   .file-frame img{ width: 100px; height:100px; float: left;}
   .file {
     float: right;
-    background-color:#5342bf;
-    border-color:#5342bf;
+    background-color:#bb4292;
+    border-color:#bb4292;
     color:#fff;
     width: 100%;
   }
@@ -211,7 +211,7 @@
                       <div class="avatar-upload btn file-frame">
                               <img src="{{$thumb}}" class="img-responsive">
                               <button class="file btn" type="button">Browse <i class="fa fa-upload"></i></button>
-                              <input type="hidden" name="image" class="image" value="{{$profileimg}}">
+                              <input type="hidden" name="image" class="image" value="{{base64_decode($profileimg)}}">
                       </div>
                     </div>
                   </div>
@@ -584,7 +584,7 @@
 			
                     <table class="table table-bordered proposers-table">
                       <thead>
-                        <tr  style="background:#5342bf">
+                        <tr  style="background:#f0587e">
                           <th>{{ __('step3.sno') }}</th>
 						  <th>{{ __('step3.fetchprop') }}</th>
                           <th colspan="2">{{ __('step3.eroll') }}</th>
@@ -593,7 +593,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr style="background:#5342bf;">
+                        <tr style="background:#f0587e;">
                           <td>&nbsp;</td>
 						  <td>&nbsp;</td>
                           <td style="color:white;">{{ __('step3.epart') }}</td>
@@ -621,7 +621,7 @@
 							
                             <td>
 								<div class="input-group"  style="width: 250px;">
-								  <input type="text"  name="non_recognized_proposers[{{$key}}][epic_no_proposer_serch_part_2]" value="{{$iterate_proposer['epic_no_proposer_serch_part_2']}}" id="epic_no_{{$i}}" class="form-control"  placeholder="{{ __('step3.enterepic') }}"  />
+								  <input type="text"  name="non_recognized_proposers[{{$key}}][epic_no_proposer_serch_part_2]" value="{{$iterate_proposer['epic_no_proposer_serch_part_2']}}" id="epic_no_{{$i}}" class="form-control alphanumeric"  placeholder="{{ __('step3.enterepic') }}"  />
 								  <div class="input-group-append">
 									<button class="btn btn-success" type="button" id="epic_no_search_{{$i}}" onclick="return getEPicDetails({{$i}});">
 									<i class="fa fa-search" aria-hidden="true"></i>
@@ -632,9 +632,9 @@
 							</td>
 										
 							
-                            <td><input type="number" placeholder="{{ __('step3.pno') }}" class="form-control  particulars-field-12" name="non_recognized_proposers[{{$key}}][part_no]" value="{{$iterate_proposer['part_no']}}" id="p_{{$i}}" ></td>
+                            <td><input type="number" placeholder="{{ __('step3.pno') }}" class="form-control  particulars-field-12 alphanumeric" name="non_recognized_proposers[{{$key}}][part_no]" value="{{$iterate_proposer['part_no']}}" id="p_{{$i}}" ></td>
 							<td><input type="number" placeholder="{{ __('step3.sno') }}" class="form-control  particulars-field-12" name="non_recognized_proposers[{{$key}}][serial_no]" value="{{$iterate_proposer['serial_no']}}" id="s_{{$i}}" ></td>
-                            <td><input type="text" placeholder="{{ __('step3.fullnam') }}" class="form-control  particulars-field-12 alphaonly" id="fullname_{{$i}}" name="non_recognized_proposers[{{$key}}][fullname]" value="{{$iterate_proposer['fullname']}}" ><span id="error_message"></span></td>
+                            <td><input type="text" placeholder="{{ __('step3.fullnam') }}" class="form-control  particulars-field-12 alphanumeric" id="fullname_{{$i}}" name="non_recognized_proposers[{{$key}}][fullname]" value="{{$iterate_proposer['fullname']}}" ><span id="error_message"></span></td>
                             <input type="hidden" class="form-control " name="non_recognized_proposers[{{$key}}][signature]" value="{{$iterate_proposer['signature']}}">
                             <td><input type="text" class="form-control particulars-field-12 recognized_date" name="non_recognized_proposers[{{$key}}][date]" value="{{$iterate_proposer['date']}}" readonly="readonly"></td>
                           </tr>
@@ -1022,7 +1022,7 @@
 			
                     <table class="table table-bordered proposers-table">
                       <thead>
-                        <tr  style="background:#5342bf">
+                        <tr  style="background:#f0587e">
                           <th>{{ __('step3.sno') }}</th>
 						  <th>{{ __('step3.fetchprop') }}</th>
                           <th colspan="2">{{ __('step3.eroll') }}</th>
@@ -1031,7 +1031,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr style="background:#5342bf;">
+                        <tr style="background:#f0587e;">
                           <td>&nbsp;</td>
 						  <td>&nbsp;</td>
                           <td style="color:white;">{{ __('step3.epart') }}</td>
@@ -1059,7 +1059,7 @@
 							
                             <td>
 								<div class="input-group"  style="width: 250px;">
-								  <input type="text"  name="non_recognized_proposers[{{$key}}][epic_no_proposer_serch_part_2]" value="{{$iterate_proposer['epic_no_proposer_serch_part_2']}}" id="epic_no_both_{{$i}}" class="form-control"  placeholder="{{ __('step3.enterepic') }}"  />
+								  <input type="text"  name="non_recognized_proposers[{{$key}}][epic_no_proposer_serch_part_2]" value="{{$iterate_proposer['epic_no_proposer_serch_part_2']}}" id="epic_no_both_{{$i}}" class="form-control alphanumeric"  placeholder="{{ __('step3.enterepic') }}"  />
 								  <div class="input-group-append">
 									<button class="btn btn-success" type="button" id="epic_no_search_both_{{$i}}" onclick="return getEPicDetails_both({{$i}});">
 									<i class="fa fa-search" aria-hidden="true"></i>
@@ -1070,9 +1070,9 @@
 							</td>
 										
 							
-                            <td><input type="number" placeholder="{{ __('step3.pno') }}" class="form-control  particulars-field-12" name="non_recognized_proposers[{{$key}}][part_no]" value="{{$iterate_proposer['part_no']}}" id="p_both_{{$i}}" ></td>
+                            <td><input type="number" placeholder="{{ __('step3.pno') }}" class="form-control  particulars-field-12 alphanumeric" name="non_recognized_proposers[{{$key}}][part_no]" value="{{$iterate_proposer['part_no']}}" id="p_both_{{$i}}" ></td>
 							<td><input type="number" placeholder="{{ __('step3.sno') }}" class="form-control  particulars-field-12" name="non_recognized_proposers[{{$key}}][serial_no]" value="{{$iterate_proposer['serial_no']}}" id="s_both_{{$i}}" ></td>
-                            <td><input type="text" placeholder="{{ __('step3.fullnam') }}" class="form-control  particulars-field-12 alphaonly" id="fullname_both_{{$i}}" name="non_recognized_proposers[{{$key}}][fullname]" value="{{$iterate_proposer['fullname']}}" ><span id="error_message_both"></span></td>
+                            <td><input type="text" placeholder="{{ __('step3.fullnam') }}" class="form-control  particulars-field-12 alphanumeric" id="fullname_both_{{$i}}" name="non_recognized_proposers[{{$key}}][fullname]" value="{{$iterate_proposer['fullname']}}" ><span id="error_message_both"></span></td>
                             <input type="hidden" class="form-control " name="non_recognized_proposers[{{$key}}][signature]" value="{{$iterate_proposer['signature']}}">
                             <td><input type="text" class="form-control particulars-field-12 recognized_date" name="non_recognized_proposers[{{$key}}][date]" value="{{$iterate_proposer['date']}}" readonly="readonly"></td>
                           </tr>
@@ -1148,7 +1148,7 @@
       @section('script') 
 	  
 	  
-	
+	<script type="text/javascript" src="{{ asset('affidavit/js/remove_special_character.js') }}"></script>
 	  
       <script type="text/javascript" src="{{ asset('admintheme/js/jquery-ui.js') }}"></script>
 	  <script type="text/javascript">
@@ -1934,7 +1934,7 @@
         $(document).ready(function () {
           $('.file').on('click', function() { 
             $('#form-upload').remove();
-            $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" value="" /></form>');
+            $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" value="" /><input type="hidden" name="_token" value="<?php echo csrf_token(); ?>" /></form>');
             $('#form-upload input[name=\'file\']').trigger('click');
             if (typeof timer != 'undefined') {
               clearInterval(timer);
@@ -1943,7 +1943,8 @@
               if ($('#form-upload input[name=\'file\']').val() != '') { 
                 clearInterval(timer);
                 $.ajax({
-                  url: "<?php echo $href_file_upload; ?>?_token=<?php echo csrf_token(); ?>",
+                
+                  url: "<?php echo $href_file_upload; ?>",
                   type: 'POST',
                   dataType: 'json',
                   data: new FormData($('#form-upload')[0]),
@@ -1960,20 +1961,23 @@
                     $('.file i').replaceWith('<i class="fa fa-upload"></i>');
                     $('.file').prop('disabled', false);
                   },
+
                   success: function(json) {
+
                     if(json['success'] == false) {
                       $('.file-frame').after("<span class='text-danger'>"+json['errors']+"</span>");
                       $('.file-frame').addClass("file-frame-error");
                     }
                     if (json['success'] == true) {
-                      $('.file-frame').find('.image').val(json['path']);
-                      $('.file-frame').find('img').attr("src","<?php echo url('/'); ?>/"+json['path']);
+                      $('.file-frame').find('.image').val(atob(json['path']));
+                      $('.file-frame').find('img').attr("src","<?php echo url('/'); ?>/"+atob(json['path']));
 					  $(".profile_img").hide();
                     }
                   },
                   error: function(xhr, ajaxOptions, thrownError) { 
+                  	
                     console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-                    $('.file-frame').after("<span class='text-danger'><?php echo __('messages.file_type_error'); ?></span>");
+                    // $('.file-frame').after("<span class='text-danger'><?php echo __('messages.file_type_error'); ?></span>");
                   }
                 });
               }

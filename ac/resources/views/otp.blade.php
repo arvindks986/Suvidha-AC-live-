@@ -17,9 +17,9 @@ else
 
 ?> 
 
-@if($errors->any())
+<!-- @if($errors->any())
     {{ implode('', $errors->all('<div style="align-content: center;">:message</div>')) }}
-@endif
+@endif -->
      <style type="text/css">
        .inputGroup input:checked ~ label:after {
     background-color: #ffc517;
@@ -139,9 +139,17 @@ else
                   <li>{{$maskedMobile}} or <a href="{{url('/login')}}">Edit <img src="img/icons/edit.png" alt=""></a></li>
                 </ul>
 
+
+
+
+
+
+
+
               <form class="log-frm-area" method="POST" action="{{ url('customlogin') }}" autocomplete='off' enctype="x-www-urlencoded" id="loginval"  autocomplete="off" >
       {{ csrf_field() }}
        <!--MOBILE NUMBERT FIELD STARTS-->
+        
        <div class=" form-inline{{ $errors->has('mobile') ? ' has-error' : '' }}">
           
           <input id="mobile" type="hidden" class="form-control col-md-9" name="mobile" value="{{$mobile}}"  placeholder="Enter Mobile No." maxlength="10" minlength="10" readonly="readonly">
@@ -154,21 +162,24 @@ else
 
           <div class="form-group{{ $errors->has('otp') ? ' has-error' : '' }}">
                <div class="custom-field">
-                  <input id="otp" type="password" class="form-control w-60" name="otp" value="{{ old('otp') }}"  placeholder="Mobile Otp"  minlength="6" autocomplete="off" autofocus>&nbsp;
+    <input id="otp" type="password" class="form-control w-60" name="otp" value="{{ old('otp') }}"  placeholder="Mobile Otp" maxlength="6" minlength="6"  autofocus oncopy="return false"
+       onpaste="return false">&nbsp;
                     <label for="" class="form-label">Enter OTP.</label>
                       <a href="#" id="fgpassword" style="float: right;" class="resendotpform" >Resend OTP <img src="{{ asset('loginpage/img/icons/reload-icon.png')}}" alt="" height="16px"></a>
 
                     </div>
                     @if ($errors->has('otp'))
                             <span class="help-block">
-                           <strong>{{ $errors->first('otp') }}</strong>
+                           <strong style="color:red">{{ $errors->first('otp') }}</strong>
                        </span> @endif
             </div>
+
             <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                 <div class="custom-field">
-                  <input type="password" id="password" class="form-control w-60"   name="password" value="{{old('password')}}" autocomplete="off"  autofocus placeholder="Password">
+                  <input type="password" id="password" class="form-control w-60"   name="password"  autocomplete="current-password"  autocorrect="on" spellcheck="false"  autofocus placeholder="Password" oncopy="return false" onpaste="return false">
+
                   <label for="" class="form-label">Enter Password.</label>
-                  <a href="#" id="fgpassword" style="float: right;" onclick="return fgpassword();">Reset Password?</a>
+                  <a href="#" id="fgpassword" style="float: right;" onclick="return fgpassword();" >Reset Password?</a>
                     </div>
                             @if ($errors->has('password'))
                             <span class="help-block">
@@ -181,6 +192,22 @@ else
                 <input type="submit" class="btn btn-lg btn-primary w-100" id="btnsub" value="Submit"> 
 
           </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
      
       @elseif($checkpass->verify_otp==0)
               <h2>OTP Verification !</h2> 
@@ -229,7 +256,7 @@ else
         @elseif($checkpass->verify_otp==1 && empty($checkpass->password))
                 <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                 <div class="custom-field">
-                  <input type="password" id="password" class="form-control w-60" id=""  name="password" value="{{old('password')}}" autocomplete="off"  autofocus placeholder="" minlength="8" >
+                  <input type="password" id="password" class="form-control w-60" id=""  name="password" value="" autocomplete="off"  autofocus placeholder="" minlength="8" >
                     <label for="" class="form-label">Password.</label>
 
                     </div>
@@ -297,13 +324,14 @@ else
   <footer class="stickyFooter">
 
   </footer>
+
   <script src="{{ asset('theme/vendor/jquery/jquery.min.js') }}"></script>
 <!-- Validation  JavaScript -->
 <!--**********DCO FORM VALIDATION STARTS**********-->
     <script type="text/javascript" src="{{ asset('jquery-validation/jquery.validate.min.js') }} "></script>
     <script type="text/javascript" src="{{ asset('jquery-validation/additional-methods.min.js') }}"></script>
     <!--**********DCO FORM VALIDATIONS SCRIPT**********-->
-    <script src="{{ asset('formvalidations/loginformvalidations.js') }}"></script>
+    
     <script src="{{ asset('theme/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     
      
@@ -404,7 +432,13 @@ $(document).on("click", ".resendotpform", function () {
            // url: APP_URL + '/resendotp',    
              url: "{!! url('resendotp') !!}",            
             type: 'POST',
-            data: 'mobile='+btoa(mobile),
+            contentType: 'application/json',   
+            dataType: 'json',
+            data: JSON.stringify({
+            mobile: encryptData(mobile)
+            
+    }),
+            //data: 'mobile='+btoa(mobile),
             success: function (data) {
                 if(data == 1){
                     $('#otpsend').hide();
@@ -450,7 +484,10 @@ $(document).on("click", ".verifyotp", function () {
     let otp2      = firstVal + secondVal + thirdVal + fourthVal + fifthVal + sixVal;
 
 
-    var mobile = $("#mobile").val();
+     var mobile = $("#mobile").val();
+     var encrypt_otp=encryptData(otp2);
+     var encrypt_mobile=encryptData(mobile);
+    
    // var otp = $("#otp").val();
     var otp = otp2;
      //var mydata=[];
@@ -474,11 +511,17 @@ $(document).on("click", ".verifyotp", function () {
             'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
             },
             url: "{!! url('verifyotpfirst') !!}",
-                            
+                    
             type: 'POST',
+            contentType: 'application/json',   
+            dataType: 'json',
+            data: JSON.stringify({
+            mobile: encrypt_mobile,
+            otp: encrypt_otp
+    }),
             
             //data: 'mobile='+encryptyData(mobile)+'&otp='+encryptyData(otp),
-            data: 'mobile='+btoa(mobile)+'&otp='+btoa(otp),
+            //data: 'mobile='+btoa(mobile)+'&otp='+encrypt_otp,
 
             success: function (data) {
                 if(data == 1){
@@ -539,14 +582,26 @@ $(document).on("click", ".setpassword", function () {
         return false;
     }
 
+     var encrypt_mobile=encryptData(mobile);
+     var encrypt_password=encryptData(password);
+     var encrypt_cpassword=encryptData(cpassword);
+     
         $.ajax({
             headers: {
             'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
             },
              url: "{!! url('setpassword') !!}",
+             
                             
             type: 'POST',
-            data: 'mobile='+btoa(mobile)+'&password='+btoa(password)+'&cpassword='+btoa(cpassword) ,
+            contentType: 'application/json',  
+             dataType: 'json',
+             data: JSON.stringify({
+             mobile: encrypt_mobile,
+             password: encrypt_password,
+             cpassword:encrypt_cpassword,
+           }), 
+            //data: 'mobile='+mobile+'&password='+password+'&cpassword='+cpassword ,
             success: function (data) {
                 if(data == 1){
                     $('#otpsend').hide();
@@ -589,6 +644,8 @@ $(document).on("click", ".setpassword", function () {
           {
 
             var mobile=$("#mobile").val();
+          
+
             if(mobile.length!=10)
             {
                  $('#otpsend').addClass('alert alert-danger').text('Please Check Mobile Number');
@@ -606,7 +663,14 @@ $(document).on("click", ".setpassword", function () {
              url: "{!! url('fgpassword') !!}",
                             
             type: 'POST',
-              data: 'mobile='+btoa(mobile) ,
+            contentType: 'application/json',  
+             dataType: 'json',
+             data: JSON.stringify({
+             mobile: encryptData(mobile),
+             
+           }), 
+
+              //data: 'mobile='+mobile ,
             success: function (data) {
                 if(data == 1){
                     $('#otpsend').hide();
@@ -670,14 +734,13 @@ $("#otp").keypress(function(e) {
 
 
 
-  function encryptyData(data) 
-     {
-    const key = 'AwdL2cXoGHtULolvWERioSDF';
-    let k = CryptoJS.enc.Utf8.parse(key);
-    encryptedAES = CryptoJS.AES.encrypt(data, k, { mode: CryptoJS.mode.ECB });
-    return encryptedAES.toString();
-    
-     }
+  function encryptData(data) {
+    var SECRET_KEY="AwdL2cXoGHtULolv"
+  return CryptoJS.AES.encrypt(
+    JSON.stringify(data),
+    SECRET_KEY
+  ).toString();
+}
 </script>
 
 
@@ -719,6 +782,22 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please enter full 6-digit OTP");
         }
     });
+});
+
+document.getElementById('loginval').addEventListener('submit', function (e) {
+
+  
+
+    // encrypt ONLY sensitive fields
+    let mobile   = document.getElementById('mobile').value;
+    let otp      = document.getElementById('otp').value;
+    let password = document.getElementById('password').value;
+
+    document.getElementById('mobile').value   = encryptData(mobile);
+    document.getElementById('otp').value      = encryptData(otp);
+    document.getElementById('password').value = encryptData(password);
+
+    // form continues submitting normally
 });
 
 
