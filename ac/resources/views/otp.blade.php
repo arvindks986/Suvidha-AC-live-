@@ -154,7 +154,7 @@ else
 
           <div class="form-group{{ $errors->has('otp') ? ' has-error' : '' }}">
                <div class="custom-field">
-                  <input id="otp" type="password" class="form-control w-60" name="otp" value="{{ old('otp') }}"  placeholder="Mobile Otp" maxlength="6" minlength="6" autocomplete="off" autofocus>&nbsp;
+                  <input id="otp" type="password" class="form-control w-60" name="otp" value="{{ old('otp') }}"  placeholder="Mobile Otp"  minlength="6" autocomplete="off" autofocus>&nbsp;
                     <label for="" class="form-label">Enter OTP.</label>
                       <a href="#" id="fgpassword" style="float: right;" class="resendotpform" >Resend OTP <img src="{{ asset('loginpage/img/icons/reload-icon.png')}}" alt="" height="16px"></a>
 
