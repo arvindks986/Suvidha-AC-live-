@@ -334,11 +334,11 @@
 				   $('#notStarted2').modal('show'); 	
 				   
 				  if(st_code=='S04'){
-				  	alert("ssdds");
+				  	//alert("ssdds");
 				    $("#bihar2").show();
 				    $("#other2").hide();
 				   } else {
-				   	alert("ssdds1213");
+				   	//alert("ssdds1213");
 					  $("#bihar2").hide();
 				      $("#other2").show();
 				   }
